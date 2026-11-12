@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>POLYMATHY // Compound DAG Knowledge Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>POLYMATHY // Knowledge Graph & Learning Assistant</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
 :root {
-  /* Core Surfaces (Technical Paper & Blueprint Ink) */
+  /* Surfaces & Ink (Clean STEM Manual Monograph Aesthetic) */
   --bg: #f8f9fa;
   --bg-alt: #f1f3f5;
   --surface: #ffffff;
@@ -24,26 +24,31 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Semantic Status & Locator Colors */
+  /* Semantic Colors (Human-friendly status names, NO cryptic letters) */
   --accent: #0969da;
   --accent-soft: #ddf4ff;
   --head-color: #8250df;
   --head-soft: #fbefff;
 
-  --flag-c-bg: #dafbe1;
-  --flag-c-text: #116329;
-  --flag-c-border: #4ac26b;
+  --status-done-bg: #dafbe1;
+  --status-done-text: #116329;
+  --status-done-border: #4ac26b;
 
-  --flag-w-bg: #fff8c5;
-  --flag-w-text: #7d4e00;
-  --flag-w-border: #d4a72c;
+  --status-active-bg: #fff8c5;
+  --status-active-text: #7d4e00;
+  --status-active-border: #d4a72c;
 
-  --flag-x-bg: #ffebe9;
-  --flag-x-text: #a40e26;
-  --flag-x-border: #ff8182;
+  --status-needed-bg: #ffebe9;
+  --status-needed-text: #a40e26;
+  --status-needed-border: #ff8182;
 
-  --stub-bg: #eaeef2;
-  --stub-text: #57606a;
+  --status-ready-bg: #ddf4ff;
+  --status-ready-text: #0969da;
+  --status-ready-border: #54aeff;
+
+  --status-draft-bg: #eaeef2;
+  --status-draft-text: #57606a;
+  --status-draft-border: #8c959f;
 
   --shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.06);
   --shadow-md: 0 4px 10px rgba(31, 35, 40, 0.10);
@@ -61,7 +66,7 @@ body {
   flex-direction: column;
 }
 
-/* Form & Button Primitives (STEM Manual) */
+/* Form & Button Primitives */
 button, input, select, textarea {
   font-family: var(--font-mono);
   font-size: 11.5px;
@@ -103,23 +108,23 @@ button.head-btn {
 }
 button.head-btn:hover:not(:disabled) { background: #f3dcff; }
 button.success-btn {
-  background: var(--flag-c-bg);
-  color: var(--flag-c-text);
-  border-color: var(--flag-c-border);
+  background: var(--status-done-bg);
+  color: var(--status-done-text);
+  border-color: var(--status-done-border);
 }
 button.danger-btn {
-  background: var(--flag-x-bg);
-  color: var(--flag-x-text);
-  border-color: var(--flag-x-border);
+  background: var(--status-needed-bg);
+  color: var(--status-needed-text);
+  border-color: var(--status-needed-border);
 }
-button.btn-xs { padding: 2px 6px; font-size: 10.5px; }
+button.btn-xs { padding: 2px 7px; font-size: 11px; }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
 textarea { font-family: var(--font-sans); resize: vertical; }
 
 /* Top Telemetry & Locator Bar */
 .topbar {
-  height: 44px;
-  min-height: 44px;
+  height: 46px;
+  min-height: 46px;
   flex-shrink: 0;
   background: var(--surface);
   border-bottom: 1.5px solid var(--border-dark);
@@ -154,14 +159,14 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   background: var(--bg-alt);
   border: 1px solid var(--border);
   border-radius: 3px;
-  padding: 2px 7px;
+  padding: 3px 8px;
   color: var(--text-muted);
 }
 .locator-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 2px 6px;
+  gap: 6px;
+  padding: 3px 7px;
   border-radius: 3px;
   border: 1px solid;
   font-family: var(--font-mono);
@@ -200,14 +205,15 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   overflow: hidden;
 }
 .canvas-pane {
-  flex: 1 1 68%;
+  flex: 1 1 66%;
   min-width: 320px;
   position: relative;
   overflow: hidden;
   background-color: var(--bg);
   background-image: radial-gradient(var(--border) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-size: 22px 22px;
   user-select: none;
+  touch-action: none;
 }
 .splitter {
   width: 5px;
@@ -254,10 +260,10 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   background: var(--surface);
   border: 1.5px solid var(--head-color);
   border-radius: 4px;
-  padding: 5px 10px;
+  padding: 5px 11px;
   box-shadow: var(--shadow-md);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 11.5px;
 }
 .detour-banner.visible { display: flex; }
 
@@ -281,8 +287,17 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--text-muted);
+}
+.hud-hint-pill {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
 }
 
 .minimap-wrap {
@@ -290,8 +305,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   top: 12px;
   right: 12px;
   width: 184px;
-  height: 144px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.95);
   border: 1.5px solid var(--border-dark);
   border-radius: 4px;
   box-shadow: var(--shadow-md);
@@ -299,16 +313,23 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: height 0.15s ease;
+}
+.minimap-wrap.minimized {
+  width: 110px;
+}
+.minimap-wrap.minimized #minimapSvg {
+  display: none;
 }
 .minimap-header {
-  height: 18px;
+  height: 22px;
   background: var(--bg-alt);
   border-bottom: 1px solid var(--border);
   padding: 0 6px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: 9.5px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -316,12 +337,12 @@ textarea { font-family: var(--font-sans); resize: vertical; }
 }
 #minimapSvg {
   width: 100%;
-  flex: 1 1 0;
+  height: 120px;
   display: block;
   cursor: crosshair;
 }
 
-/* Signature STEM Manual UI Primitives */
+/* Primitives & Boxes */
 .box {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -342,7 +363,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   align-items: center;
   border-bottom: 1px solid var(--border);
   padding-bottom: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   gap: 8px;
 }
 .box-title {
@@ -353,6 +374,14 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   color: var(--text-muted);
   text-transform: uppercase;
 }
+.section-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-bottom: 9px;
+  line-height: 1.4;
+}
+
+/* Clear Semantic Tags */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -368,25 +397,30 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   line-height: 1.2;
   white-space: nowrap;
 }
-.tag.flag-C {
-  background: var(--flag-c-bg);
-  color: var(--flag-c-text);
-  border-color: var(--flag-c-border);
+.tag.done {
+  background: var(--status-done-bg);
+  color: var(--status-done-text);
+  border-color: var(--status-done-border);
 }
-.tag.flag-W {
-  background: var(--flag-w-bg);
-  color: var(--flag-w-text);
-  border-color: var(--flag-w-border);
+.tag.active {
+  background: var(--status-active-bg);
+  color: var(--status-active-text);
+  border-color: var(--status-active-border);
 }
-.tag.flag-X {
-  background: var(--flag-x-bg);
-  color: var(--flag-x-text);
-  border-color: var(--flag-x-border);
+.tag.needed {
+  background: var(--status-needed-bg);
+  color: var(--status-needed-text);
+  border-color: var(--status-needed-border);
 }
-.tag.stub {
-  background: var(--stub-bg);
-  color: var(--stub-text);
-  border-color: var(--border-strong);
+.tag.ready {
+  background: var(--status-ready-bg);
+  color: var(--status-ready-text);
+  border-color: var(--status-ready-border);
+}
+.tag.draft {
+  background: var(--status-draft-bg);
+  color: var(--status-draft-text);
+  border-color: var(--status-draft-border);
   border-style: dashed;
 }
 .tag.edited {
@@ -400,7 +434,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   border-color: var(--head-color);
 }
 
-/* Collapsible Drawers */
+/* Detour Drawer */
 details.audit-drawer {
   border: 1.5px solid var(--border-dark);
   border-radius: 4px;
@@ -458,7 +492,7 @@ details.audit-drawer[open] summary {
   padding: 1px 5px;
 }
 
-/* Side Panel Topic Header & Module Items */
+/* Side Panel Content */
 .topic-breadcrumb {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -497,10 +531,10 @@ details.audit-drawer[open] summary {
 }
 .progress-fill {
   height: 100%;
-  background: var(--flag-w-border);
+  background: var(--status-active-border);
   transition: width 0.2s ease;
 }
-.progress-fill.done { background: var(--flag-c-border); }
+.progress-fill.done { background: var(--status-done-border); }
 
 .item-list {
   display: flex;
@@ -583,9 +617,9 @@ details.audit-drawer[open] summary {
 .diag-warn {
   margin-top: 8px;
   padding: 7px 9px;
-  background: var(--flag-x-bg);
-  border: 1px solid var(--flag-x-border);
-  color: var(--flag-x-text);
+  background: var(--status-needed-bg);
+  border: 1px solid var(--status-needed-border);
+  color: var(--status-needed-text);
   border-radius: 3px;
   font-family: var(--font-mono);
   font-size: 11px;
@@ -703,15 +737,15 @@ code.inline {
   padding: 1px 4px;
 }
 
-/* SVG Element Classes */
+/* SVG Interactive Styles */
 .svg-node { cursor: pointer; }
 .svg-node:hover .node-card { stroke: var(--text); stroke-width: 1.8px; }
 .svg-expand-badge { cursor: pointer; }
 .svg-expand-badge:hover rect { fill: var(--text); }
 .svg-expand-badge:hover text { fill: var(--surface); }
-.prereq-hit { cursor: pointer; }
-.prereq-hit:hover .prereq-pill-rect { stroke-width: 1.8px; filter: brightness(0.96); }
-.dimmed { opacity: 0.2; transition: opacity 0.15s; }
+.prereq-arrow-hit { cursor: pointer; }
+.prereq-arrow-hit:hover path.visible-arrow { stroke-width: 3.2px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.25)); }
+.dimmed { opacity: 0.18; transition: opacity 0.15s; }
 
 @keyframes mainPulse {
   0%, 100% { stroke-opacity: 0.95; r: 10; }
@@ -740,10 +774,11 @@ code.inline {
 
 @media (max-width: 900px) {
   .workspace { flex-direction: column; }
-  .canvas-pane { flex: 1 1 52%; min-width: 0; }
+  .canvas-pane { flex: 1 1 50%; min-width: 0; }
   .splitter { width: 100%; height: 5px; cursor: row-resize; border: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .side-pane { width: 100% !important; max-width: none; min-width: 0; flex: 1 1 48%; }
-  .minimap-wrap { width: 140px; height: 110px; }
+  .side-pane { width: 100% !important; max-width: none; min-width: 0; flex: 1 1 50%; }
+  .minimap-wrap { width: 130px; }
+  #minimapSvg { height: 90px; }
 }
 </style>
 </head>
@@ -753,30 +788,31 @@ code.inline {
 <header class="topbar">
   <div class="topbar-left">
     <div class="brand">
-      <span>[POLYMATHY // COMPOUND DAG]</span>
+      <span>POLYMATHY</span>
     </div>
-    <span class="telemetry-pill" id="globalProgressPill">Baseline: 0 / 0 Topics</span>
+    <span class="telemetry-pill" id="globalProgressPill" title="Mastered topics / Total topics">Completed: 0 / 0</span>
   </div>
 
   <div class="topbar-center">
-    <div class="locator-chip main" title="Primary Study Goal (MAIN)">
+    <div class="locator-chip main" title="Your main study target. Always highlighted on the map.">
       <span class="locator-label">MAIN:</span>
       <span class="locator-title" id="topMainTitle">—</span>
-      <button class="btn-xs accent-btn" id="btnLocateMain" title="Locate MAIN (M)">Locate</button>
+      <button class="btn-xs accent-btn" id="btnLocateMain" title="Center camera on your MAIN goal (HotKey: M)">Locate</button>
     </div>
-    <div class="locator-chip head" title="Active Side-Panel Topic (HEAD)">
+    <div class="locator-chip head" title="The topic currently open in the side panel.">
       <span class="locator-label">HEAD:</span>
       <span class="locator-title" id="topHeadTitle">—</span>
-      <button class="btn-xs head-btn" id="btnLocateHead" title="Locate HEAD (H)">Locate</button>
+      <button class="btn-xs head-btn" id="btnLocateHead" title="Center camera on inspected HEAD topic (HotKey: H)">Locate</button>
     </div>
   </div>
 
   <div class="topbar-right">
-    <button class="btn-xs" id="btnToggleLayout" title="Toggle Radial Wedge / Top-Down Tree">Layout: Radial</button>
-    <button class="btn-xs" id="btnFrontierRadar">Frontier Radar</button>
-    <button class="btn-xs" id="btnImportPatch">+ Import Patch</button>
-    <button class="btn-xs" id="btnLayerInspector">Layer Inspector</button>
-    <button class="btn-xs" id="btnManual">? Manual</button>
+    <button class="btn-xs" id="btnNewTopicTop" title="Add a brand new topic anywhere in the graph">+ New Topic</button>
+    <button class="btn-xs" id="btnToggleLayout" title="Switch between top-down hierarchy tree and radial circular map">Layout: Tree</button>
+    <button class="btn-xs" id="btnFrontierRadar" title="Discover what to study next and which topics unlock the most branches">Frontier Radar</button>
+    <button class="btn-xs" id="btnImportPatch" title="Import topic bundles or AI-generated curriculum delta patches">+ Import</button>
+    <button class="btn-xs" id="btnLayerInspector" title="Manage your edits, backups, and save changes">Storage & Backups</button>
+    <button class="btn-xs" id="btnManual" title="Open field manual, visual legend, and shortcuts">? Guide</button>
   </div>
 </header>
 
@@ -784,40 +820,58 @@ code.inline {
 <main class="workspace" id="workspace">
   <!-- LEFT: COMPOUND DAG CANVAS -->
   <section class="canvas-pane" id="canvasPane">
+    <!-- FLOATING DETOUR RETURN BANNER -->
     <div class="detour-banner" id="floatingDetourBanner">
-      <button class="btn-xs head-btn" id="btnFloatingGetBack">← Get Back</button>
+      <button class="btn-xs head-btn" id="btnFloatingGetBack" title="Return to previous topic in your detour history">← Back</button>
       <span id="floatingDetourLabel">Detour active</span>
     </div>
 
+    <!-- MINIMAP OVERLAY -->
     <div class="minimap-wrap" id="minimapWrap">
       <div class="minimap-header">
         <span>MINIMAP</span>
-        <span id="minimapZoomPct">88%</span>
+        <div>
+          <span id="minimapZoomPct" style="margin-right:4px;">100%</span>
+          <button class="btn-xs" id="btnToggleMinimap" style="padding:0 3px;" title="Minimize/Expand minimap">−</button>
+        </div>
       </div>
       <svg id="minimapSvg" viewBox="-100 -80 200 160"></svg>
     </div>
 
+    <!-- CANVAS BOTTOM HUD CONTROLS -->
     <div class="canvas-hud-bottom">
       <div class="hud-box">
-        <button class="btn-xs" id="btnZoomOut" title="Zoom Out">-</button>
-        <span id="zoomPctLabel">88%</span>
+        <button class="btn-xs" id="btnPanLeft" title="Pan Left">◀</button>
+        <button class="btn-xs" id="btnPanUp" title="Pan Up">▲</button>
+        <button class="btn-xs" id="btnPanDown" title="Pan Down">▼</button>
+        <button class="btn-xs" id="btnPanRight" title="Pan Right">▶</button>
+        <span style="border-left:1px solid var(--border);height:14px;margin:0 2px;"></span>
+        <button class="btn-xs" id="btnZoomOut" title="Zoom Out">−</button>
+        <span id="zoomPctLabel">100%</span>
         <button class="btn-xs" id="btnZoomIn" title="Zoom In">+</button>
-        <button class="btn-xs" id="btnFitMap" title="Fit Visible Graph">Fit</button>
-        <button class="btn-xs" id="btnExpandAll" title="Expand All Branches">Expand All</button>
-        <button class="btn-xs" id="btnCollapseDomains" title="Collapse to Top Domains">Reset Fold</button>
+        <button class="btn-xs" id="btnFitMap" title="Fit all visible topics into view">Fit</button>
+        <button class="btn-xs" id="btnToggleWheelMode" title="Toggle mouse wheel behavior between Scrolling and Zooming">Wheel: Scroll</button>
+        <button class="btn-xs" id="btnExpandAll" title="Expand all branches">Expand All</button>
+        <button class="btn-xs" id="btnCollapseDomains" title="Collapse back to main domains">Reset Fold</button>
       </div>
+
+      <div class="hud-hint-pill">
+        💡 Drag or scroll to pan • Pinch or Ctrl+Scroll to zoom • Click topic to inspect
+      </div>
+
       <div class="hud-box" id="spotlightHudBox" style="display:none; border-color: var(--accent); color: var(--accent);">
-        <span>MAIN SUBGRAPH SPOTLIGHT</span>
+        <span>MAIN GOAL SPOTLIGHT</span>
         <button class="btn-xs accent-btn" id="btnClearSpotlight">Clear</button>
       </div>
     </div>
 
+    <!-- MAIN SVG SCENE -->
     <svg id="dagSvg" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <marker id="arrow-solid-x" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <marker id="arrow-needed" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
           <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#a40e26"></path>
         </marker>
-        <marker id="arrow-dotted-c" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+        <marker id="arrow-done" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
           <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#116329"></path>
         </marker>
         <marker id="arrow-dim" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -827,9 +881,7 @@ code.inline {
       <g id="svgWorld">
         <g id="layerConduits"></g>
         <g id="layerPrereqs"></g>
-        <g id="layerSources"></g>
         <g id="layerNodes"></g>
-        <g id="layerPrereqPills"></g>
       </g>
     </svg>
   </section>
@@ -837,7 +889,7 @@ code.inline {
   <!-- RESIZABLE SPLITTER -->
   <div class="splitter" id="splitter" title="Drag to resize side panel"></div>
 
-  <!-- RIGHT: 5-STAGE EXECUTION SIDE PANEL -->
+  <!-- RIGHT: EXECUTION & EDITING SIDE PANEL -->
   <aside class="side-pane" id="sidePane"></aside>
 </main>
 
@@ -859,7 +911,7 @@ code.inline {
   'use strict';
 
   /* =========================================================================
-   * 1. SEED DATASET (Layer 0 Base Patch + Realistic Initial Layer 2 State)
+   * 1. SEED DATASET (Rich Cross-Disciplinary Knowledge Graph)
    * ========================================================================= */
   const SEED_PATCH_001 = {
     patch_id: "001_seed_polymath_dag",
@@ -869,17 +921,17 @@ code.inline {
         title: "Knowledge",
         parentId: null,
         prereqIds: [],
-        intro: "Origin vertex $v_0$ of the Compound DAG $G = (V, E_{\\text{tree}}, E_{\\text{prereq}}, S)$. Every conceptual domain expands radially outward with hollow progress conduits.",
+        intro: "Origin vertex of the knowledge graph. Expand into core domains to explore deeper concepts, track your study progress, and master prerequisites.",
         sources: []
       },
 
-      /* --- TOP-LEVEL DOMAINS --- */
+      /* --- CORE DOMAINS --- */
       {
         id: "math",
         title: "Mathematics",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Formal study of structure, space, change, and discrete relations.",
+        intro: "Formal study of abstract structure, space, geometry, analysis, and discrete relations.",
         sources: [{ id: "src_math_princeton", title: "Gowers — Princeton Companion to Mathematics" }]
       },
       {
@@ -887,23 +939,23 @@ code.inline {
         title: "Physics",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Quantitative modeling of matter, energy, fields, and spacetime geometry.",
-        sources: [{ id: "src_phys_feynman", title: "Feynman Lectures on Physics (Vol. I–III)" }]
+        intro: "Quantitative and mathematical laws of matter, energy, fields, gravitation, and spacetime.",
+        sources: [{ id: "src_phys_feynman", title: "Feynman Lectures on Physics" }]
       },
       {
         id: "cs",
         title: "Computer Science",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Computation, algorithmic complexity, information encoding, and statistical learning.",
-        sources: [{ id: "src_cs_sicp", title: "Abelson & Sussman — SICP" }]
+        intro: "Algorithms, complexity, information theory, statistical learning, and digital systems.",
+        sources: [{ id: "src_cs_sicp", title: "Abelson & Sussman — Structure and Interpretation of Computer Programs" }]
       },
       {
         id: "philosophy",
         title: "Philosophy",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Formal foundations of inference, epistemology, and scientific reasoning.",
+        intro: "Foundations of reasoning, formal logic, epistemology, and scientific inquiry.",
         sources: [{ id: "src_phil_sep", title: "Stanford Encyclopedia of Philosophy — Logic & Epistemology" }]
       },
 
@@ -913,27 +965,26 @@ code.inline {
         title: "Linear Algebra",
         parentId: "math",
         prereqIds: [],
-        intro: "Vector spaces, linear transformations $T: V \\to W$, spectral decomposition, and inner product geometry.",
+        intro: "Vector spaces, linear maps $T: V \\to W$, matrices, inner product spaces, and spectral decomposition.",
         sources: [{ id: "src_la_axler", title: "Axler — Linear Algebra Done Right" }]
       },
       {
         id: "math.linear_algebra.vectors_matrices",
-        title: "Vectors, Spaces & Linear Maps",
+        title: "Vectors & Linear Maps",
         parentId: "math.linear_algebra",
         prereqIds: [],
-        intro: "Basis, dimension, rank-nullity theorem $\\dim V = \\operatorname{rank}(T) + \\operatorname{nullity}(T)$, and matrix representations.",
+        intro: "Basis, dimension, matrix transformations, and the rank-nullity theorem: $\\dim V = \\operatorname{rank}(T) + \\operatorname{nullity}(T)$.",
         sources: [
-          { id: "src_vec_strang", title: "Strang — MIT 18.06 Lectures 1–10" },
+          { id: "src_vec_strang", title: "Strang — MIT Linear Algebra Lectures" },
           { id: "src_vec_3b1b", title: "3Blue1Brown — Essence of Linear Algebra" }
         ]
       },
-      /* Post-baseline deeper subtopics demonstrating double-bar gate! */
       {
         id: "math.linear_algebra.vectors_matrices.inner_products",
-        title: "Inner Products & Gram-Schmidt",
+        title: "Inner Products & Projections",
         parentId: "math.linear_algebra.vectors_matrices",
         prereqIds: [],
-        intro: "Orthogonal projections, Cauchy-Schwarz $|\\langle u, v\\rangle| \\le \\|u\\|\\|v\\|$, and orthonormal bases.",
+        intro: "Orthogonal projections, Cauchy-Schwarz inequality $|\\langle u, v\\rangle| \\le \\|u\\|\\|v\\|$, and orthonormal bases.",
         sources: []
       },
       {
@@ -941,27 +992,24 @@ code.inline {
         title: "Singular Value Decomposition (SVD)",
         parentId: "math.linear_algebra.vectors_matrices",
         prereqIds: [],
-        intro: "Factorization $A = U\\Sigma V^T$ mapping orthonormal input bases to scaled orthonormal output bases.",
+        intro: "Factorization $A = U\\Sigma V^T$ mapping orthogonal coordinate systems across domain and codomain.",
         sources: []
       },
       {
         id: "math.linear_algebra.determinants",
-        title: "Determinants & Oriented Volume",
+        title: "Determinants & Volume",
         parentId: "math.linear_algebra",
         prereqIds: ["math.linear_algebra.vectors_matrices"],
-        intro: "Alternating multilinear forms measuring signed $n$-volume scaling $\\det(AB) = \\det(A)\\det(B)$.",
-        sources: [{ id: "src_det_1", title: "Axler Ch. 10 — Determinants" }]
+        intro: "Alternating multilinear forms measuring signed volume scaling factor: $\\det(AB) = \\det(A)\\det(B)$.",
+        sources: [{ id: "src_det_1", title: "Axler — Determinants and Trace" }]
       },
       {
         id: "math.linear_algebra.eigenvalues",
         title: "Eigenvalues & Spectral Theorem",
         parentId: "math.linear_algebra",
         prereqIds: ["math.linear_algebra.vectors_matrices", "math.linear_algebra.determinants"],
-        intro: "Invariant subspaces $Av = \\lambda v$, characteristic polynomial $\\det(A - \\lambda I) = 0$, and orthogonal diagonalization of symmetric operators.",
-        sources: [
-          { id: "src_eig_axler", title: "Axler Ch. 5 & 7 — Eigenvalues and Spectral Theorem" },
-          { id: "src_eig_notes", title: "Diagonalization & Quadratic Forms Problem Set" }
-        ]
+        intro: "Invariant 1D subspaces $Av = \\lambda v$, characteristic polynomials, and orthogonal diagonalization of symmetric operators.",
+        sources: [{ id: "src_eig_axler", title: "Axler — Eigenvalues and Eigenspaces" }]
       },
 
       {
@@ -969,23 +1017,23 @@ code.inline {
         title: "Multivariable Calculus",
         parentId: "math",
         prereqIds: [],
-        intro: "Differential and integral calculus on $\\mathbb{R}^n$, gradients, Jacobians, and exterior Stokes theorem.",
-        sources: [{ id: "src_mvc_hubbard", title: "Hubbard & Hubbard — Vector Calculus, Linear Algebra, and Differential Forms" }]
+        intro: "Differential and integral calculus of functions of several variables $\\mathbb{R}^n \\to \\mathbb{R}^m$, gradients, and vector fields.",
+        sources: [{ id: "src_mvc_hubbard", title: "Hubbard & Hubbard — Vector Calculus and Differential Forms" }]
       },
       {
         id: "math.multivariable_calculus.partial_derivatives",
-        title: "Gradients, Jacobians & Taylor Maps",
+        title: "Gradients & Jacobians",
         parentId: "math.multivariable_calculus",
         prereqIds: [],
-        intro: "Total derivative $Df(x)$ as the best linear approximation $f(x+h) = f(x) + Df(x)h + o(\\|h\\|)$.",
-        sources: [{ id: "src_pd_1", title: "MIT 18.02 Multivariable Calculus Notes" }]
+        intro: "Directional derivatives, gradient vector $\\nabla f$, Jacobian matrix $Df$, and local linear approximation.",
+        sources: [{ id: "src_pd_1", title: "MIT 18.02 Multivariable Calculus" }]
       },
       {
         id: "math.multivariable_calculus.vector_fields_stokes",
         title: "Vector Fields & Stokes' Theorem",
         parentId: "math.multivariable_calculus",
         prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
-        intro: "Unification of Green, Gauss, and classical Stokes via differential forms: $$\\int_{\\partial \\Omega} \\omega = \\int_{\\Omega} d\\omega$$",
+        intro: "Line and surface integrals, divergence theorem, and generalized Stokes' theorem: $$\\int_{\\partial \\Omega} \\omega = \\int_{\\Omega} d\\omega$$",
         sources: [{ id: "src_stokes_1", title: "Schey — Div, Grad, Curl, and All That" }]
       },
 
@@ -994,26 +1042,23 @@ code.inline {
         title: "Differential Geometry",
         parentId: "math",
         prereqIds: [],
-        intro: "Smooth manifolds, tangent bundles, connections, and intrinsic curvature.",
+        intro: "Smooth manifolds, tangent bundles, Riemannian metrics, connections, and intrinsic curvature.",
         sources: [{ id: "src_dg_lee", title: "John M. Lee — Introduction to Smooth Manifolds" }]
       },
       {
         id: "math.differential_geometry.manifolds",
-        title: "Smooth Manifolds & Tangent Bundles",
+        title: "Smooth Manifolds & Tangent Spaces",
         parentId: "math.differential_geometry",
         prereqIds: ["math.multivariable_calculus.vector_fields_stokes", "math.linear_algebra.eigenvalues"],
-        intro: "Topological spaces locally homeomorphic to $\\mathbb{R}^n$ with $C^\\infty$ transition maps $\\psi \\circ \\varphi^{-1}$, supporting intrinsic tangent vectors $T_p M$ and tensor fields.",
-        sources: [
-          { id: "src_man_lee", title: "Lee — Smooth Manifolds (Ch. 1–3)" },
-          { id: "src_man_schuller", title: "Frederic Schuller — Lectures on Geometric Anatomy" }
-        ]
+        intro: "Topological manifolds with smooth transition functions, tangent vectors as derivations, and differential forms.",
+        sources: [{ id: "src_man_schuller", title: "Frederic Schuller — Geometric Anatomy of Theoretical Physics" }]
       },
       {
         id: "math.differential_geometry.riemannian_metrics",
         title: "Riemannian Metrics & Curvature",
         parentId: "math.differential_geometry",
         prereqIds: ["math.differential_geometry.manifolds"],
-        intro: "Metric tensor $g_{\\mu\\nu}$, Levi-Civita connection $\\Gamma^\\lambda_{\\mu\\nu}$, geodesics, and Riemann curvature tensor $R^\\rho_{\\sigma\\mu\\nu}$.",
+        intro: "Metric tensor $g_{\\mu\\nu}$, Levi-Civita affine connection $\\Gamma^\\lambda_{\\mu\\nu}$, geodesics, and Riemann curvature tensor $R^\\rho_{\\sigma\\mu\\nu}$.",
         sources: [{ id: "src_riem_docarmo", title: "do Carmo — Riemannian Geometry" }]
       },
 
@@ -1022,31 +1067,31 @@ code.inline {
         title: "Graph Theory",
         parentId: "math",
         prereqIds: [],
-        intro: "Combinatorial and structural properties of graphs $G=(V,E)$, connectivity, minors, and colorings.",
-        sources: [{ id: "src_gt_diestel", title: "Diestel — Graph Theory (5th ed.)" }]
+        intro: "Combinatorics and structural properties of graphs $G=(V,E)$, connectivity, paths, and graph embeddings.",
+        sources: [{ id: "src_gt_diestel", title: "Diestel — Graph Theory" }]
       },
       {
         id: "math.graph_theory.connectivity",
-        title: "Paths, Cycles & Connectivity",
+        title: "Paths & Connectivity",
         parentId: "math.graph_theory",
         prereqIds: [],
-        intro: "Vertex/edge cuts, Menger's theorem, and connected components.",
-        sources: [{ id: "src_gt_conn", title: "Diestel Ch. 1 & 3 — Basics & Connectivity" }]
+        intro: "Connected components, cut vertices, bridges, and Menger's theorem.",
+        sources: [{ id: "src_gt_conn", title: "Diestel Ch. 1 — Basics" }]
       },
       {
         id: "math.graph_theory.trees",
-        title: "Trees & Spanning Structures",
+        title: "Trees & Spanning Forests",
         parentId: "math.graph_theory",
         prereqIds: ["math.graph_theory.connectivity"],
-        intro: "Acyclic connected graphs ($|E| = |V| - 1$), Cayley's formula $n^{n-2}$, and minimum spanning trees.",
-        sources: [{ id: "src_gt_trees", title: "Bondy & Murty — Trees and Forests" }]
+        intro: "Connected acyclic graphs, Cayley's tree formula $n^{n-2}$, and minimum spanning tree algorithms.",
+        sources: [{ id: "src_gt_trees", title: "Bondy & Murty — Trees" }]
       },
       {
         id: "math.graph_theory.planar_graphs",
-        title: "Planar Graphs & Kuratowski",
+        title: "Planar Graphs & Embeddings",
         parentId: "math.graph_theory",
         prereqIds: ["math.graph_theory.connectivity", "math.topology.point_set_basics"],
-        intro: "Embeddings in $\\mathbb{R}^2$ without crossings, Euler's formula $V - E + F = 2$, and forbidden minors $K_5, K_{3,3}$.",
+        intro: "Graphs embeddable in $\\mathbb{R}^2$ without edge crossings, Euler's formula $V - E + F = 2$, and Kuratowski's theorem ($K_5, K_{3,3}$).",
         sources: [{ id: "src_gt_planar", title: "Diestel Ch. 4 — Planar Graphs" }]
       },
 
@@ -1055,24 +1100,24 @@ code.inline {
         title: "Probability Theory",
         parentId: "math",
         prereqIds: [],
-        intro: "Measure-theoretic uncertainty, stochastic processes, and Bayesian conditioning.",
+        intro: "Probability spaces $(\\Omega, \\mathcal{F}, P)$, random variables, expectations, and stochastic processes.",
         sources: [{ id: "src_prob_blitz", title: "Blitzstein & Hwang — Introduction to Probability" }]
       },
       {
         id: "math.probability.axioms_distributions",
-        title: "Probability Spaces & Distributions",
+        title: "Random Variables & Distributions",
         parentId: "math.probability",
         prereqIds: [],
-        intro: "Kolmogorov axioms $(\\Omega, \\mathcal{F}, P)$, expectation $\\mathbb{E}[X]$, variance, and Central Limit Theorem.",
-        sources: [{ id: "src_prob_1", title: "Stat 110 Lectures (Harvard)" }]
+        intro: "Kolmogorov probability axioms, expectation, variance, and the Central Limit Theorem.",
+        sources: [{ id: "src_prob_1", title: "Harvard Stat 110 Lectures" }]
       },
       {
         id: "math.probability.bayes_markov",
-        title: "Bayesian Inference & Markov Chains",
+        title: "Bayesian Updating & Markov Chains",
         parentId: "math.probability",
         prereqIds: ["math.probability.axioms_distributions", "math.linear_algebra.eigenvalues"],
-        intro: "Posterior updates $P(\\theta|D) \\propto P(D|\\theta)P(\\theta)$ and stationary distributions $\\pi P = \\pi$ via Perron-Frobenius eigenvectors.",
-        sources: [{ id: "src_prob_mackay", title: "MacKay — Information Theory, Inference, and Learning" }]
+        intro: "Bayes' theorem $P(\\theta|D) \\propto P(D|\\theta)P(\\theta)$ and stationary transition distributions $\\pi P = \\pi$.",
+        sources: [{ id: "src_prob_mackay", title: "MacKay — Information Theory, Inference, and Learning Algorithms" }]
       },
 
       /* --- PHYSICS --- */
@@ -1081,24 +1126,24 @@ code.inline {
         title: "Classical Mechanics",
         parentId: "physics",
         prereqIds: [],
-        intro: "Kinematics, variational principles, and symplectic Hamiltonian phase space.",
+        intro: "Newtonian dynamics, Lagrangian variational mechanics, and Hamiltonian phase-space geometry.",
         sources: [{ id: "src_cm_taylor", title: "Taylor — Classical Mechanics" }]
       },
       {
         id: "physics.classical_mechanics.newtonian",
-        title: "Newtonian Dynamics & Conservation",
+        title: "Newtonian Mechanics",
         parentId: "physics.classical_mechanics",
         prereqIds: [],
-        intro: "Inertial frames, $\\mathbf{F} = \\dot{\\mathbf{p}}$, angular momentum, and central force orbits.",
+        intro: "Inertial frames of reference, momentum conservation $\\mathbf{F} = \\dot{\\mathbf{p}}$, and energy conservation.",
         sources: [{ id: "src_newt_1", title: "Kleppner & Kolenkow — An Introduction to Mechanics" }]
       },
       {
         id: "physics.classical_mechanics.lagrangian_hamiltonian",
-        title: "Lagrangian & Hamiltonian Action",
+        title: "Lagrangian & Principle of Least Action",
         parentId: "physics.classical_mechanics",
         prereqIds: ["physics.classical_mechanics.newtonian", "math.multivariable_calculus.partial_derivatives"],
-        intro: "Stationary action $\\delta S = \\delta \\int L(q, \\dot{q}, t)\\,dt = 0$, Euler-Lagrange equations, and Noether's symmetry theorem.",
-        sources: [{ id: "src_lag_landau", title: "Landau & Lifshitz — Mechanics (Vol. 1)" }]
+        intro: "Stationary action $\\delta \\int L(q, \\dot{q}, t)\\,dt = 0$, Euler-Lagrange equations, and Noether's conservation theorem.",
+        sources: [{ id: "src_lag_landau", title: "Landau & Lifshitz — Mechanics" }]
       },
 
       {
@@ -1106,24 +1151,16 @@ code.inline {
         title: "Electromagnetism",
         parentId: "physics",
         prereqIds: [],
-        intro: "Classical field theory of electric and magnetic phenomena and electromagnetic radiation.",
+        intro: "Classical field theory of electric and magnetic fields, charge conservation, and electromagnetic radiation.",
         sources: [{ id: "src_em_griffiths", title: "Griffiths — Introduction to Electrodynamics" }]
       },
       {
         id: "physics.electromagnetism.maxwell_equations",
-        title: "Maxwell's Equations & Waves",
+        title: "Maxwell's Field Equations",
         parentId: "physics.electromagnetism",
         prereqIds: ["math.multivariable_calculus.vector_fields_stokes"],
-        intro: "Coupled PDEs $\\nabla \\cdot \\mathbf{E} = \\rho/\\varepsilon_0$, $\\nabla \\times \\mathbf{B} = \\mu_0\\mathbf{J} + \\mu_0\\varepsilon_0\\partial_t\\mathbf{E}$, and light speed $c = (\\mu_0\\varepsilon_0)^{-1/2}$.",
+        intro: "The fundamental equations of electrodynamics: $\\nabla \\cdot \\mathbf{E} = \\rho/\\varepsilon_0$, $\\nabla \\cdot \\mathbf{B} = 0$, $\\nabla \\times \\mathbf{E} = -\\partial_t\\mathbf{B}$, and $\\nabla \\times \\mathbf{B} = \\mu_0\\mathbf{J} + \\mu_0\\varepsilon_0\\partial_t\\mathbf{E}$.",
         sources: [{ id: "src_max_purcell", title: "Purcell & Morin — Electricity and Magnetism" }]
-      },
-      {
-        id: "physics.electromagnetism.tensor_em",
-        title: "Covariant Field Tensor $F^{\\mu\\nu}$",
-        parentId: "physics.electromagnetism",
-        prereqIds: ["physics.electromagnetism.maxwell_equations", "physics.relativity.special_relativity"],
-        intro: "Unification of $\\mathbf{E}$ and $\\mathbf{B}$ into antisymmetric 2-form $F = dA$ with $\\partial_\\mu F^{\\mu\\nu} = \\mu_0 J^\\nu$.",
-        sources: [{ id: "src_tem_jackson", title: "Jackson — Classical Electrodynamics Ch. 11" }]
       },
 
       {
@@ -1131,57 +1168,46 @@ code.inline {
         title: "Relativity",
         parentId: "physics",
         prereqIds: [],
-        intro: "Lorentz invariance of Minkowski spacetime and Einstein's geometric theory of gravitation.",
+        intro: "Special relativity in Minkowski spacetime and Einstein's geometric general theory of gravitation.",
         sources: [{ id: "src_rel_carroll", title: "Sean Carroll — Spacetime and Geometry" }]
       },
       {
         id: "physics.relativity.special_relativity",
-        title: "Special Relativity & Minkowski Space",
+        title: "Special Relativity & Minkowski Spacetime",
         parentId: "physics.relativity",
         prereqIds: ["physics.classical_mechanics.newtonian", "math.linear_algebra.vectors_matrices"],
-        intro: "Invariant interval $ds^2 = -c^2 dt^2 + dx^2 + dy^2 + dz^2$, Lorentz boosts, and 4-momentum $E^2 - (pc)^2 = (mc^2)^2$.",
+        intro: "Constancy of light speed $c$, invariant interval $ds^2 = -c^2 dt^2 + dx^2 + dy^2 + dz^2$, and Lorentz boosts.",
         sources: [{ id: "src_sr_taylor", title: "Taylor & Wheeler — Spacetime Physics" }]
       },
       {
         id: "physics.relativity.general_relativity",
-        title: "General Relativity & Einstein Equations",
+        title: "General Relativity & Einstein's Equations",
         parentId: "physics.relativity",
         prereqIds: [
           "physics.relativity.special_relativity",
           "math.differential_geometry.riemannian_metrics",
           "physics.classical_mechanics.lagrangian_hamiltonian"
         ],
-        intro: "Spacetime curvature coupled to stress-energy via $$G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$$ where $\\nabla_\\mu G^{\\mu\\nu} = 0$.",
-        sources: [
-          { id: "src_gr_carroll", title: "Carroll — Spacetime and Geometry Ch. 4–5" },
-          { id: "src_gr_wald", title: "Wald — General Relativity" }
-        ]
+        intro: "Spacetime curvature produced by energy and momentum: $$G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$$ where $\\nabla_\\mu G^{\\mu\\nu} = 0$.",
+        sources: [{ id: "src_gr_carroll", title: "Carroll — Spacetime and Geometry Ch. 4" }]
       },
 
       /* --- COMPUTER SCIENCE --- */
       {
         id: "cs.algorithms_graphs",
-        title: "Algorithms & Graph Search",
+        title: "Algorithms & Search",
         parentId: "cs",
         prereqIds: [],
-        intro: "Asymptotic complexity, combinatorial search, shortest paths, and duality in network flows.",
+        intro: "Algorithmic complexity, graph exploration, shortest paths, and dynamic programming.",
         sources: [{ id: "src_algo_clrs", title: "CLRS — Introduction to Algorithms" }]
       },
       {
         id: "cs.algorithms_graphs.traversal_shortest_paths",
-        title: "BFS, DFS & Shortest Paths",
+        title: "BFS, DFS & Dijkstra",
         parentId: "cs.algorithms_graphs",
         prereqIds: ["math.graph_theory.connectivity", "math.graph_theory.trees"],
-        intro: "Linear-time $O(V + E)$ traversal, topological DAG sorting, and Dijkstra/Bellman-Ford relaxations.",
-        sources: [{ id: "src_algo_erickson", title: "Jeff Erickson — Algorithms (Graph Chapters)" }]
-      },
-      {
-        id: "cs.algorithms_graphs.network_flows",
-        title: "Max-Flow Min-Cut Theorem",
-        parentId: "cs.algorithms_graphs",
-        prereqIds: ["cs.algorithms_graphs.traversal_shortest_paths"],
-        intro: "Ford-Fulkerson augmenting paths, residual graphs, and bipartite matching reductions.",
-        sources: [{ id: "src_flow_kt", title: "Kleinberg & Tardos — Algorithm Design Ch. 7" }]
+        intro: "Breadth-first and depth-first search in $O(V + E)$, topological DAG sorting, and priority-queue shortest path algorithms.",
+        sources: [{ id: "src_algo_erickson", title: "Jeff Erickson — Algorithms" }]
       },
 
       {
@@ -1189,24 +1215,16 @@ code.inline {
         title: "Information Theory",
         parentId: "cs",
         prereqIds: [],
-        intro: "Quantifying uncertainty, lossless compression limits, and noisy channel capacity.",
+        intro: "Quantifying uncertainty, data compression limits, Shannon entropy, and channel capacity.",
         sources: [{ id: "src_it_cover", title: "Cover & Thomas — Elements of Information Theory" }]
       },
       {
         id: "cs.information_theory.shannon_entropy",
-        title: "Shannon Entropy & Source Coding",
+        title: "Shannon Entropy & Coding",
         parentId: "cs.information_theory",
         prereqIds: ["math.probability.axioms_distributions"],
-        intro: "Expected surprise $H(X) = -\\sum p(x) \\log_2 p(x)$ bounding optimal prefix-free code lengths.",
-        sources: [{ id: "src_shan_1", title: "Shannon (1948) — A Mathematical Theory of Communication" }]
-      },
-      {
-        id: "cs.information_theory.kl_divergence",
-        title: "KL Divergence & Mutual Information",
-        parentId: "cs.information_theory",
-        prereqIds: ["cs.information_theory.shannon_entropy", "math.multivariable_calculus.partial_derivatives"],
-        intro: "Relative entropy $D_{\\mathrm{KL}}(P \\parallel Q) = \\sum P(x)\\log \\frac{P(x)}{Q(x)} \\ge 0$ by Gibbs' inequality.",
-        sources: []
+        intro: "Average information content $H(X) = -\\sum p(x) \\log_2 p(x)$ and optimal prefix-free source coding.",
+        sources: [{ id: "src_shan_1", title: "Claude Shannon (1948) — A Mathematical Theory of Communication" }]
       },
 
       {
@@ -1214,24 +1232,16 @@ code.inline {
         title: "Machine Learning",
         parentId: "cs",
         prereqIds: [],
-        intro: "Empirical risk minimization, convex/non-convex optimization, and generative probabilistic inference.",
+        intro: "Statistical learning, empirical risk minimization, gradient optimization, and probabilistic models.",
         sources: [{ id: "src_ml_bishop", title: "Bishop — Pattern Recognition and Machine Learning" }]
       },
       {
         id: "cs.machine_learning.optimization_sgd",
-        title: "Gradient Descent & Convexity",
+        title: "Gradient Descent & Convex Optimization",
         parentId: "cs.machine_learning",
         prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
-        intro: "First-order updates $\\theta_{t+1} = \\theta_t - \\eta \\nabla \\mathcal{L}(\\theta_t)$, conditioning, and momentum.",
+        intro: "First-order parameter updates $\\theta_{t+1} = \\theta_t - \\eta \\nabla \\mathcal{L}(\\theta_t)$ and stochastic batch approximations.",
         sources: [{ id: "src_opt_boyd", title: "Boyd & Vandenberghe — Convex Optimization" }]
-      },
-      {
-        id: "cs.machine_learning.probabilistic_models",
-        title: "Variational & Probabilistic Models",
-        parentId: "cs.machine_learning",
-        prereqIds: ["math.probability.bayes_markov", "cs.information_theory.kl_divergence", "cs.machine_learning.optimization_sgd"],
-        intro: "Maximizing the Evidence Lower Bound (ELBO) $\\log p(x) \\ge \\mathbb{E}_q[\\log p(x,z)] - \\mathbb{E}_q[\\log q(z)]$.",
-        sources: [{ id: "src_ml_murphy", title: "Murphy — Probabilistic Machine Learning" }]
       },
 
       /* --- PHILOSOPHY --- */
@@ -1240,7 +1250,7 @@ code.inline {
         title: "Formal Logic",
         parentId: "philosophy",
         prereqIds: [],
-        intro: "Syntax, semantics, completeness, and the limits of formal axiomatic systems.",
+        intro: "Syntax, formal deduction, semantics, completeness, and model theory.",
         sources: [{ id: "src_log_enderton", title: "Enderton — A Mathematical Introduction to Logic" }]
       },
       {
@@ -1248,33 +1258,16 @@ code.inline {
         title: "First-Order Logic & Completeness",
         parentId: "philosophy.formal_logic",
         prereqIds: [],
-        intro: "Quantifiers $\\forall, \\exists$, Tarskian model satisfaction $\\mathcal{M} \\models \\varphi$, and Gödel's completeness theorem ($\\Gamma \\vdash \\varphi \\iff \\Gamma \\models \\varphi$).",
-        sources: [{ id: "src_fol_1", title: "Smith — An Introduction to Formal Logic" }]
+        intro: "Quantified predicate calculus, model satisfaction $\\mathcal{M} \\models \\varphi$, and Gödel's completeness theorem.",
+        sources: [{ id: "src_fol_1", title: "Peter Smith — An Introduction to Formal Logic" }]
       },
       {
         id: "philosophy.formal_logic.godel_incompleteness",
-        title: "Gödel's Incompleteness Theorems",
+        title: "Gödel's Incompleteness",
         parentId: "philosophy.formal_logic",
         prereqIds: ["philosophy.formal_logic.propositional_predicate"],
-        intro: "Arithmetization of syntax and diagonalization showing any consistent recursively enumerable system strong enough for PA is incomplete.",
-        sources: [{ id: "src_godel_smith", title: "Peter Smith — An Introduction to Gödel's Theorems" }]
-      },
-
-      {
-        id: "philosophy.epistemology",
-        title: "Epistemology",
-        parentId: "philosophy",
-        prereqIds: [],
-        intro: "Justification, rationality, and formal models of belief revision.",
-        sources: [{ id: "src_epi_1", title: "SEP — Formal Epistemology" }]
-      },
-      {
-        id: "philosophy.epistemology.bayesian_confirmation",
-        title: "Bayesian Confirmation Theory",
-        parentId: "philosophy.epistemology",
-        prereqIds: ["philosophy.formal_logic.propositional_predicate", "math.probability.bayes_markov"],
-        intro: "Dutch book coherence arguments and degree-of-belief updating under empirical evidence.",
-        sources: [{ id: "src_bc_talbott", title: "Talbott — Bayesian Epistemology" }]
+        intro: "Formalized arithmetics, self-reference via Gödel numbering, and the limits of consistent proof systems.",
+        sources: [{ id: "src_godel_smith", title: "Peter Smith — Gödel's Incompleteness Theorems" }]
       }
     ]
   };
@@ -1396,13 +1389,13 @@ code.inline {
   });
 
   /* =========================================================================
-   * 2. PERSISTENCE & 3-LAYER OVERLAYFS ENGINE
+   * 2. STORAGE & 3-LAYER OVERLAYFS ENGINE
    * ========================================================================= */
   const STORAGE_KEYS = {
-    patches: "polymathy_v1_patches",
-    overrides: "polymathy_v1_overrides",
-    state: "polymathy_v1_state",
-    ui: "polymathy_v1_ui"
+    patches: "polymathy_v2_patches",
+    overrides: "polymathy_v2_overrides",
+    state: "polymathy_v2_state",
+    ui: "polymathy_v2_ui"
   };
 
   function safeReadJSON(key, fallback) {
@@ -1418,9 +1411,7 @@ code.inline {
   function safeWriteJSON(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      /* Ignore storage quota errors in private mode */
-    }
+    } catch { /* Ignore storage quota limits in private mode */ }
   }
 
   let layer0Patches = safeReadJSON(STORAGE_KEYS.patches, [SEED_PATCH_001]);
@@ -1433,9 +1424,11 @@ code.inline {
   if (!layer2State.nodes) layer2State.nodes = {};
 
   let uiSettings = safeReadJSON(STORAGE_KEYS.ui, {
-    layoutMode: "radial", // "radial" | "tree"
+    layoutMode: "tree", // Default to tree for maximum clarity and zero overlaps
     learnChecklistActive: {},
     spotlightMain: false,
+    wheelMode: "scroll", // "scroll" | "zoom"
+    minimapMinimized: false,
     sidePaneWidth: null
   });
 
@@ -1472,13 +1465,12 @@ code.inline {
       parts.pop();
       const candidate = parts.join(".");
       if (nodeMap.has(candidate)) return candidate;
-      // Also allow creating intermediate stub prefix if dotted hierarchy exists
       return candidate;
     }
     return "knowledge";
   }
 
-  /* Fold Layer 0: append-only curriculum patches */
+  /* Fold Layer 0 Patches */
   function foldLayer0(patches) {
     const map = new Map();
     for (const patch of patches) {
@@ -1489,7 +1481,6 @@ code.inline {
           if (!existing) {
             map.set(raw.id, cloneNode(raw));
           } else {
-            // Idempotent re-merge / upgrade
             if (raw.title) existing.title = raw.title;
             if (raw.parentId !== undefined) existing.parentId = raw.parentId;
             if (raw.intro) existing.intro = raw.intro;
@@ -1526,7 +1517,7 @@ code.inline {
     return map;
   }
 
-  /* Fold Layer 0 (+) Layer 1 + Auto-hydrate Stubs */
+  /* Fold Layer 0 (+) Layer 1 Overrides */
   function foldLayer0And1(patches, overrides) {
     const baseMap = foldLayer0(patches);
     const map = new Map();
@@ -1535,7 +1526,7 @@ code.inline {
     const tombstones = new Set(overrides.tombstones || []);
     const overriddenIds = new Set();
 
-    // Custom nodes created in UI
+    // Custom user nodes
     for (const raw of (overrides.custom_nodes || [])) {
       if (!raw || !raw.id || tombstones.has(raw.id)) continue;
       const node = cloneNode(raw);
@@ -1549,7 +1540,7 @@ code.inline {
       if (deadId !== "knowledge") map.delete(deadId);
     }
 
-    // Field overrides
+    // Field overrides (title, intro)
     for (const [id, patchFields] of Object.entries(overrides.field_overrides || {})) {
       const node = map.get(id);
       if (!node) continue;
@@ -1559,7 +1550,7 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // Reparents
+    // Reparents (moving topic to another parent)
     for (const [id, newParent] of Object.entries(overrides.reparents || {})) {
       const node = map.get(id);
       if (!node || id === "knowledge") continue;
@@ -1568,7 +1559,7 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // 2P-Set Edge Deltas (prereqIds + sources)
+    // 2P-Set Edge Deltas (prerequisites & sources)
     for (const [id, delta] of Object.entries(overrides.edge_deltas || {})) {
       const node = map.get(id);
       if (!node) continue;
@@ -1588,7 +1579,7 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // Ghost / Stub Node Auto-Hydration (fixed-point loop for multi-segment dotted IDs)
+    // Stub Auto-Hydration for unresolved referenced IDs
     let addedStub = true;
     while (addedStub) {
       addedStub = false;
@@ -1620,7 +1611,7 @@ code.inline {
       }
     }
 
-    // Clean orphaned parentId or tombstoned prereqIds
+    // Clean broken parent or self loops
     for (const node of map.values()) {
       if (node.id !== "knowledge" && (!node.parentId || !map.has(node.parentId))) {
         node.parentId = "knowledge";
@@ -1631,11 +1622,10 @@ code.inline {
     return { map, baseMap, overriddenIds };
   }
 
-  /* Join Layer 2 Telemetry + Compute Recursive Conduit Progress Ratios */
+  /* Compute live graph and progress ratios */
   function buildLiveGraph() {
     const { map, baseMap, overriddenIds } = foldLayer0And1(layer0Patches, layer1Overrides);
 
-    // Build children adjacency & outgoing prereq dependents
     const childrenMap = new Map();
     const dependentsMap = new Map();
     for (const id of map.keys()) {
@@ -1651,7 +1641,6 @@ code.inline {
       }
     }
 
-    // Attach Layer 2 state per node
     const nodeState = (id) => {
       const s = layer2State.nodes[id];
       return {
@@ -1696,7 +1685,6 @@ code.inline {
 
     for (const id of map.keys()) computeProgress(id);
 
-    // Enrich nodes with computed metrics
     for (const [id, node] of map) {
       const st = nodeState(id);
       const kids = childrenMap.get(id) || [];
@@ -1710,7 +1698,6 @@ code.inline {
       node.depth = computeDepth(id, map);
     }
 
-    // Ensure navigation pointers stay valid
     if (!map.has(layer2State.navigation.MAIN)) layer2State.navigation.MAIN = "knowledge";
     if (!map.has(layer2State.navigation.HEAD)) layer2State.navigation.HEAD = layer2State.navigation.MAIN;
     layer2State.navigation.detourStack = (layer2State.navigation.detourStack || []).filter(id => map.has(id));
@@ -1735,10 +1722,8 @@ code.inline {
     return d;
   }
 
-  /* Strict Acyclicity DFS Check on E_prereq: returns cycle array or null */
+  /* Cycle detection on prerequisites */
   function findPrereqCycle(graphNodes, prereqId, targetId) {
-    // Adding edge (prereqId -> targetId) creates a cycle iff prereqId is reachable from targetId
-    // via existing outgoing prerequisite edges (dependents)
     if (prereqId === targetId) return [targetId, prereqId];
     const adj = new Map();
     for (const n of graphNodes.values()) adj.set(n.id, []);
@@ -1747,7 +1732,6 @@ code.inline {
         if (adj.has(p)) adj.get(p).push(n.id);
       }
     }
-    // Simulate adding edge prereqId -> targetId; check path from targetId to prereqId
     const visited = new Set();
     const path = [];
     function dfs(curr) {
@@ -1776,7 +1760,7 @@ code.inline {
         if (adj.has(p)) adj.get(p).push(n.id);
       }
     }
-    const color = new Map(); // 0 unvisited, 1 visiting, 2 done
+    const color = new Map();
     const stack = [];
     for (const id of nodeMap.keys()) {
       if ((color.get(id) || 0) !== 0) continue;
@@ -1805,9 +1789,7 @@ code.inline {
     return null;
   }
 
-  /* =========================================================================
-   * 3. DIRECTORY TRUNCATION & FORMATTING HELPERS
-   * ========================================================================= */
+  /* Directory Breadcrumb Helper */
   function getAncestorChain(id, nodesMap) {
     const chain = [];
     let cur = nodesMap.get(id);
@@ -1822,8 +1804,7 @@ code.inline {
 
   function formatTruncatedDirectory(id, nodesMap) {
     const chain = getAncestorChain(id, nodesMap);
-    if (chain.length <= 1) return "Knowledge (Origin)";
-    // Drop root v_0 = Knowledge; indices [1..n]
+    if (chain.length <= 1) return "Knowledge";
     const sub = chain.slice(1).map(n => n.title);
     const n = sub.length;
     if (n === 1) return sub[0];
@@ -1832,7 +1813,7 @@ code.inline {
   }
 
   function escapeHtml(str) {
-    return String(str)
+    return String(str || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -1851,7 +1832,7 @@ code.inline {
         ],
         throwOnError: false
       });
-    } catch { /* Graceful fallback */ }
+    } catch { /* Fallback */ }
   }
 
   function showToast(msg) {
@@ -1863,10 +1844,10 @@ code.inline {
   }
 
   /* =========================================================================
-   * 4. GRAPH LAYOUT ENGINE (Radial Wedge + Orthogonal Top-Down Tree)
+   * 3. ZERO-OVERLAP GRAPH LAYOUT ENGINE (Tidy Tree & Generous Radial)
    * ========================================================================= */
   let liveGraph = buildLiveGraph();
-  let layoutPositions = new Map(); // id -> { x, y, angle, depth, visibleChildren }
+  let layoutPositions = new Map();
   let visibleNodeIds = new Set();
 
   function computeVisibleSet(graph) {
@@ -1889,96 +1870,105 @@ code.inline {
     visibleNodeIds = computeVisibleSet(graph);
     const pos = new Map();
 
-    // Leaf weight among visible nodes
-    const weightMap = new Map();
-    function calcWeight(id) {
-      const n = graph.nodes.get(id);
-      if (!n) return 1;
-      const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
-      if (visKids.length === 0) {
-        weightMap.set(id, 1);
-        return 1;
-      }
-      let sum = 0;
-      for (const c of visKids) sum += calcWeight(c);
-      const w = Math.max(1, sum);
-      weightMap.set(id, w);
-      return w;
-    }
-    calcWeight("knowledge");
+    if (uiSettings.layoutMode === "tree") {
+      /* TIDY HIERARCHICAL TREE (Mathematical guarantee: ZERO OVERLAPS) */
+      const NODE_WIDTH = 170;
+      const HORIZ_GAP = 55;
+      const UNIT_WIDTH = NODE_WIDTH + HORIZ_GAP;
+      const LEVEL_HEIGHT = 180;
 
-    if (uiSettings.layoutMode === "radial") {
-      // Count visible nodes at each depth to dynamically expand ring radii if dense
-      const depthCounts = new Map();
-      for (const id of visibleNodeIds) {
-        const d = graph.nodes.get(id).depth;
-        depthCounts.set(d, (depthCounts.get(d) || 0) + 1);
+      // Post-order traversal to calculate clean subtree bounding widths
+      const subtreeWidths = new Map();
+      function calcSubtreeWidth(id) {
+        const n = graph.nodes.get(id);
+        const visKids = (n?.childrenIds || []).filter(c => visibleNodeIds.has(c));
+        if (visKids.length === 0) {
+          subtreeWidths.set(id, UNIT_WIDTH);
+          return UNIT_WIDTH;
+        }
+        let total = 0;
+        for (const cId of visKids) total += calcSubtreeWidth(cId);
+        const w = Math.max(UNIT_WIDTH, total);
+        subtreeWidths.set(id, w);
+        return w;
       }
-      const ringRadius = new Map([[0, 0]]);
-      const maxDepth = Math.max(0, ...depthCounts.keys());
-      for (let d = 1; d <= maxDepth; d++) {
-        const prevR = ringRadius.get(d - 1);
-        const minCircumferenceR = ((depthCounts.get(d) || 1) * 185) / (2 * Math.PI);
-        ringRadius.set(d, Math.max(prevR + 195, minCircumferenceR));
+      calcSubtreeWidth("knowledge");
+
+      // Pre-order traversal to assign non-overlapping coordinates
+      function assignTreePos(id, leftX) {
+        const n = graph.nodes.get(id);
+        const totalW = subtreeWidths.get(id) || UNIT_WIDTH;
+        const centerX = leftX + totalW / 2;
+        const y = n.depth * LEVEL_HEIGHT - 120;
+        pos.set(id, { x: centerX, y, angle: Math.PI / 2, depth: n.depth });
+
+        const visKids = (n?.childrenIds || []).filter(c => visibleNodeIds.has(c));
+        let curLeft = leftX;
+        for (const cId of visKids) {
+          const kidW = subtreeWidths.get(cId) || UNIT_WIDTH;
+          assignTreePos(cId, curLeft);
+          curLeft += kidW;
+        }
       }
+      const rootW = subtreeWidths.get("knowledge") || UNIT_WIDTH;
+      assignTreePos("knowledge", -rootW / 2);
+
+    } else {
+      /* GENEROUS RADIAL WEDGE WITH COLLISION CLEARANCE */
+      const leafCountMap = new Map();
+      function countLeaves(id) {
+        const n = graph.nodes.get(id);
+        const visKids = (n?.childrenIds || []).filter(c => visibleNodeIds.has(c));
+        if (visKids.length === 0) {
+          leafCountMap.set(id, 1);
+          return 1;
+        }
+        let count = 0;
+        for (const cId of visKids) count += countLeaves(cId);
+        leafCountMap.set(id, Math.max(1, count));
+        return count;
+      }
+      countLeaves("knowledge");
+
+      // Ring radii with generous circumference: 2*pi*R >= Count * 220px
+      const totalLeaves = leafCountMap.get("knowledge") || 1;
+      const minRadius = Math.max(300, (totalLeaves * 210) / (2 * Math.PI));
+      const ringRadii = [0, minRadius * 0.45, minRadius * 0.85, minRadius * 1.3, minRadius * 1.75, minRadius * 2.2];
 
       pos.set("knowledge", { x: 0, y: 0, angle: 0, depth: 0 });
 
-      function assignRadial(id, thetaStart, thetaEnd) {
+      function assignRadialPos(id, thetaStart, thetaEnd) {
         const n = graph.nodes.get(id);
-        const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
-        const totalW = visKids.reduce((acc, c) => acc + weightMap.get(c), 0) || 1;
-        let cur = thetaStart;
+        const visKids = (n?.childrenIds || []).filter(c => visibleNodeIds.has(c));
+        const totalW = visKids.reduce((acc, c) => acc + (leafCountMap.get(c) || 1), 0) || 1;
+        let curAngle = thetaStart;
+
         for (const cId of visKids) {
-          const w = weightMap.get(cId);
+          const w = leafCountMap.get(cId) || 1;
           const span = ((thetaEnd - thetaStart) * w) / totalW;
-          const mid = cur + span / 2;
+          const mid = curAngle + span / 2;
           const d = graph.nodes.get(cId).depth;
-          const r = ringRadius.get(d) || d * 200;
+          const r = ringRadii[d] || (d * 240);
           pos.set(cId, {
             x: r * Math.cos(mid),
             y: r * Math.sin(mid),
             angle: mid,
             depth: d
           });
-          assignRadial(cId, cur, cur + span);
-          cur += span;
+          assignRadialPos(cId, curAngle, curAngle + span);
+          curAngle += span;
         }
       }
-      assignRadial("knowledge", -Math.PI * 0.5, Math.PI * 1.5);
-    } else {
-      // Orthogonal Top-Down Tidy Tree Layout
-      const totalLeaves = weightMap.get("knowledge") || 1;
-      const unitWidth = 190;
-      const levelHeight = 165;
-      const totalWidth = totalLeaves * unitWidth;
-
-      function assignTree(id, xStart, xEnd) {
-        const n = graph.nodes.get(id);
-        const midX = (xStart + xEnd) / 2;
-        const y = n.depth * levelHeight - 180;
-        pos.set(id, { x: midX, y, angle: Math.PI / 2, depth: n.depth });
-
-        const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
-        const totalW = visKids.reduce((acc, c) => acc + weightMap.get(c), 0) || 1;
-        let curX = xStart;
-        for (const cId of visKids) {
-          const w = weightMap.get(cId);
-          const span = ((xEnd - xStart) * w) / totalW;
-          assignTree(cId, curX, curX + span);
-          curX += span;
-        }
-      }
-      assignTree("knowledge", -totalWidth / 2, totalWidth / 2);
+      assignRadialPos("knowledge", -Math.PI * 0.5, Math.PI * 1.5);
     }
 
     layoutPositions = pos;
   }
 
   /* =========================================================================
-   * 5. CAMERA (PAN, ZOOM, SMOOTH 450ms rAF INTERPOLATION) & MINIMAP
+   * 4. CAMERA ENGINE (Smooth Pan, Scroll, Touch Drag/Pinch & Minimap)
    * ========================================================================= */
-  const camera = { x: 0, y: 0, k: 0.85 };
+  const camera = { x: 0, y: 0, k: 0.95 };
   let animFrameId = null;
 
   function applyWorldTransform() {
@@ -2001,7 +1991,7 @@ code.inline {
     }
   }
 
-  function animateCameraTo(worldX, worldY, targetK = null, duration = 450) {
+  function animateCameraTo(worldX, worldY, targetK = null, duration = 400) {
     cancelCameraAnim();
     const startX = camera.x;
     const startY = camera.y;
@@ -2035,22 +2025,14 @@ code.inline {
     ensureAncestorsExpanded(id);
     const p = layoutPositions.get(id);
     if (!p) return;
-    animateCameraTo(p.x, p.y, Math.max(camera.k, zoomTarget), 450);
+    animateCameraTo(p.x, p.y, Math.max(camera.k, zoomTarget), 400);
   }
 
-  function gentleCenterIfNearEdge(id) {
-    const p = layoutPositions.get(id);
-    if (!p) return;
-    const canvas = document.getElementById("canvasPane");
-    const w = canvas.clientWidth;
-    const h = canvas.clientHeight;
-    const sx = p.x * camera.k + w / 2 + camera.x;
-    const sy = p.y * camera.k + h / 2 + camera.y;
-    const marginX = Math.min(130, w * 0.18);
-    const marginY = Math.min(95, h * 0.18);
-    if (sx < marginX || sx > w - marginX || sy < marginY || sy > h - marginY) {
-      animateCameraTo(p.x, p.y, camera.k, 380);
-    }
+  function panCameraBy(dx, dy) {
+    cancelCameraAnim();
+    camera.x += dx;
+    camera.y += dy;
+    applyWorldTransform();
   }
 
   function fitVisibleGraph() {
@@ -2059,18 +2041,18 @@ code.inline {
     for (const p of layoutPositions.values()) {
       minX = Math.min(minX, p.x - 95);
       maxX = Math.max(maxX, p.x + 95);
-      minY = Math.min(minY, p.y - 45);
-      maxY = Math.max(maxY, p.y + 45);
+      minY = Math.min(minY, p.y - 50);
+      maxY = Math.max(maxY, p.y + 50);
     }
     const canvas = document.getElementById("canvasPane");
     const w = canvas.clientWidth || 800;
     const h = canvas.clientHeight || 600;
-    const spanX = Math.max(200, maxX - minX);
-    const spanY = Math.max(200, maxY - minY);
-    const k = Math.max(0.28, Math.min(1.25, Math.min((w - 80) / spanX, (h - 80) / spanY)));
+    const spanX = Math.max(220, maxX - minX);
+    const spanY = Math.max(220, maxY - minY);
+    const k = Math.max(0.24, Math.min(1.2, Math.min((w - 90) / spanX, (h - 90) / spanY)));
     const cx = (minX + maxX) / 2;
     const cy = (minY + maxY) / 2;
-    animateCameraTo(cx, cy, k, 420);
+    animateCameraTo(cx, cy, k, 380);
   }
 
   function ensureAncestorsExpanded(id) {
@@ -2096,10 +2078,8 @@ code.inline {
     }
   }
 
-  /* =========================================================================
-   * 6. SVG GEOMETRY HELPERS FOR HOLLOW PROGRESS CONDUITS
-   * ========================================================================= */
-  function sampleCubicBezier(p0, p1, p2, p3, steps = 40) {
+  /* Conduit Geometry Math */
+  function sampleCubicBezier(p0, p1, p2, p3, steps = 36) {
     const pts = [];
     let totalLen = 0;
     for (let i = 0; i <= steps; i++) {
@@ -2135,8 +2115,7 @@ code.inline {
         return { x, y, tx: dx / d, ty: dy / d };
       }
     }
-    const p = pts[0];
-    return { x: p.x, y: p.y, tx: 1, ty: 0 };
+    return { x: pts[0].x, y: pts[0].y, tx: 1, ty: 0 };
   }
 
   function subPolylinePath(sampled, fracStart, fracEnd) {
@@ -2164,15 +2143,11 @@ code.inline {
     return el;
   }
 
-  /* =========================================================================
-   * 7. MAIN SUBGRAPH SPOTLIGHT HELPER (Frontier Radar)
-   * ========================================================================= */
+  /* Compute Main Goal Subgraph for Spotlight */
   function computeMainDependencySubgraph(graph) {
     const mainId = graph.navigation.MAIN;
     const activeSet = new Set();
-    // 1) Tree ancestors of MAIN
     for (const anc of getAncestorChain(mainId, graph.nodes)) activeSet.add(anc.id);
-    // 2) Transitive prerequisites of MAIN (and their tree ancestors so paths remain clear)
     const queue = [mainId];
     while (queue.length > 0) {
       const cur = queue.shift();
@@ -2190,7 +2165,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 8. RENDER ENGINE (SVG MAP + MINIMAP + SIDE PANEL + TOP TELEMETRY)
+   * 5. SCENE RENDERING (Conduits, Arrows & Zero-Clutter Cards)
    * ========================================================================= */
   function renderAll() {
     liveGraph = buildLiveGraph();
@@ -2206,13 +2181,13 @@ code.inline {
   function renderTopbar() {
     const nodesArr = [...liveGraph.nodes.values()].filter(n => n.id !== "knowledge" && !n.isStub);
     const doneCount = nodesArr.filter(n => n.isBaselineDone).length;
-    document.getElementById("globalProgressPill").textContent = `Baseline: ${doneCount} / ${nodesArr.length} Topics`;
+    document.getElementById("globalProgressPill").textContent = `Completed: ${doneCount} / ${nodesArr.length}`;
 
     const mainNode = liveGraph.nodes.get(liveGraph.navigation.MAIN);
     const headNode = liveGraph.nodes.get(liveGraph.navigation.HEAD);
     document.getElementById("topMainTitle").textContent = mainNode ? mainNode.title : "—";
     document.getElementById("topHeadTitle").textContent = headNode ? headNode.title : "—";
-    document.getElementById("btnToggleLayout").textContent = uiSettings.layoutMode === "radial" ? "Layout: Radial" : "Layout: Tree";
+    document.getElementById("btnToggleLayout").textContent = uiSettings.layoutMode === "tree" ? "Layout: Tree" : "Layout: Radial";
 
     const spotHud = document.getElementById("spotlightHudBox");
     spotHud.style.display = uiSettings.spotlightMain ? "flex" : "none";
@@ -2228,8 +2203,8 @@ code.inline {
     const prevId = stack[stack.length - 1];
     const prevNode = liveGraph.nodes.get(prevId);
     const btn = document.getElementById("btnFloatingGetBack");
-    btn.textContent = `← Get Back to ${prevNode ? prevNode.title : prevId}`;
-    document.getElementById("floatingDetourLabel").textContent = `Stack Depth: ${stack.length}`;
+    btn.textContent = `← Back to ${prevNode ? prevNode.title : prevId}`;
+    document.getElementById("floatingDetourLabel").textContent = `Detour depth: ${stack.length}`;
     banner.classList.add("visible");
   }
 
@@ -2252,20 +2227,16 @@ code.inline {
   function renderSvgScene() {
     const gConduits = document.getElementById("layerConduits");
     const gPrereqs = document.getElementById("layerPrereqs");
-    const gSources = document.getElementById("layerSources");
     const gNodes = document.getElementById("layerNodes");
-    const gPills = document.getElementById("layerPrereqPills");
 
     gConduits.innerHTML = "";
     gPrereqs.innerHTML = "";
-    gSources.innerHTML = "";
     gNodes.innerHTML = "";
-    gPills.innerHTML = "";
 
     const spotlightSet = uiSettings.spotlightMain ? computeMainDependencySubgraph(liveGraph) : null;
     const isDimmed = (id) => spotlightSet && !spotlightSet.has(id);
 
-    /* 1) Hollow Progress Conduits & Perpendicular Crossbars */
+    /* 1) Hollow Progress Conduits */
     for (const vId of visibleNodeIds) {
       if (vId === "knowledge") continue;
       const v = liveGraph.nodes.get(vId);
@@ -2274,87 +2245,63 @@ code.inline {
       if (!uPos || !vPos) continue;
 
       let p1, p2;
-      if (uiSettings.layoutMode === "radial") {
+      if (uiSettings.layoutMode === "tree") {
+        const midY = (uPos.y + vPos.y) / 2;
+        p1 = { x: uPos.x, y: midY };
+        p2 = { x: vPos.x, y: midY };
+      } else {
         const dx = vPos.x - uPos.x;
         const dy = vPos.y - uPos.y;
         const dist = Math.hypot(dx, dy) || 1;
-        // Slight outward radial curve
         const ux = uPos.x === 0 && uPos.y === 0 ? dx / dist : uPos.x / (Math.hypot(uPos.x, uPos.y) || 1);
         const uy = uPos.x === 0 && uPos.y === 0 ? dy / dist : uPos.y / (Math.hypot(uPos.x, uPos.y) || 1);
         p1 = { x: uPos.x + ux * dist * 0.35, y: uPos.y + uy * dist * 0.35 };
         p2 = { x: vPos.x - dx * 0.32, y: vPos.y - dy * 0.32 };
-      } else {
-        const midY = (uPos.y + vPos.y) / 2;
-        p1 = { x: uPos.x, y: midY };
-        p2 = { x: vPos.x, y: midY };
       }
 
-      const sampled = sampleCubicBezier(uPos, p1, p2, vPos, 40);
+      const sampled = sampleCubicBezier(uPos, p1, p2, vPos, 36);
       const fullPath = subPolylinePath(sampled, 0, 1);
-
       const conduitGroup = makeSvgEl("g", { class: isDimmed(vId) ? "dimmed" : "" });
 
-      // Outer wall (width 9 -> 6px core + 1.5px wall each side)
+      // Outer wall
       conduitGroup.appendChild(makeSvgEl("path", {
         d: fullPath,
         fill: "none",
         stroke: "#8c959f",
-        "stroke-width": 9,
+        "stroke-width": 8,
         "stroke-linecap": "round"
       }));
-      // Hollow inner channel
+      // Hollow channel
       conduitGroup.appendChild(makeSvgEl("path", {
         d: fullPath,
         fill: "none",
         stroke: "#ffffff",
-        "stroke-width": 6,
+        "stroke-width": 5.5,
         "stroke-linecap": "round"
       }));
 
-      // Map ratio to visible span outside parent/child boxes [0.16 .. 0.84]
       const visStart = 0.16;
       const visEnd = 0.84;
-      const r = v.progress;
+      let activeRatio = v.progress;
+      if (v.isPostBaselineDeepened) {
+        activeRatio = 0.30 + 0.70 * v.progress;
+      }
+      const fillFrac = visStart + activeRatio * (visEnd - visStart);
       const fillColor = v.isBaselineDone ? "#4ac26b" : "#d4a72c";
       const barColor = v.isBaselineDone ? "#116329" : "#7d4e00";
 
-      // If baselineDone and deeper subtopics were appended later, reserve gate at 0.30 of visible span
-      let activeRatio = r;
-      if (v.isPostBaselineDeepened) {
-        activeRatio = 0.30 + 0.70 * r;
-      }
-      const fillFrac = visStart + activeRatio * (visEnd - visStart);
-
-      if (activeRatio > 0.005) {
+      if (activeRatio > 0.01) {
         const fillPath = subPolylinePath(sampled, 0, fillFrac);
         conduitGroup.appendChild(makeSvgEl("path", {
           d: fillPath,
           fill: "none",
           stroke: fillColor,
-          "stroke-width": 4.6,
+          "stroke-width": 4.2,
           "stroke-linecap": "butt"
         }));
       }
 
-      // Post-Baseline Double-Bar Gate stamped at baseline threshold
-      if (v.isPostBaselineDeepened) {
-        const gateFrac = visStart + 0.30 * (visEnd - visStart);
-        for (const offset of [-0.015, 0.015]) {
-          const gp = pointAndTangentAtFraction(sampled, gateFrac + offset);
-          const nx = -gp.ty * 8;
-          const ny = gp.tx * 8;
-          conduitGroup.appendChild(makeSvgEl("line", {
-            x1: (gp.x - nx).toFixed(2),
-            y1: (gp.y - ny).toFixed(2),
-            x2: (gp.x + nx).toFixed(2),
-            y2: (gp.y + ny).toFixed(2),
-            stroke: "#116329",
-            "stroke-width": 2.2
-          }));
-        }
-      }
-
-      // Perpendicular achievement crossbar (14px wide, 2.5px stroke)
+      // Achievement Crossbar
       const pt = pointAndTangentAtFraction(sampled, fillFrac);
       const nx = -pt.ty * 7;
       const ny = pt.tx * 7;
@@ -2364,14 +2311,14 @@ code.inline {
         x2: (pt.x + nx).toFixed(2),
         y2: (pt.y + ny).toFixed(2),
         stroke: barColor,
-        "stroke-width": 2.5,
+        "stroke-width": 2.4,
         "stroke-linecap": "square"
       }));
 
       gConduits.appendChild(conduitGroup);
     }
 
-    /* 2) Cross-Branch Prerequisite Arrows (Contextual for HEAD, plus dimmed MAIN) */
+    /* 2) Prerequisite Arrows (Clean curves, NO blocking labels covering cards) */
     const targetsToDraw = [];
     if (liveGraph.navigation.MAIN !== liveGraph.navigation.HEAD) {
       targetsToDraw.push({ id: liveGraph.navigation.MAIN, dimmed: true });
@@ -2403,40 +2350,46 @@ code.inline {
         const dist = Math.hypot(dx, dy) || 1;
         const nx = -dy / dist;
         const ny = dx / dist;
-        // Offset curve nicely so multiple arrows separate clearly
+
         const curveSign = idx % 2 === 0 ? 1 : -1;
-        const curveMag = Math.max(48, Math.min(130, dist * 0.22)) + idx * 14;
+        const curveMag = Math.max(38, Math.min(110, dist * 0.22)) + idx * 12;
         const cx = (sPos.x + tPos.x) / 2 + nx * curveMag * curveSign;
         const cy = (sPos.y + tPos.y) / 2 + ny * curveMag * curveSign;
 
-        // Shorten end slightly so arrowhead sits right outside node card
-        const endT = Math.max(0.75, 1 - 46 / dist);
+        const endT = Math.max(0.72, 1 - 42 / dist);
         const ex = (1 - endT) * (1 - endT) * sPos.x + 2 * (1 - endT) * endT * cx + endT * endT * tPos.x;
         const ey = (1 - endT) * (1 - endT) * sPos.y + 2 * (1 - endT) * endT * cy + endT * endT * tPos.y;
 
         const pathD = `M ${sPos.x.toFixed(1)} ${sPos.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
         const strokeColor = dimmed ? "#8c959f" : (isDone ? "#116329" : "#a40e26");
-        const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-dotted-c)" : "url(#arrow-solid-x)");
+        const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-done)" : "url(#arrow-needed)");
 
         const hitGroup = makeSvgEl("g", {
-          class: `prereq-hit ${dimmed ? "dimmed" : ""}`,
+          class: `prereq-arrow-hit ${dimmed ? "dimmed" : ""}`,
           style: dimmed ? "opacity: 0.45;" : ""
         });
+        // Tooltip hint on hover
+        const titleEl = makeSvgEl("title");
+        titleEl.textContent = `Prerequisite: ${pNode.title} (${isDone ? "Completed" : "Needs Completion"}) — Click to jump`;
+        hitGroup.appendChild(titleEl);
+
         // Invisible wide hit area
         hitGroup.appendChild(makeSvgEl("path", {
           d: pathD,
           fill: "none",
           stroke: "transparent",
-          "stroke-width": 14
+          "stroke-width": 16
         }));
+        // Visible line
         const arrowAttrs = {
+          class: "visible-arrow",
           d: pathD,
           fill: "none",
           stroke: strokeColor,
-          "stroke-width": isDone ? 1.8 : 2.3,
+          "stroke-width": isDone ? 1.9 : 2.4,
           "marker-end": markerId
         };
-        if (isDone) arrowAttrs["stroke-dasharray"] = "5,5";
+        if (isDone) arrowAttrs["stroke-dasharray"] = "5,4";
         hitGroup.appendChild(makeSvgEl("path", arrowAttrs));
 
         hitGroup.addEventListener("click", (e) => {
@@ -2444,101 +2397,10 @@ code.inline {
           detourTo(pId);
         });
         gPrereqs.appendChild(hitGroup);
-
-        // Midpoint directory label pill
-        if (!dimmed) {
-          const mx = 0.25 * sPos.x + 0.5 * cx + 0.25 * tPos.x;
-          const my = 0.25 * sPos.y + 0.5 * cy + 0.25 * tPos.y;
-          let dirText = formatTruncatedDirectory(pId, liveGraph.nodes);
-          if (pAnchor.proxied) dirText = `↳ ${dirText}`;
-          if (dirText.length > 36) dirText = "…" + dirText.slice(-35);
-          const pillW = Math.max(96, dirText.length * 6.1 + 18);
-
-          const pillGroup = makeSvgEl("g", { class: "prereq-hit" });
-          pillGroup.appendChild(makeSvgEl("rect", {
-            class: "prereq-pill-rect",
-            x: (mx - pillW / 2).toFixed(1),
-            y: (my - 10).toFixed(1),
-            width: pillW.toFixed(1),
-            height: 20,
-            rx: 3,
-            fill: isDone ? "#dafbe1" : "#ffebe9",
-            stroke: isDone ? "#4ac26b" : "#ff8182",
-            "stroke-width": 1.2
-          }));
-          const pillTxt = makeSvgEl("text", {
-            x: mx.toFixed(1),
-            y: (my + 3.5).toFixed(1),
-            "text-anchor": "middle",
-            "font-family": "var(--font-mono)",
-            "font-size": 9.5,
-            "font-weight": 700,
-            fill: isDone ? "#116329" : "#a40e26"
-          });
-          pillTxt.textContent = dirText;
-          pillGroup.appendChild(pillTxt);
-          pillGroup.addEventListener("click", (e) => {
-            e.stopPropagation();
-            detourTo(pId);
-          });
-          gPills.appendChild(pillGroup);
-        }
       });
     }
 
-    /* 3) Leaf Source Clusters around Expanded Leaf / HEAD Nodes */
-    for (const vId of visibleNodeIds) {
-      if (vId === "knowledge") continue;
-      const v = liveGraph.nodes.get(vId);
-      if (!v || v.sources.length === 0) continue;
-      if (!v.state.expandedOnMap && vId !== liveGraph.navigation.HEAD) continue;
-      const pos = layoutPositions.get(vId);
-      if (!pos) continue;
-
-      const maxShow = Math.min(3, v.sources.length);
-      for (let i = 0; i < maxShow; i++) {
-        const src = v.sources[i];
-        const done = v.state.completedSourceIds.includes(src.id);
-        const angle = (pos.angle || 0) + (i - (maxShow - 1) / 2) * 0.42;
-        const sx = pos.x + Math.cos(angle) * 86;
-        const sy = pos.y + Math.sin(angle) * 52 + 24;
-        const sg = makeSvgEl("g", { class: isDimmed(vId) ? "dimmed" : "" });
-        sg.appendChild(makeSvgEl("line", {
-          x1: pos.x,
-          y1: pos.y + 18,
-          x2: sx,
-          y2: sy,
-          stroke: "#d0d7de",
-          "stroke-width": 1,
-          "stroke-dasharray": "2,2"
-        }));
-        const label = (done ? "✓ " : "○ ") + (src.title.length > 22 ? src.title.slice(0, 21) + "…" : src.title);
-        const cw = Math.max(70, label.length * 5.6 + 12);
-        sg.appendChild(makeSvgEl("rect", {
-          x: sx - cw / 2,
-          y: sy - 9,
-          width: cw,
-          height: 18,
-          rx: 2,
-          fill: done ? "#dafbe1" : "#f1f3f5",
-          stroke: done ? "#4ac26b" : "#d0d7de",
-          "stroke-width": 1
-        }));
-        const st = makeSvgEl("text", {
-          x: sx,
-          y: sy + 3,
-          "text-anchor": "middle",
-          "font-family": "var(--font-mono)",
-          "font-size": 8.5,
-          fill: done ? "#116329" : "#59636e"
-        });
-        st.textContent = label;
-        sg.appendChild(st);
-        gSources.appendChild(sg);
-      }
-    }
-
-    /* 4) Topic Vertices (Origin Dot + Branch Cards) */
+    /* 3) Topic Node Cards */
     for (const id of visibleNodeIds) {
       const n = liveGraph.nodes.get(id);
       const pos = layoutPositions.get(id);
@@ -2551,16 +2413,21 @@ code.inline {
         transform: `translate(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`
       });
 
+      // Tooltip hint
+      const titleHint = makeSvgEl("title");
+      titleHint.textContent = `${n.title} — Click to inspect in side panel`;
+      nodeG.appendChild(titleHint);
+
       if (id === "knowledge") {
-        // Concentric Origin Dot (o)
+        // Origin Dot
         nodeG.appendChild(makeSvgEl("circle", {
-          cx: 0, cy: 0, r: 30,
+          cx: 0, cy: 0, r: 28,
           fill: "#ffffff",
           stroke: isHead ? "#8250df" : "#1f2328",
           "stroke-width": isHead ? 2.8 : 2
         }));
         nodeG.appendChild(makeSvgEl("circle", {
-          cx: 0, cy: 0, r: 21,
+          cx: 0, cy: 0, r: 19,
           fill: "#f1f3f5",
           stroke: "#8c959f",
           "stroke-width": 1.2
@@ -2570,18 +2437,18 @@ code.inline {
           fill: "#1f2328"
         }));
         const lbl = makeSvgEl("text", {
-          x: 0, y: 44,
+          x: 0, y: 42,
           "text-anchor": "middle",
           "font-family": "var(--font-mono)",
           "font-size": 11,
           "font-weight": 800,
           fill: "#1f2328"
         });
-        lbl.textContent = "KNOWLEDGE (ORIGIN)";
+        lbl.textContent = "KNOWLEDGE";
         nodeG.appendChild(lbl);
       } else {
-        const w = 152;
-        const h = 42;
+        const w = 158;
+        const h = 44;
         let fill = "#ffffff";
         let stroke = "#8c959f";
         let strokeW = 1.2;
@@ -2589,7 +2456,6 @@ code.inline {
 
         if (n.isStub) {
           fill = "#eaeef2";
-          stroke = "#8c959f";
           dash = "4,3";
         } else if (n.isBaselineDone) {
           fill = "#f6fff8";
@@ -2602,7 +2468,7 @@ code.inline {
           stroke = "#d4a72c";
         }
 
-        // MAIN pulsing beacon ring
+        // MAIN pulse beacon
         if (isMain) {
           nodeG.appendChild(makeSvgEl("rect", {
             x: -w / 2 - 5,
@@ -2626,7 +2492,7 @@ code.inline {
           }));
         }
 
-        // HEAD active reticle
+        // HEAD reticle
         if (isHead) {
           nodeG.appendChild(makeSvgEl("rect", {
             x: -w / 2 - 3,
@@ -2654,7 +2520,7 @@ code.inline {
         if (dash) cardAttrs["stroke-dasharray"] = dash;
         nodeG.appendChild(makeSvgEl("rect", cardAttrs));
 
-        // Left status indicator bar
+        // Status accent line
         const statusBarColor = n.isStub ? "#57606a"
           : n.isBaselineDone ? "#4ac26b"
           : n.isBlocked ? "#ff8182"
@@ -2669,8 +2535,8 @@ code.inline {
           fill: statusBarColor
         }));
 
-        // Title (truncate cleanly)
-        const titleStr = n.title.length > 20 ? n.title.slice(0, 19) + "…" : n.title;
+        // Title text
+        const titleStr = n.title.length > 21 ? n.title.slice(0, 20) + "…" : n.title;
         const txt = makeSvgEl("text", {
           x: -w / 2 + 10,
           y: -3,
@@ -2682,25 +2548,25 @@ code.inline {
         txt.textContent = titleStr;
         nodeG.appendChild(txt);
 
-        // Subline: progress % + status flag
+        // Subtitle (Clear, readable status without cryptic flags)
         const pct = Math.round(n.progress * 100);
-        const flagStr = n.isStub ? "[STUB]"
-          : n.isBaselineDone ? "[C] BASELINE"
-          : n.isBlocked ? "[X] BLOCKED"
-          : n.progress > 0 ? "[W] ACTIVE"
-          : "[ ] READY";
+        const statusLabel = n.isStub ? "Draft"
+          : n.isBaselineDone ? "Completed"
+          : n.isBlocked ? "Needs Prereqs"
+          : n.progress > 0 ? "In Progress"
+          : "Ready";
         const subTxt = makeSvgEl("text", {
           x: -w / 2 + 10,
-          y: 12,
+          y: 13,
           "font-family": "var(--font-mono)",
           "font-size": 9,
           "font-weight": 600,
           fill: n.isBaselineDone ? "#116329" : n.isBlocked ? "#a40e26" : "#59636e"
         });
-        subTxt.textContent = `${flagStr} · ${pct}%`;
+        subTxt.textContent = `${statusLabel} · ${pct}%`;
         nodeG.appendChild(subTxt);
 
-        // Locator Badges above node card
+        // Top badges: MAIN / HEAD
         if (isMain || isHead) {
           let bx = -w / 2;
           if (isMain) {
@@ -2718,7 +2584,7 @@ code.inline {
           }
         }
 
-        // Expand / Collapse Badge (+N / -) — does NOT change HEAD
+        // Expand / Collapse Badge (+N / -)
         if (n.childrenIds.length > 0) {
           const isExp = n.state.expandedOnMap;
           const badgeText = isExp ? "−" : `+${n.childrenIds.length}`;
@@ -2726,7 +2592,7 @@ code.inline {
           const bg = makeSvgEl("g", { class: "svg-expand-badge" });
           bg.appendChild(makeSvgEl("rect", {
             x: w / 2 - bw - 4,
-            y: h / 2 - 9,
+            y: h / 2 - 10,
             width: bw,
             height: 16,
             rx: 3,
@@ -2736,7 +2602,7 @@ code.inline {
           }));
           const bt = makeSvgEl("text", {
             x: w / 2 - bw / 2 - 4,
-            y: h / 2 + 2,
+            y: h / 2 + 1.5,
             "text-anchor": "middle",
             "font-family": "var(--font-mono)",
             "font-size": 9,
@@ -2753,7 +2619,6 @@ code.inline {
         }
       }
 
-      // Single Click on Node Body: sets HEAD = id, clears detourStack, toggles expandedOnMap if has children/sources
       nodeG.addEventListener("click", (e) => {
         e.stopPropagation();
         selectNodeFromMap(id);
@@ -2763,25 +2628,24 @@ code.inline {
     }
   }
 
-  /* Minimap Rendering & Viewport Rectangle */
+  /* Minimap Rendering */
   let minimapBounds = { minX: -400, maxX: 400, minY: -300, maxY: 300 };
 
   function renderMinimap() {
     const svg = document.getElementById("minimapSvg");
     svg.innerHTML = "";
-    let minX = -220, maxX = 220, minY = -180, maxY = 180;
+    let minX = -200, maxX = 200, minY = -160, maxY = 160;
     for (const p of layoutPositions.values()) {
-      minX = Math.min(minX, p.x - 100);
-      maxX = Math.max(maxX, p.x + 100);
-      minY = Math.min(minY, p.y - 80);
-      maxY = Math.max(maxY, p.y + 80);
+      minX = Math.min(minX, p.x - 90);
+      maxX = Math.max(maxX, p.x + 90);
+      minY = Math.min(minY, p.y - 70);
+      maxY = Math.max(maxY, p.y + 70);
     }
     minimapBounds = { minX, maxX, minY, maxY };
     const vw = Math.max(100, maxX - minX);
     const vh = Math.max(100, maxY - minY);
     svg.setAttribute("viewBox", `${minX.toFixed(1)} ${minY.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
 
-    // Skeleton edges
     for (const id of visibleNodeIds) {
       if (id === "knowledge") continue;
       const n = liveGraph.nodes.get(id);
@@ -2791,12 +2655,11 @@ code.inline {
       svg.appendChild(makeSvgEl("line", {
         x1: u.x, y1: u.y, x2: v.x, y2: v.y,
         stroke: n.isBaselineDone ? "#4ac26b" : "#8c959f",
-        "stroke-width": Math.max(2, vw * 0.004)
+        "stroke-width": Math.max(1.8, vw * 0.0035)
       }));
     }
 
-    // Node dots + beacons
-    const dotR = Math.max(5, vw * 0.011);
+    const dotR = Math.max(4.5, vw * 0.01);
     for (const id of visibleNodeIds) {
       const p = layoutPositions.get(id);
       if (!p) continue;
@@ -2804,25 +2667,16 @@ code.inline {
       const isHead = id === liveGraph.navigation.HEAD;
       svg.appendChild(makeSvgEl("circle", {
         cx: p.x, cy: p.y,
-        r: isMain || isHead ? dotR * 1.45 : dotR,
+        r: isMain || isHead ? dotR * 1.5 : dotR,
         fill: isMain ? "#0969da" : isHead ? "#8250df" : (id === "knowledge" ? "#1f2328" : "#59636e")
       }));
-      if (isHead) {
-        svg.appendChild(makeSvgEl("circle", {
-          cx: p.x, cy: p.y,
-          r: dotR * 2.4,
-          fill: "none",
-          stroke: "#8250df",
-          "stroke-width": Math.max(2, vw * 0.005)
-        }));
-      }
     }
 
     const vpRect = makeSvgEl("rect", {
       id: "minimapViewportRect",
-      fill: "rgba(9, 105, 218, 0.10)",
+      fill: "rgba(9, 105, 218, 0.12)",
       stroke: "#0969da",
-      "stroke-width": Math.max(2.5, vw * 0.006)
+      "stroke-width": Math.max(2, vw * 0.005)
     });
     svg.appendChild(vpRect);
     updateMinimapViewport();
@@ -2845,7 +2699,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 9. NAVIGATION STATE MACHINE (MAIN vs HEAD & DETOUR STACK)
+   * 6. NAVIGATION ACTIONS (MAIN, HEAD, DETOUR STACK)
    * ========================================================================= */
   function selectNodeFromMap(id) {
     const node = liveGraph.nodes.get(id);
@@ -2857,7 +2711,6 @@ code.inline {
     }
     persistAll();
     renderAll();
-    gentleCenterIfNearEdge(id);
   }
 
   function toggleNodeExpansion(id) {
@@ -2908,7 +2761,7 @@ code.inline {
     layer2State.navigation.detourStack = [];
     persistAll();
     renderAll();
-    showToast("MAIN goal anchored to current HEAD.");
+    showToast("Main study target anchored to current topic.");
   }
 
   function ensureNodeState(id) {
@@ -2924,9 +2777,11 @@ code.inline {
   }
 
   /* =========================================================================
-   * 10. SIDE PANEL (5-STAGE EXECUTION FLOW)
+   * 7. FULLY EDITABLE SIDE PANEL WITH HINTS & SIMPLIFIED LABELS
    * ========================================================================= */
-  let isEditingHeader = false;
+  let isEditingTopicDetails = false;
+  let editingSourceId = null;
+  let editingSubtopicId = null;
   let prereqSearchQuery = "";
   let lastPrereqCycleDiag = "";
 
@@ -2945,7 +2800,7 @@ code.inline {
 
     let html = "";
 
-    /* 6.1 Top Collapsible Detour Tracker */
+    /* Top Detour Call-Stack */
     if (stack.length > 0) {
       const chainIds = [...stack, headId];
       const chainHtml = chainIds.map((id, idx) => {
@@ -2954,89 +2809,92 @@ code.inline {
         if (idx === chainIds.length - 1) {
           return `<span class="detour-current">${title}</span>`;
         }
-        return `<span class="detour-link" data-detour-idx="${idx}">${title}</span>`;
+        return `<span class="detour-link" data-detour-idx="${idx}" title="Jump back to this topic">${title}</span>`;
       }).join(` <span>→</span> `);
 
       html += `
         <details open class="audit-drawer detour-drawer">
           <summary>
-            <span>DETOUR CALL STACK (Depth: ${stack.length})</span>
-            <button type="button" class="btn-xs head-btn" id="btnSideGetBack">← Get Back</button>
+            <span>DETOUR HISTORY (${stack.length} steps deep)</span>
+            <button type="button" class="btn-xs head-btn" id="btnSideGetBack" title="Return to previous topic">← Back</button>
           </summary>
           <div class="detour-chain">${chainHtml}</div>
         </details>
       `;
     }
 
-    /* 6.2 Topic Header & Directory Truncation */
+    /* Topic Header */
     const statusTag = node.isStub
-      ? `<span class="tag stub">[STUB NODE]</span>`
+      ? `<span class="tag draft" title="Draft topic placeholder">Draft</span>`
       : node.isBaselineDone
-        ? `<span class="tag flag-C">[BASELINE DONE]</span>`
+        ? `<span class="tag done" title="Topic mastered">Completed</span>`
         : node.isBlocked
-          ? `<span class="tag flag-X">[PREREQ BLOCKED]</span>`
-          : `<span class="tag flag-W">[IN PROGRESS]</span>`;
-    const overrideTag = liveGraph.overriddenIds.has(headId) ? `<span class="tag edited">[OVERRIDDEN]</span>` : "";
+          ? `<span class="tag needed" title="Unmet prerequisites required first">Needs Prereqs</span>`
+          : `<span class="tag active" title="Currently active in your curriculum">In Progress</span>`;
+    const overrideTag = liveGraph.overriddenIds.has(headId) ? `<span class="tag edited" title="Modified via UI">Edited</span>` : "";
 
     html += `
       <div class="box">
-        <div class="topic-breadcrumb">${escapeHtml(formatTruncatedDirectory(headId, liveGraph.nodes))}</div>
+        <div class="topic-breadcrumb" title="Directory path in knowledge graph">${escapeHtml(formatTruncatedDirectory(headId, liveGraph.nodes))}</div>
         <div class="topic-title-row">
           <div>
             <div class="topic-title">${escapeHtml(node.title)}</div>
             <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;">id: ${escapeHtml(node.id)}</div>
           </div>
           <div class="list-row-actions">
-            ${headId !== "knowledge" ? `<button type="button" class="btn-xs" id="btnToggleEditHeader">${isEditingHeader ? "Cancel" : "Edit"}</button>` : ""}
+            <button type="button" class="btn-xs" id="btnToggleEditTopic" title="Edit title, category, or overview notes">${isEditingTopicDetails ? "Cancel" : "✏️ Edit Topic"}</button>
           </div>
         </div>
+
         <div class="topic-meta-bar">
           ${statusTag}
           ${overrideTag}
-          <span class="tag">${pct}% Conduit</span>
+          <span class="tag" title="Overall progress">${pct}% Complete</span>
           ${isMain
-            ? `<span class="tag" style="background:var(--accent-soft);color:var(--accent);border-color:var(--accent);">[MAIN GOAL ✓]</span>`
-            : `<button type="button" class="btn-xs accent-btn" id="btnSetAsMain">${stack.length > 0 ? "Checkout HEAD as MAIN" : "Set as MAIN Goal"}</button>`
+            ? `<span class="tag" style="background:var(--accent-soft);color:var(--accent);border-color:var(--accent);" title="Currently your main objective on the map">Main Target ✓</span>`
+            : `<button type="button" class="btn-xs accent-btn" id="btnSetAsMain" title="Set this topic as your primary target beacon on the map">Set as Main Target</button>`
           }
         </div>
-        <div class="progress-track">
+
+        <div class="progress-track" title="Topic completion progress">
           <div class="progress-fill ${node.isBaselineDone ? "done" : ""}" style="width:${pct}%"></div>
         </div>
-        ${isEditingHeader ? renderInlineHeaderEditor(node) : ""}
+
+        ${isEditingTopicDetails ? renderTopicEditor(node) : ""}
       </div>
     `;
 
-    /* Module 1: Prerequisites Gate */
+    /* Section 1: Prerequisites */
     const allPrereqsDone = node.prereqIds.every(pId => {
       const p = liveGraph.nodes.get(pId);
       return p && p.isBaselineDone;
     });
-    const gateBadge = node.prereqIds.length === 0
-      ? `<span class="tag flag-C">[NO PREREQS]</span>`
+    const prereqStatusBadge = node.prereqIds.length === 0
+      ? `<span class="tag done">None Required</span>`
       : allPrereqsDone
-        ? `<span class="tag flag-C">[GATE OPEN]</span>`
-        : `<span class="tag flag-X">[GATE LOCKED]</span>`;
+        ? `<span class="tag done">All Completed ✓</span>`
+        : `<span class="tag needed">Required First</span>`;
 
     const prereqRows = node.prereqIds.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No cross-branch prerequisites attached.</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No prerequisites required. You can start studying this immediately!</div>`
       : node.prereqIds.map(pId => {
           const p = liveGraph.nodes.get(pId);
           if (!p) return "";
           const badge = p.isBaselineDone
-            ? `<span class="tag flag-C">[DOTTED]</span>`
-            : `<span class="tag flag-X">[SOLID]</span>`;
+            ? `<span class="tag done">✓ Completed</span>`
+            : `<span class="tag needed">✕ Needed</span>`;
           return `
             <div class="list-row">
               <div class="list-row-left">
                 ${badge}
                 <div class="list-row-main">
-                  <div class="list-row-title">${escapeHtml(p.title)} ${p.isStub ? '<span class="tag stub">[STUB]</span>' : ''}</div>
+                  <div class="list-row-title">${escapeHtml(p.title)} ${p.isStub ? '<span class="tag draft">Draft</span>' : ''}</div>
                   <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(pId, liveGraph.nodes))}</div>
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(pId)}">Detour →</button>
-                <button type="button" class="btn-xs" data-remove-prereq="${escapeHtml(pId)}" title="Remove prerequisite">✕</button>
+                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(pId)}" title="Jump to this prerequisite">Detour →</button>
+                <button type="button" class="btn-xs danger-btn" data-remove-prereq="${escapeHtml(pId)}" title="Remove this prerequisite">✕</button>
               </div>
             </div>
           `;
@@ -3050,62 +2908,83 @@ code.inline {
     html += `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">1. PREREQUISITES GATE</span>
-          ${gateBadge}
+          <span class="box-title">Prerequisites</span>
+          ${prereqStatusBadge}
         </div>
+        <div class="section-hint">Concepts you should understand before this topic. Click <strong>Detour →</strong> to inspect or study any prerequisite.</div>
         <div class="item-list">${prereqRows}</div>
         <div class="inline-add-row">
-          <input type="text" id="inputPrereqSearch" placeholder="Filter topic to link..." value="${escapeHtml(prereqSearchQuery)}" style="flex:1 1 110px;">
-          <select id="selectPrereqCandidate" style="flex:1.4 1 150px;">
-            <option value="">-- Select prerequisite --</option>
+          <input type="text" id="inputPrereqSearch" placeholder="Filter topics to link..." value="${escapeHtml(prereqSearchQuery)}" style="flex:1 1 110px;" title="Filter topics">
+          <select id="selectPrereqCandidate" style="flex:1.4 1 150px;" title="Select topic to link as prerequisite">
+            <option value="">-- Choose prerequisite --</option>
             ${candidatePrereqs.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("")}
           </select>
-          <button type="button" class="btn-xs" id="btnLinkPrereq">+ Link Prerequisite</button>
+          <button type="button" class="btn-xs" id="btnLinkPrereq" title="Add this prerequisite">+ Add Prerequisite</button>
         </div>
         ${lastPrereqCycleDiag ? `<div class="diag-warn">${escapeHtml(lastPrereqCycleDiag)}</div>` : ""}
       </div>
     `;
 
-    /* Module 2: Concept Intro & Core Model */
+    /* Section 2: Overview & Notes */
     const introTag = node.state.introDone
-      ? `<span class="tag flag-C">[COMPLETED]</span>`
-      : `<span class="tag flag-W">[PENDING]</span>`;
+      ? `<span class="tag done">Completed</span>`
+      : `<span class="tag active">Pending</span>`;
     html += `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">2. CONCEPT INTRO & CORE MODEL</span>
+          <span class="box-title">Overview & Notes</span>
           ${introTag}
         </div>
+        <div class="section-hint">Technical definition and summary of this concept. Click <strong>✏️ Edit Topic</strong> above to edit or add formulas ($LaTeX$ supported).</div>
         <div class="intro-prose" id="sideIntroProse">
           ${node.isStub && !node.intro
-            ? `<em style="color:var(--text-muted);">Ghost/Stub node synthesized from cross-branch link. Click <strong>Edit</strong> above or import an LLM patch to hydrate this concept.</em>`
-            : escapeHtml(node.intro || "No concept introduction written yet.").replace(/\n/g, "<br>")
+            ? `<em style="color:var(--text-muted);">Draft topic. Click <strong>✏️ Edit Topic</strong> above to write an overview or add formulas.</em>`
+            : escapeHtml(node.intro || "No overview notes written yet.").replace(/\n/g, "<br>")
           }
         </div>
-        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-family:var(--font-mono);font-size:11.5px;font-weight:600;">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-family:var(--font-mono);font-size:11.5px;font-weight:600;" title="Check when you understand the overview">
           <input type="checkbox" id="chkIntroDone" ${node.state.introDone ? "checked" : ""}>
-          <span>Complete Intro & Core Vocabulary</span>
+          <span>Concept understood & vocabulary mastered</span>
         </label>
       </div>
     `;
 
-    /* Module 3: Sources & External Deep-Dive */
+    /* Section 3: Resources & Links (Fully Editable Inline) */
     const doneSrcCount = node.sources.filter(s => node.state.completedSourceIds.includes(s.id)).length;
     const srcRows = node.sources.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No sources attached yet.</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No resources attached. Add books, lecture playlists, or links below!</div>`
       : node.sources.map(src => {
           const checked = node.state.completedSourceIds.includes(src.id);
+          const isEditingThis = editingSourceId === src.id;
+
+          if (isEditingThis) {
+            return `
+              <div class="box inset" style="margin-bottom:6px;">
+                <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">EDIT RESOURCE</div>
+                <div style="display:flex;flex-direction:column;gap:5px;">
+                  <input type="text" id="editSrcTitle_${escapeHtml(src.id)}" value="${escapeHtml(src.title)}" placeholder="Resource Title">
+                  <input type="text" id="editSrcUrl_${escapeHtml(src.id)}" value="${escapeHtml(src.url || "")}" placeholder="URL (optional)">
+                  <div style="display:flex;justify-content:flex-end;gap:5px;">
+                    <button type="button" class="btn-xs" data-cancel-edit-src>Cancel</button>
+                    <button type="button" class="btn-xs primary" data-save-edit-src="${escapeHtml(src.id)}">Save</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
           return `
             <div class="list-row">
               <div class="list-row-left">
-                <input type="checkbox" data-source-chk="${escapeHtml(src.id)}" ${checked ? "checked" : ""}>
+                <input type="checkbox" data-source-chk="${escapeHtml(src.id)}" ${checked ? "checked" : ""} title="Mark resource studied">
                 <div class="list-row-main">
                   <div class="list-row-title ${checked ? "checked" : ""}">${escapeHtml(src.title)}</div>
                   ${src.url ? `<div class="list-row-sub"><a href="${escapeHtml(src.url)}" target="_blank" rel="noopener">${escapeHtml(src.url)}</a></div>` : ""}
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs" data-remove-source="${escapeHtml(src.id)}" title="Remove source">✕</button>
+                <button type="button" class="btn-xs" data-edit-source="${escapeHtml(src.id)}" title="Edit resource title or link">✏️</button>
+                <button type="button" class="btn-xs danger-btn" data-remove-source="${escapeHtml(src.id)}" title="Delete resource">✕</button>
               </div>
             </div>
           `;
@@ -3114,37 +2993,55 @@ code.inline {
     html += `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">3. SOURCES & EXTERNAL DEEP-DIVE</span>
-          <span class="tag">${doneSrcCount} / ${node.sources.length}</span>
+          <span class="box-title">Resources & Study Materials</span>
+          <span class="tag" title="Studied / Total">${doneSrcCount} / ${node.sources.length} Studied</span>
         </div>
+        <div class="section-hint">Textbooks, video lectures, papers, or cheat sheets. Click <strong>✏️</strong> to edit or check them off as you study.</div>
         <div class="item-list">${srcRows}</div>
         <div class="inline-add-row">
-          <input type="text" id="inputSourceTitle" placeholder="Source title / book / paper...">
-          <input type="text" id="inputSourceUrl" placeholder="URL (optional)">
-          <button type="button" class="btn-xs" id="btnAddSource">+ Add Source</button>
+          <input type="text" id="inputSourceTitle" placeholder="Book / Lecture / Article title..." title="Resource name">
+          <input type="text" id="inputSourceUrl" placeholder="URL link (optional)" title="Optional link">
+          <button type="button" class="btn-xs" id="btnAddSource" title="Attach new study resource">+ Add Resource</button>
         </div>
       </div>
     `;
 
-    /* Module 4: Subtopic Task Checklist (Resolution) */
+    /* Section 4: Subtopics & Tasks (Fully Editable Inline) */
     const isLearningContainer = !!uiSettings.learnChecklistActive[headId] || node.childrenIds.length > 0;
     const subRows = node.childrenIds.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Leaf topic — add deeper subtopics below anytime (even after baseline latch).</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No subtopics yet. Add smaller component topics below to break down this concept!</div>`
       : node.childrenIds.map(cId => {
           const c = liveGraph.nodes.get(cId);
           if (!c) return "";
           const cpct = Math.round(c.progress * 100);
+          const isEditingThis = editingSubtopicId === cId;
+
+          if (isEditingThis) {
+            return `
+              <div class="box inset" style="margin-bottom:6px;">
+                <div style="font-family:var(--font-mono);font-size:10px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">RENAME SUBTOPIC</div>
+                <div style="display:flex;gap:5px;">
+                  <input type="text" id="editSubTitle_${escapeHtml(cId)}" value="${escapeHtml(c.title)}" style="flex:1;">
+                  <button type="button" class="btn-xs" data-cancel-edit-sub>Cancel</button>
+                  <button type="button" class="btn-xs primary" data-save-edit-sub="${escapeHtml(cId)}">Save</button>
+                </div>
+              </div>
+            `;
+          }
+
           return `
             <div class="list-row">
               <div class="list-row-left">
-                <input type="checkbox" data-subtopic-chk="${escapeHtml(cId)}" ${c.isBaselineDone ? "checked" : ""} title="Toggle baseline completion">
+                <input type="checkbox" data-subtopic-chk="${escapeHtml(cId)}" ${c.isBaselineDone ? "checked" : ""} title="Toggle completion for this subtopic">
                 <div class="list-row-main">
                   <div class="list-row-title ${c.isBaselineDone ? "checked" : ""}">${escapeHtml(c.title)}</div>
-                  <div class="list-row-sub">${cpct}% conduit · ${c.childrenIds.length} subtopics</div>
+                  <div class="list-row-sub">${cpct}% complete · ${c.childrenIds.length} subtopics</div>
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs head-btn" data-open-subtopic="${escapeHtml(cId)}">Open →</button>
+                <button type="button" class="btn-xs" data-edit-subtopic="${escapeHtml(cId)}" title="Rename subtopic">✏️</button>
+                <button type="button" class="btn-xs head-btn" data-open-subtopic="${escapeHtml(cId)}" title="Open and inspect this subtopic">Open →</button>
+                <button type="button" class="btn-xs danger-btn" data-delete-subtopic="${escapeHtml(cId)}" title="Delete this subtopic">✕</button>
               </div>
             </div>
           `;
@@ -3153,41 +3050,43 @@ code.inline {
     html += `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">4. SUBTOPIC TASK CHECKLIST</span>
-          <span class="tag">${node.childrenIds.length} Subtopics</span>
+          <span class="box-title">Subtopics & Tasks</span>
+          <span class="tag" title="Direct child subtopics">${node.childrenIds.length} Subtopics</span>
         </div>
+        <div class="section-hint">Divide this topic into component subtopics. Checking a subtopic advances the map conduit.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
-          <button type="button" class="btn-xs ${uiSettings.learnChecklistActive[headId] ? "accent-btn" : ""}" id="btnLearnTopic">
-            ${uiSettings.learnChecklistActive[headId] ? "Learning Active ✓" : "Learn This Topic"}
+          <button type="button" class="btn-xs ${uiSettings.learnChecklistActive[headId] ? "accent-btn" : ""}" id="btnLearnTopic" title="Toggle active checklist view">
+            ${uiSettings.learnChecklistActive[headId] ? "Checklist Open ✓" : "Open Checklist"}
           </button>
-          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">Resolution depth: ${node.depth}</span>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">Hierarchy depth: ${node.depth}</span>
         </div>
         ${isLearningContainer ? `<div class="item-list">${subRows}</div>` : ""}
         <div class="inline-add-row">
-          <input type="text" id="inputSubtopicTitle" placeholder="New subtopic title...">
-          <button type="button" class="btn-xs" id="btnAddSubtopic">+ Add Subtopic</button>
+          <input type="text" id="inputSubtopicTitle" placeholder="New subtopic title..." title="Type title and press enter">
+          <button type="button" class="btn-xs" id="btnAddSubtopic" title="Add component subtopic">+ Add Subtopic</button>
         </div>
       </div>
     `;
 
-    /* Module 5: Baseline Latch & LLM Expansion */
+    /* Section 5: Completion & Actions */
     html += `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">5. BASELINE LATCH & LLM EXPANSION</span>
-          ${node.isBaselineDone ? `<span class="tag flag-C">[LATCHED]</span>` : `<span class="tag flag-W">[UNLATCHED]</span>`}
+          <span class="box-title">Completion & AI Tools</span>
+          ${node.isBaselineDone ? `<span class="tag done">Completed ✓</span>` : `<span class="tag active">In Progress</span>`}
         </div>
+        <div class="section-hint">Marking this topic complete permanently unlocks all downstream topics that depend on it.</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${node.isBaselineDone
-            ? `<button type="button" class="success-btn" disabled>Baseline Latched ✓</button>`
-            : `<button type="button" class="primary" id="btnMarkBaseline">Mark Baseline Completed</button>`
+            ? `<button type="button" class="success-btn" disabled>Topic Completed ✓</button>`
+            : `<button type="button" class="primary" id="btnMarkBaseline" title="Mark this topic complete to unblock downstream topics">Mark Topic Completed</button>`
           }
-          <button type="button" id="btnCopyLlmSlice">Copy LLM Expansion Context</button>
+          <button type="button" id="btnCopyLlmSlice" title="Copy an AI prompt formatted for ChatGPT/Claude to expand this topic">Copy AI Prompt for Expanding</button>
         </div>
-        <div style="font-size:11.5px;color:var(--text-muted);margin-top:8px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
           ${node.isBaselineDone
-            ? "Baseline is permanently latched: all outgoing prerequisite arrows are dotted across the map. You may continue adding deeper subtopics in Module 4 without re-locking downstream topics."
-            : "Latching baseline permanently marks this topic's core prerequisite requirement satisfied across all downstream topics."
+            ? "✓ Outgoing prerequisite arrows from this topic are dotted green across the graph. You can still add deeper subtopics anytime without re-locking downstream topics."
+            : "Tip: You can return and deepen this topic with more subtopics later even after marking it complete."
           }
         </div>
       </div>
@@ -3198,74 +3097,131 @@ code.inline {
     bindSidePanelEvents(node);
   }
 
-  function renderInlineHeaderEditor(node) {
+  /* Inline Topic Editor (Edit Title, Move Parent Category, Edit Notes, Delete) */
+  function renderTopicEditor(node) {
+    const parentOptions = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== node.id && !isDescendantOf(n.id, node.id, liveGraph.nodes))
+      .map(n => `<option value="${escapeHtml(n.id)}" ${n.id === node.parentId ? "selected" : ""}>${escapeHtml(n.title)} (${escapeHtml(n.id)})</option>`)
+      .join("");
+
     return `
       <div class="box inset" style="margin-top:10px;">
-        <div style="font-family:var(--font-mono);font-size:10.5px;font-weight:700;margin-bottom:6px;color:var(--text-muted);">EDIT NODE (LAYER 1 OVERRIDE)</div>
-        <div style="display:flex;flex-direction:column;gap:6px;">
-          <input type="text" id="editNodeTitle" value="${escapeHtml(node.title)}" placeholder="Title">
-          <textarea id="editNodeIntro" rows="4" placeholder="Concept introduction (supports $LaTeX$)...">${escapeHtml(node.intro)}</textarea>
-          <div style="display:flex;justify-content:space-between;gap:6px;">
-            <button type="button" class="btn-xs danger-btn" id="btnDeleteNode">Delete Node</button>
-            <button type="button" class="btn-xs primary" id="btnSaveHeaderEdit">Save Override</button>
+        <div style="font-family:var(--font-mono);font-size:10.5px;font-weight:700;margin-bottom:6px;color:var(--text-muted);">EDIT TOPIC PROPERTIES</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Title:</label>
+            <input type="text" id="editNodeTitle" value="${escapeHtml(node.title)}" style="width:100%;" title="Topic name">
+          </div>
+          ${node.id !== "knowledge" ? `
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Parent Category (Move topic):</label>
+              <select id="editNodeParent" style="width:100%;" title="Change where this topic sits in the hierarchy">
+                ${parentOptions}
+              </select>
+            </div>
+          ` : ""}
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Overview Notes ($LaTeX$ math supported):</label>
+            <textarea id="editNodeIntro" rows="4" style="width:100%;">${escapeHtml(node.intro)}</textarea>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px;">
+            ${node.id !== "knowledge" ? `<button type="button" class="btn-xs danger-btn" id="btnDeleteNode" title="Delete this topic">Delete Topic</button>` : "<span></span>"}
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="btn-xs" id="btnCancelEditTopic">Cancel</button>
+              <button type="button" class="btn-xs primary" id="btnSaveHeaderEdit">Save Changes</button>
+            </div>
           </div>
         </div>
       </div>
     `;
   }
 
+  function isDescendantOf(candidateId, ancestorId, nodeMap) {
+    let cur = nodeMap.get(candidateId);
+    const seen = new Set();
+    while (cur && cur.parentId && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      if (cur.parentId === ancestorId) return true;
+      cur = nodeMap.get(cur.parentId);
+    }
+    return false;
+  }
+
+  /* Bind Side Panel Interactive Events */
   function bindSidePanelEvents(node) {
     const headId = node.id;
 
-    // Detour breadcrumb & Get Back
+    // Detour links & Back
     document.querySelectorAll("[data-detour-idx]").forEach(el => {
       el.addEventListener("click", () => jumpToDetourFrame(Number(el.dataset.detourIdx)));
     });
     const btnSideBack = document.getElementById("btnSideGetBack");
     if (btnSideBack) btnSideBack.addEventListener("click", (e) => { e.preventDefault(); popDetour(); });
 
-    // Set as MAIN
+    // Set as MAIN Target
     const btnSetMain = document.getElementById("btnSetAsMain");
     if (btnSetMain) btnSetMain.addEventListener("click", setHeadAsMain);
 
-    // Header Edit toggle & save
-    const btnEdit = document.getElementById("btnToggleEditHeader");
+    // Edit Topic Toggle
+    const btnEdit = document.getElementById("btnToggleEditTopic");
     if (btnEdit) {
       btnEdit.addEventListener("click", () => {
-        isEditingHeader = !isEditingHeader;
+        isEditingTopicDetails = !isEditingTopicDetails;
         renderSidePanel();
       });
     }
+    const btnCancelEdit = document.getElementById("btnCancelEditTopic");
+    if (btnCancelEdit) {
+      btnCancelEdit.addEventListener("click", () => {
+        isEditingTopicDetails = false;
+        renderSidePanel();
+      });
+    }
+
+    // Save Topic Details
     const btnSaveEdit = document.getElementById("btnSaveHeaderEdit");
     if (btnSaveEdit) {
       btnSaveEdit.addEventListener("click", () => {
         const newTitle = document.getElementById("editNodeTitle").value.trim();
         const newIntro = document.getElementById("editNodeIntro").value;
+        const newParentSelect = document.getElementById("editNodeParent");
+        const newParent = newParentSelect ? newParentSelect.value : null;
+
         if (!newTitle) return;
+
+        // Save title and intro override
         if (!layer1Overrides.field_overrides[headId]) layer1Overrides.field_overrides[headId] = {};
         layer1Overrides.field_overrides[headId].title = newTitle;
         layer1Overrides.field_overrides[headId].intro = newIntro;
-        isEditingHeader = false;
+
+        // Save reparenting if changed
+        if (newParent && newParent !== node.parentId) {
+          layer1Overrides.reparents[headId] = newParent;
+        }
+
+        isEditingTopicDetails = false;
         persistAll();
         renderAll();
-        showToast("Saved Layer 1 node override.");
+        showToast("Topic details saved.");
       });
     }
+
+    // Delete Topic
     const btnDel = document.getElementById("btnDeleteNode");
     if (btnDel) {
       btnDel.addEventListener("click", () => {
         if (headId === "knowledge") return;
-        if (!confirm(`Tombstone node "${node.title}" (${headId}) in Layer 1?`)) return;
+        if (!confirm(`Delete topic "${node.title}"?`)) return;
         if (!layer1Overrides.tombstones.includes(headId)) layer1Overrides.tombstones.push(headId);
         layer2State.navigation.HEAD = node.parentId || "knowledge";
-        isEditingHeader = false;
+        isEditingTopicDetails = false;
         persistAll();
         renderAll();
-        showToast("Node tombstoned in Layer 1.");
+        showToast("Topic deleted.");
       });
     }
 
-    // Module 1: Prerequisites Gate
+    // Prerequisites Gate: Detour & Remove
     document.querySelectorAll("[data-detour-id]").forEach(btn => {
       btn.addEventListener("click", () => detourTo(btn.dataset.detourId));
     });
@@ -3278,6 +3234,7 @@ code.inline {
         lastPrereqCycleDiag = "";
         persistAll();
         renderAll();
+        showToast("Prerequisite removed.");
       });
     });
 
@@ -3290,7 +3247,7 @@ code.inline {
           .filter(n => n.id !== headId && n.id !== "knowledge" && !node.prereqIds.includes(n.id))
           .filter(n => !prereqSearchQuery || n.title.toLowerCase().includes(prereqSearchQuery.toLowerCase()) || n.id.toLowerCase().includes(prereqSearchQuery.toLowerCase()))
           .slice(0, 40);
-        sel.innerHTML = `<option value="">-- Select prerequisite --</option>` +
+        sel.innerHTML = `<option value="">-- Choose prerequisite --</option>` +
           candidates.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("");
       });
     }
@@ -3303,7 +3260,7 @@ code.inline {
         const cycle = findPrereqCycle(liveGraph.nodes, candId, headId);
         if (cycle) {
           const names = cycle.map(id => (liveGraph.nodes.get(id)?.title || id)).join(" → ");
-          lastPrereqCycleDiag = `CYCLE REJECTED: Linking "${candId}" → "${headId}" forms a directed cycle: ${names}`;
+          lastPrereqCycleDiag = `CYCLE DETECTED: Linking "${candId}" → "${headId}" creates an impossible dependency loop: ${names}`;
           renderSidePanel();
           return;
         }
@@ -3313,11 +3270,11 @@ code.inline {
         if (!delta.addPrereqs.includes(candId)) delta.addPrereqs.push(candId);
         persistAll();
         renderAll();
-        showToast("Prerequisite linked.");
+        showToast("Prerequisite added.");
       });
     }
 
-    // Module 2: Intro Completed
+    // Concept Intro Checkbox
     const chkIntro = document.getElementById("chkIntroDone");
     if (chkIntro) {
       chkIntro.addEventListener("change", () => {
@@ -3327,7 +3284,7 @@ code.inline {
       });
     }
 
-    // Module 3: Sources
+    // Resources / Sources: Checkbox, Edit, Remove, Add
     document.querySelectorAll("[data-source-chk]").forEach(chk => {
       chk.addEventListener("change", () => {
         const sId = chk.dataset.sourceChk;
@@ -3341,6 +3298,47 @@ code.inline {
         renderAll();
       });
     });
+
+    document.querySelectorAll("[data-edit-source]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        editingSourceId = btn.dataset.editSource;
+        renderSidePanel();
+      });
+    });
+
+    document.querySelectorAll("[data-cancel-edit-src]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        editingSourceId = null;
+        renderSidePanel();
+      });
+    });
+
+    document.querySelectorAll("[data-save-edit-src]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const sId = btn.dataset.saveEditSrc;
+        const newTitle = document.getElementById(`editSrcTitle_${sId}`).value.trim();
+        const newUrl = document.getElementById(`editSrcUrl_${sId}`).value.trim();
+        if (!newTitle) return;
+
+        const delta = ensureEdgeDelta(headId);
+        // If in delta addSources, update directly
+        const inAdd = delta.addSources.find(s => s.id === sId);
+        if (inAdd) {
+          inAdd.title = newTitle;
+          inAdd.url = newUrl || undefined;
+        } else {
+          // Remove old base source and add updated version
+          if (!delta.removeSourceIds.includes(sId)) delta.removeSourceIds.push(sId);
+          delta.addSources.push({ id: sId, title: newTitle, url: newUrl || undefined });
+        }
+
+        editingSourceId = null;
+        persistAll();
+        renderAll();
+        showToast("Resource updated.");
+      });
+    });
+
     document.querySelectorAll("[data-remove-source]").forEach(btn => {
       btn.addEventListener("click", () => {
         const sId = btn.dataset.removeSource;
@@ -3349,8 +3347,10 @@ code.inline {
         if (!delta.removeSourceIds.includes(sId)) delta.removeSourceIds.push(sId);
         persistAll();
         renderAll();
+        showToast("Resource deleted.");
       });
     });
+
     const btnAddSrc = document.getElementById("btnAddSource");
     if (btnAddSrc) {
       btnAddSrc.addEventListener("click", () => {
@@ -3363,11 +3363,11 @@ code.inline {
         delta.addSources.push(newSrc);
         persistAll();
         renderAll();
-        showToast("Source attached to Layer 1.");
+        showToast("Resource added.");
       });
     }
 
-    // Module 4: Subtopic Task Checklist
+    // Subtopics: Checklist open, Completion, Rename, Delete, Add
     const btnLearn = document.getElementById("btnLearnTopic");
     if (btnLearn) {
       btnLearn.addEventListener("click", () => {
@@ -3377,6 +3377,7 @@ code.inline {
         renderAll();
       });
     }
+
     document.querySelectorAll("[data-subtopic-chk]").forEach(chk => {
       chk.addEventListener("change", () => {
         const cId = chk.dataset.subtopicChk;
@@ -3385,6 +3386,7 @@ code.inline {
         renderAll();
       });
     });
+
     document.querySelectorAll("[data-open-subtopic]").forEach(btn => {
       btn.addEventListener("click", () => {
         const cId = btn.dataset.openSubtopic;
@@ -3397,6 +3399,46 @@ code.inline {
         locateNode(cId, 0.96);
       });
     });
+
+    document.querySelectorAll("[data-edit-subtopic]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        editingSubtopicId = btn.dataset.editSubtopic;
+        renderSidePanel();
+      });
+    });
+
+    document.querySelectorAll("[data-cancel-edit-sub]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        editingSubtopicId = null;
+        renderSidePanel();
+      });
+    });
+
+    document.querySelectorAll("[data-save-edit-sub]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cId = btn.dataset.saveEditSub;
+        const newTitle = document.getElementById(`editSubTitle_${cId}`).value.trim();
+        if (!newTitle) return;
+        if (!layer1Overrides.field_overrides[cId]) layer1Overrides.field_overrides[cId] = {};
+        layer1Overrides.field_overrides[cId].title = newTitle;
+        editingSubtopicId = null;
+        persistAll();
+        renderAll();
+        showToast("Subtopic renamed.");
+      });
+    });
+
+    document.querySelectorAll("[data-delete-subtopic]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cId = btn.dataset.deleteSubtopic;
+        if (!confirm(`Delete subtopic "${liveGraph.nodes.get(cId)?.title || cId}"?`)) return;
+        if (!layer1Overrides.tombstones.includes(cId)) layer1Overrides.tombstones.push(cId);
+        persistAll();
+        renderAll();
+        showToast("Subtopic deleted.");
+      });
+    });
+
     const btnAddSub = document.getElementById("btnAddSubtopic");
     if (btnAddSub) {
       const addSubFn = () => {
@@ -3428,7 +3470,7 @@ code.inline {
       });
     }
 
-    // Module 5: Baseline Latch & LLM Expansion Context
+    // Mark Baseline Completed
     const btnBase = document.getElementById("btnMarkBaseline");
     if (btnBase) {
       btnBase.addEventListener("click", () => {
@@ -3437,7 +3479,7 @@ code.inline {
         st.introDone = true;
         persistAll();
         renderAll();
-        showToast("Baseline latched ✓ Outgoing prerequisites are now dotted.");
+        showToast("Topic marked completed! Dependent topics unlocked.");
       });
     }
 
@@ -3460,44 +3502,141 @@ code.inline {
   }
 
   /* =========================================================================
-   * 11. LLM EXPANSION CONTEXT SLICER (Section 7.4)
+   * 8. NEW TOPIC MODAL (+ New Topic Anywhere)
+   * ========================================================================= */
+  function openNewTopicModal(defaultParentId = null) {
+    const parentId = defaultParentId || liveGraph.navigation.HEAD || "knowledge";
+    const parentOptions = [...liveGraph.nodes.values()]
+      .map(n => `<option value="${escapeHtml(n.id)}" ${n.id === parentId ? "selected" : ""}>${escapeHtml(n.title)} (${escapeHtml(n.id)})</option>`)
+      .join("");
+
+    const candidatePrereqs = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== "knowledge")
+      .slice(0, 50)
+      .map(n => `<option value="${escapeHtml(n.id)}">${escapeHtml(n.title)}</option>`)
+      .join("");
+
+    openModal("+ CREATE NEW TOPIC", `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">ADD A NEW CONCEPT TO YOUR GRAPH</span>
+          <span class="tag ready">Custom Topic</span>
+        </div>
+        <div class="section-hint">Create a new subject or subtopic. It will appear on your map immediately and auto-save.</div>
+
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;margin-bottom:3px;">Topic Title *</label>
+            <input type="text" id="newTopicTitle" placeholder="e.g. Quantum Computing Basics" style="width:100%;font-size:12px;">
+          </div>
+
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;margin-bottom:3px;">Where does it belong? (Parent Topic) *</label>
+            <select id="newTopicParent" style="width:100%;">
+              ${parentOptions}
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;margin-bottom:3px;">Prerequisite (Optional):</label>
+            <select id="newTopicPrereq" style="width:100%;">
+              <option value="">-- None (Start anytime) --</option>
+              ${candidatePrereqs}
+            </select>
+          </div>
+
+          <div>
+            <label style="display:block;font-size:11px;font-weight:700;margin-bottom:3px;">Overview Summary (Optional, LaTeX math supported):</label>
+            <textarea id="newTopicIntro" rows="3" placeholder="Brief technical definition or summary..." style="width:100%;"></textarea>
+          </div>
+
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px;">
+            <button type="button" class="btn-xs" id="btnCancelNewTopic">Cancel</button>
+            <button type="button" class="btn-xs primary" id="btnConfirmNewTopic">Create Topic</button>
+          </div>
+        </div>
+      </div>
+    `);
+
+    document.getElementById("btnCancelNewTopic").addEventListener("click", closeModal);
+    document.getElementById("btnConfirmNewTopic").addEventListener("click", () => {
+      const title = document.getElementById("newTopicTitle").value.trim();
+      const parent = document.getElementById("newTopicParent").value;
+      const prereq = document.getElementById("newTopicPrereq").value;
+      const intro = document.getElementById("newTopicIntro").value;
+
+      if (!title) {
+        alert("Please enter a title for your topic.");
+        return;
+      }
+
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "topic";
+      let newId = `${parent === "knowledge" ? "" : parent + "."}${slug}`;
+      let counter = 2;
+      while (liveGraph.nodes.has(newId)) {
+        newId = `${parent === "knowledge" ? "" : parent + "."}${slug}_${counter++}`;
+      }
+
+      layer1Overrides.custom_nodes.push({
+        id: newId,
+        title,
+        parentId: parent,
+        prereqIds: prereq ? [prereq] : [],
+        intro: intro || "",
+        sources: []
+      });
+
+      ensureNodeState(parent).expandedOnMap = true;
+      layer2State.navigation.HEAD = newId;
+      layer2State.navigation.detourStack = [];
+
+      persistAll();
+      closeModal();
+      renderAll();
+      locateNode(newId, 0.98);
+      showToast(`Created topic "${title}".`);
+    });
+  }
+
+  /* =========================================================================
+   * 9. LLM EXPANSION SLICER
    * ========================================================================= */
   function buildLlmExpansionPrompt(node) {
     const existingChildren = node.childrenIds.map(cId => liveGraph.nodes.get(cId)?.title || cId);
     const catalog = [...liveGraph.nodes.values()]
       .filter(n => n.id !== "knowledge" && n.parentId !== node.id)
-      .slice(0, 60)
+      .slice(0, 50)
       .map(n => `${n.id}: ${n.title}`);
 
     return [
-      `Extend this Polymathy Compound DAG topic with deeper subtopics and cross-branch prerequisites.`,
+      `Extend this Polymathy knowledge topic with deeper subtopics and cross-branch prerequisites.`,
       ``,
-      `TARGET NODE:`,
+      `TARGET TOPIC:`,
       `- id: ${node.id}`,
       `- title: ${node.title}`,
-      `- lineage: ${formatTruncatedDirectory(node.id, liveGraph.nodes)}`,
-      `- intro: ${node.intro || "(empty)"}`,
+      `- path: ${formatTruncatedDirectory(node.id, liveGraph.nodes)}`,
+      `- summary: ${node.intro || "(empty)"}`,
       ``,
       `EXISTING DIRECT SUBTOPICS (do not duplicate):`,
       existingChildren.length ? existingChildren.map(t => `- ${t}`).join("\n") : "- (none)",
       ``,
-      `CANONICAL NODE DIRECTORY (snap cross-branch prereqIds to these IDs when applicable):`,
+      `EXISTING GRAPH TOPICS (use these IDs for cross-branch prerequisites when applicable):`,
       catalog.join("\n"),
       ``,
-      `OUTPUT STRICT JSON ONLY matching this Layer 0 Delta Patch schema:`,
+      `OUTPUT STRICT JSON ONLY matching this Delta Patch schema:`,
       `{`,
-      `  "patch_id": "YYYY-MM-DD_${node.id.replace(/\./g, "_")}_ext",`,
+      `  "patch_id": "${node.id.replace(/\./g, "_")}_expansion",`,
       `  "extensions": [`,
       `    { "targetId": "${node.id}", "addPrereqs": [], "addSources": [{ "id": "src_...", "title": "..." }] }`,
       `  ],`,
       `  "nodes": [`,
       `    {`,
-      `      "id": "${node.id}.<slug>",`,
-      `      "title": "...",`,
+      `      "id": "${node.id}.<subtopic_slug>",`,
+      `      "title": "Subtopic Name",`,
       `      "parentId": "${node.id}",`,
-      `      "prereqIds": ["..."],`,
-      `      "intro": "Concise technical summary with $LaTeX$ if needed.",`,
-      `      "sources": [{ "id": "src_...", "title": "..." }]`,
+      `      "prereqIds": [],`,
+      `      "intro": "Concise technical summary ($LaTeX$ supported).",`,
+      `      "sources": []`,
       `    }`,
       `  ]`,
       `}`
@@ -3512,14 +3651,15 @@ code.inline {
         await navigator.clipboard.writeText(promptText);
         copied = true;
       }
-    } catch { /* Fallback to modal preview */ }
+    } catch { /* Fallback */ }
 
     if (copied) {
-      showToast("LLM Expansion Context copied to clipboard!");
+      showToast("AI expansion prompt copied to clipboard!");
     } else {
-      openModal("LLM EXPANSION CONTEXT SLICE", `
+      openModal("AI EXPANSION PROMPT", `
         <div class="box">
-          <div class="box-header"><span class="box-title">COPY THIS ~300-TOKEN PROMPT</span><span class="tag">[SLICE]</span></div>
+          <div class="box-header"><span class="box-title">COPY THIS PROMPT INTO ANY AI</span><span class="tag ready">Prompt</span></div>
+          <div class="section-hint">Paste this into ChatGPT, Claude, or Gemini to automatically generate subtopics. Then import the output via <strong>+ Import</strong> in the topbar.</div>
           <textarea rows="18" style="width:100%;font-family:var(--font-mono);font-size:11px;" readonly>${escapeHtml(promptText)}</textarea>
         </div>
       `);
@@ -3527,7 +3667,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 12. MODALS: FRONTIER RADAR, PATCH IMPORTER, LAYER INSPECTOR, ? MANUAL
+   * 10. MODALS: FRONTIER RADAR, IMPORT, STORAGE / BACKUPS, MANUAL
    * ========================================================================= */
   function openModal(title, htmlContent) {
     document.getElementById("modalTitle").textContent = title;
@@ -3541,88 +3681,38 @@ code.inline {
     document.getElementById("modalBackdrop").classList.remove("open");
   }
 
-  /* 12.1 Frontier Radar (Section 8) */
-  function computeUndirectedDistancesToMain(graph) {
-    const mainId = graph.navigation.MAIN;
-    const dist = new Map([[mainId, 0]]);
-    const queue = [mainId];
-    while (queue.length > 0) {
-      const u = queue.shift();
-      const d = dist.get(u);
-      const n = graph.nodes.get(u);
-      if (!n) continue;
-      const neighbors = [];
-      if (n.parentId) neighbors.push(n.parentId);
-      neighbors.push(...n.childrenIds, ...n.prereqIds, ...n.dependentsIds);
-      for (const v of neighbors) {
-        if (!dist.has(v)) {
-          dist.set(v, d + 1);
-          queue.push(v);
-        }
-      }
-    }
-    return dist;
-  }
-
-  function computeTransitiveBlockedDownstream(graph, startId) {
-    // Count how many incomplete nodes have a directed prereq path from startId
-    const visited = new Set();
-    const queue = [startId];
-    let count = 0;
-    while (queue.length > 0) {
-      const u = queue.shift();
-      const n = graph.nodes.get(u);
-      if (!n) continue;
-      for (const depId of n.dependentsIds) {
-        if (!visited.has(depId)) {
-          visited.add(depId);
-          const dep = graph.nodes.get(depId);
-          if (dep && !dep.isBaselineDone) count++;
-          queue.push(depId);
-        }
-      }
-    }
-    return count;
-  }
-
+  /* Frontier Radar */
   function openFrontierRadarModal() {
-    const distToMain = computeUndirectedDistancesToMain(liveGraph);
     const allTopics = [...liveGraph.nodes.values()].filter(n => n.id !== "knowledge");
-
-    // 1) Ready Frontier Queue: baselineDone === false AND all prereqs baselineDone === true
-    const readyQueue = allTopics
-      .filter(n => !n.isBaselineDone && !n.isBlocked)
-      .sort((a, b) => {
-        const da = distToMain.has(a.id) ? distToMain.get(a.id) : 999;
-        const db = distToMain.has(b.id) ? distToMain.get(b.id) : 999;
-        if (da !== db) return da - db;
-        return a.depth - b.depth;
-      });
-
-    // 2) High-Leverage Bottlenecks
+    const readyQueue = allTopics.filter(n => !n.isBaselineDone && !n.isBlocked);
     const bottlenecks = allTopics
       .filter(n => !n.isBaselineDone)
-      .map(n => ({ node: n, blockingCount: computeTransitiveBlockedDownstream(liveGraph, n.id) }))
+      .map(n => {
+        let count = 0;
+        const visited = new Set();
+        const queue = [n.id];
+        while (queue.length > 0) {
+          const u = queue.shift();
+          const node = liveGraph.nodes.get(u);
+          if (!node) continue;
+          for (const depId of node.dependentsIds) {
+            if (!visited.has(depId)) {
+              visited.add(depId);
+              const dep = liveGraph.nodes.get(depId);
+              if (dep && !dep.isBaselineDone) count++;
+              queue.push(depId);
+            }
+          }
+        }
+        return { node: n, blockingCount: count };
+      })
       .filter(x => x.blockingCount > 0)
       .sort((a, b) => b.blockingCount - a.blockingCount);
 
     const readyHtml = readyQueue.slice(0, 18).map(n => `
       <div class="list-row">
         <div class="list-row-left">
-          <span class="tag ${n.isStub ? "stub" : "flag-W"}">${n.isStub ? "[STUB]" : "[READY]"}</span>
-          <div class="list-row-main">
-            <div class="list-row-title">${escapeHtml(n.title)}</div>
-            <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))} · ${Math.round(n.progress * 100)}%</div>
-          </div>
-        </div>
-        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
-      </div>
-    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">All topics have reached baseline mastery!</div>`;
-
-    const bottleHtml = bottlenecks.slice(0, 12).map(({ node: n, blockingCount }) => `
-      <div class="list-row">
-        <div class="list-row-left">
-          <span class="tag flag-X">UNBLOCKS ${blockingCount}</span>
+          <span class="tag ready">Ready to Learn</span>
           <div class="list-row-main">
             <div class="list-row-title">${escapeHtml(n.title)}</div>
             <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))}</div>
@@ -3630,33 +3720,46 @@ code.inline {
         </div>
         <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
       </div>
-    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No downstream bottlenecks remaining.</div>`;
+    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">All prerequisites cleared!</div>`;
 
-    openModal("FRONTIER RADAR // TOPOLOGICAL LEARNING ASSISTANT", `
+    const bottleHtml = bottlenecks.slice(0, 12).map(({ node: n, blockingCount }) => `
+      <div class="list-row">
+        <div class="list-row-left">
+          <span class="tag needed">Unblocks ${blockingCount} topics</span>
+          <div class="list-row-main">
+            <div class="list-row-title">${escapeHtml(n.title)}</div>
+            <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))}</div>
+          </div>
+        </div>
+        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
+      </div>
+    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No blocking bottlenecks remaining.</div>`;
+
+    openModal("FRONTIER RADAR // STUDY ASSISTANT", `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">ACTIVE MAIN DEPENDENCY SUBGRAPH FILTER</span>
-          <span class="tag ${uiSettings.spotlightMain ? "edited" : ""}">${uiSettings.spotlightMain ? "[SPOTLIGHT ON]" : "[OFF]"}</span>
+          <span class="box-title">MAIN GOAL SPOTLIGHT</span>
+          <span class="tag ${uiSettings.spotlightMain ? "edited" : ""}">${uiSettings.spotlightMain ? "Spotlight Active" : "Off"}</span>
         </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
-          <span style="font-size:12px;color:var(--text-muted);">Dim unrelated branches on the map and spotlight only the ancestor chain and prerequisite tree feeding into <strong>${escapeHtml(liveGraph.nodes.get(liveGraph.navigation.MAIN)?.title || "")}</strong>.</span>
-          <button type="button" class="accent-btn" id="btnToggleSpotlightModal">${uiSettings.spotlightMain ? "Disable Spotlight" : "Spotlight MAIN Subgraph"}</button>
-        </div>
+        <div class="section-hint">Dim unrelated branches on the map to spotlight only the pathway leading into your main study goal: <strong>${escapeHtml(liveGraph.nodes.get(liveGraph.navigation.MAIN)?.title || "")}</strong>.</div>
+        <button type="button" class="accent-btn" id="btnToggleSpotlightModal">${uiSettings.spotlightMain ? "Turn Off Spotlight" : "Spotlight Main Goal Path"}</button>
       </div>
 
       <div class="box">
         <div class="box-header">
-          <span class="box-title">1. READY FRONTIER QUEUE (UNLOCKED NEXT STEPS)</span>
-          <span class="tag flag-C">${readyQueue.length} Unlocked</span>
+          <span class="box-title">1. Ready to Study (Prerequisites Met)</span>
+          <span class="tag done">${readyQueue.length} Ready</span>
         </div>
+        <div class="section-hint">Topics that are unlocked right now. You have all prerequisite foundations ready!</div>
         <div class="item-list">${readyHtml}</div>
       </div>
 
       <div class="box">
         <div class="box-header">
-          <span class="box-title">2. HIGH-LEVERAGE BOTTLENECKS</span>
-          <span class="tag flag-X">${bottlenecks.length} Blocking</span>
+          <span class="box-title">2. High-Leverage Bottlenecks</span>
+          <span class="tag needed">${bottlenecks.length} Key Topics</span>
         </div>
+        <div class="section-hint">Topics that unlock the largest number of downstream subjects once completed.</div>
         <div class="item-list">${bottleHtml}</div>
       </div>
     `);
@@ -3676,27 +3779,27 @@ code.inline {
         closeModal();
         ensureAncestorsExpanded(id);
         renderAll();
-        locateNode(id, 0.96);
+        locateNode(id, 0.98);
       });
     });
   }
 
-  /* 12.2 + Import Patch Modal (Section 7.4) */
+  /* Import Patch Modal */
   function openImportPatchModal() {
-    openModal("+ IMPORT LAYER 0 DELTA PATCH", `
+    openModal("+ IMPORT CURRICULUM PATCH", `
       <div class="box">
         <div class="box-header">
           <span class="box-title">PASTE JSON OR UPLOAD .JSON PATCH FILE</span>
-          <span class="tag">[SCHEMA + DFS VALIDATED]</span>
+          <span class="tag ready">Schema Validated</span>
         </div>
+        <div class="section-hint">Import AI-generated curriculum expansions or topic bundles. Validates acyclicity to prevent dependency loops.</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
           <input type="file" id="patchFileInput" accept=".json,application/json">
-          <button type="button" class="btn-xs" id="btnLoadSamplePatch">Load Sample Patch</button>
         </div>
         <textarea id="patchJsonInput" rows="12" style="width:100%;font-family:var(--font-mono);font-size:11px;" placeholder='{ "patch_id": "...", "extensions": [], "nodes": [] }'></textarea>
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
-          <button type="button" id="btnPreviewPatch">Validate & Preview</button>
-          <button type="button" class="primary" id="btnMergePatch">Merge into Layer 0</button>
+          <button type="button" id="btnPreviewPatch">Validate</button>
+          <button type="button" class="primary" id="btnMergePatch">Import & Merge</button>
         </div>
         <div id="patchDiagOutput"></div>
       </div>
@@ -3710,47 +3813,17 @@ code.inline {
       reader.readAsText(file);
     });
 
-    document.getElementById("btnLoadSamplePatch").addEventListener("click", () => {
-      document.getElementById("patchJsonInput").value = JSON.stringify({
-        patch_id: "002_topology_hydration",
-        extensions: [
-          {
-            targetId: "math.graph_theory.planar_graphs",
-            addSources: [{ id: "src_kuratowski_notes", title: "Kuratowski & Wagner Minor Notes" }]
-          }
-        ],
-        nodes: [
-          {
-            id: "math.topology",
-            title: "Topology",
-            parentId: "math",
-            prereqIds: [],
-            intro: "Continuous deformations, open sets, compactness, and connectedness.",
-            sources: [{ id: "src_munkres", title: "Munkres — Topology" }]
-          },
-          {
-            id: "math.topology.point_set_basics",
-            title: "Point-Set Topology Basics",
-            parentId: "math.topology",
-            prereqIds: [],
-            intro: "Metric & topological spaces, Hausdorff separation, and Jordan Curve Theorem.",
-            sources: [{ id: "src_munkres_ch2", title: "Munkres Ch. 2–3" }]
-          }
-        ]
-      }, null, 2);
-    });
-
     function parseAndValidatePatch() {
       const diag = document.getElementById("patchDiagOutput");
       let parsed;
       try {
         parsed = JSON.parse(document.getElementById("patchJsonInput").value);
       } catch (err) {
-        diag.innerHTML = `<div class="diag-warn">JSON Parse Error: ${escapeHtml(err.message)}</div>`;
+        diag.innerHTML = `<div class="diag-warn">JSON Syntax Error: ${escapeHtml(err.message)}</div>`;
         return null;
       }
       if (!parsed || typeof parsed !== "object" || (!Array.isArray(parsed.nodes) && !Array.isArray(parsed.extensions))) {
-        diag.innerHTML = `<div class="diag-warn">Schema Error: Patch must contain a "nodes" array and/or "extensions" array.</div>`;
+        diag.innerHTML = `<div class="diag-warn">Invalid Format: Must include "nodes" or "extensions" array.</div>`;
         return null;
       }
 
@@ -3758,15 +3831,12 @@ code.inline {
       const { map: mergedMap } = foldLayer0And1(testPatches, layer1Overrides);
       const cycle = validateFullDagAcyclicity(mergedMap);
       if (cycle) {
-        diag.innerHTML = `<div class="diag-warn">Acyclicity Violation: Patch introduces a prerequisite cycle: ${escapeHtml(cycle.join(" → "))}</div>`;
+        diag.innerHTML = `<div class="diag-warn">Acyclicity Error: Introduces dependency loop: ${escapeHtml(cycle.join(" → "))}</div>`;
         return null;
       }
 
       const newNodes = (parsed.nodes || []).filter(n => !liveGraph.nodes.has(n.id));
-      const hydratedStubs = (parsed.nodes || []).filter(n => liveGraph.nodes.get(n.id)?.isStub);
-      const extCount = (parsed.extensions || []).length;
-
-      diag.innerHTML = `<div class="diag-info">VALID DAG PATCH: +${newNodes.length} new nodes, ${hydratedStubs.length} stub(s) hydrated, ${extCount} extension(s). Zero prerequisite cycles detected.</div>`;
+      diag.innerHTML = `<div class="diag-info">✓ Valid curriculum patch! +${newNodes.length} new topics detected with zero cycles.</div>`;
       return parsed;
     }
 
@@ -3774,89 +3844,60 @@ code.inline {
     document.getElementById("btnMergePatch").addEventListener("click", () => {
       const parsed = parseAndValidatePatch();
       if (!parsed) return;
-      const existingIdx = parsed.patch_id ? layer0Patches.findIndex(p => p.patch_id === parsed.patch_id) : -1;
-      if (existingIdx >= 0) {
-        layer0Patches[existingIdx] = parsed;
-      } else {
-        layer0Patches.push(parsed);
-      }
+      layer0Patches.push(parsed);
       persistAll();
       renderAll();
       closeModal();
-      showToast(`Merged patch "${parsed.patch_id || "custom"}" into Layer 0.`);
+      showToast(`Imported patch "${parsed.patch_id || "custom"}".`);
     });
   }
 
-  /* 12.3 Layer Inspector & Squash / Backup Modal */
+  /* Storage & Backups Modal */
   function openLayerInspectorModal() {
     const fieldCount = Object.keys(layer1Overrides.field_overrides || {}).length;
     const edgeCount = Object.keys(layer1Overrides.edge_deltas || {}).length;
     const customCount = (layer1Overrides.custom_nodes || []).length;
     const tombCount = (layer1Overrides.tombstones || []).length;
 
-    const patchRows = layer0Patches.map((p, idx) => `
-      <div class="list-row">
-        <div class="list-row-left">
-          <span class="tag">[L0 #${idx + 1}]</span>
-          <div class="list-row-main">
-            <div class="list-row-title">${escapeHtml(p.patch_id || `patch_${idx + 1}`)}</div>
-            <div class="list-row-sub">${(p.nodes || []).length} nodes · ${(p.extensions || []).length} extensions</div>
-          </div>
-        </div>
-      </div>
-    `).join("");
-
     const overriddenRows = [...liveGraph.overriddenIds].map(id => {
       const n = liveGraph.nodes.get(id);
       return `
         <div class="list-row">
           <div class="list-row-left">
-            <span class="tag edited">[L1]</span>
+            <span class="tag edited">Modified</span>
             <div class="list-row-main">
               <div class="list-row-title">${escapeHtml(n ? n.title : id)}</div>
               <div class="list-row-sub">${escapeHtml(id)}</div>
             </div>
           </div>
-          <button type="button" class="btn-xs" data-revert-override="${escapeHtml(id)}">Revert to Layer 0</button>
+          <button type="button" class="btn-xs" data-revert-override="${escapeHtml(id)}">Reset to Default</button>
         </div>
       `;
-    }).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No active Layer 1 UI overrides.</div>`;
+    }).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No modified topics. All topics are on default curriculum settings.</div>`;
 
-    openModal("LAYER INSPECTOR // 3-LAYER OVERLAYFS", `
+    openModal("STORAGE, EDITS & BACKUPS", `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">LAYER 0 — APPEND-ONLY CURRICULUM PATCHES</span>
-          <span class="tag">${layer0Patches.length} Patches</span>
+          <span class="box-title">YOUR LOCAL EDITS</span>
+          <span class="tag edited">${customCount} new topics · ${fieldCount} renamed · ${edgeCount} edge edits · ${tombCount} deleted</span>
         </div>
-        <div class="item-list">${patchRows}</div>
-      </div>
-
-      <div class="box">
-        <div class="box-header">
-          <span class="box-title">LAYER 1 — USER UI OVERRIDES (2P-SET DELTAS)</span>
-          <span class="tag edited">${customCount} custom · ${fieldCount} fields · ${edgeCount} edges · ${tombCount} tombstones</span>
-        </div>
+        <div class="section-hint">All edits you make in the UI are safely stored locally in your browser.</div>
         <div class="item-list" style="margin-bottom:10px;">${overriddenRows}</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button type="button" class="accent-btn" id="btnSquashOverrides" ${liveGraph.overriddenIds.size === 0 && tombCount === 0 ? "disabled" : ""}>Squash Layer 1 → Layer 0 Patch</button>
-          <button type="button" class="danger-btn" id="btnClearLayer1">Clear All Layer 1 Overrides</button>
+          <button type="button" class="accent-btn" id="btnExportBundle">Download Full Backup Bundle (.json)</button>
+          <button type="button" class="danger-btn" id="btnClearLayer1">Discard All Local Edits</button>
         </div>
       </div>
 
       <div class="box">
         <div class="box-header">
-          <span class="box-title">BACKUP, PORTABILITY & RECOVERY</span>
-          <span class="tag">[JSON]</span>
+          <span class="box-title">RESTORE BACKUP</span>
+          <span class="tag ready">JSON</span>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-          <button type="button" id="btnExportBundle">Export Full Bundle (.json)</button>
-          <button type="button" id="btnExportState">Export Layer 2 state.json</button>
-          <button type="button" id="btnExportOverrides">Export Layer 1 user_overrides.json</button>
-          <button type="button" class="danger-btn" id="btnResetDemo">Reset to Seed Demo</button>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Restore Full Bundle:</span>
-          <input type="file" id="importBundleInput" accept=".json,application/json">
+        <div class="section-hint">Select a backup file (.json) to restore your topics and progress:</div>
+        <input type="file" id="importBundleInput" accept=".json,application/json">
+        <div style="margin-top:10px;">
+          <button type="button" class="danger-btn" id="btnResetDemo">Reset Graph to Initial Starter Demo</button>
         </div>
       </div>
     `);
@@ -3871,64 +3912,12 @@ code.inline {
         persistAll();
         renderAll();
         openLayerInspectorModal();
-        showToast(`Reverted "${id}" to Layer 0 base.`);
+        showToast(`Reset "${id}" to default.`);
       });
     });
 
-    document.getElementById("btnSquashOverrides").addEventListener("click", () => {
-      const squashedNum = String(layer0Patches.length + 1).padStart(3, "0");
-      const squashedPatch = {
-        patch_id: `${squashedNum}_user_squashed`,
-        extensions: [],
-        nodes: []
-      };
-      // Include custom nodes and overridden nodes cleanly
-      for (const cn of layer1Overrides.custom_nodes) {
-        const resolved = liveGraph.nodes.get(cn.id);
-        if (resolved) {
-          squashedPatch.nodes.push({
-            id: resolved.id,
-            title: resolved.title,
-            parentId: resolved.parentId,
-            prereqIds: resolved.prereqIds,
-            intro: resolved.intro,
-            sources: resolved.sources
-          });
-        }
-      }
-      for (const id of Object.keys(layer1Overrides.field_overrides)) {
-        const resolved = liveGraph.nodes.get(id);
-        if (resolved && !squashedPatch.nodes.some(n => n.id === id)) {
-          squashedPatch.nodes.push({
-            id: resolved.id,
-            title: resolved.title,
-            parentId: resolved.parentId,
-            prereqIds: resolved.prereqIds,
-            intro: resolved.intro,
-            sources: resolved.sources
-          });
-        }
-      }
-      for (const [id, delta] of Object.entries(layer1Overrides.edge_deltas)) {
-        if (!squashedPatch.nodes.some(n => n.id === id)) {
-          squashedPatch.extensions.push({
-            targetId: id,
-            addPrereqs: delta.addPrereqs || [],
-            addSources: delta.addSources || []
-          });
-        }
-      }
-      layer0Patches.push(squashedPatch);
-      layer1Overrides = EMPTY_OVERRIDES();
-      persistAll();
-      renderAll();
-      downloadJson(`${squashedPatch.patch_id}.json`, squashedPatch);
-      openLayerInspectorModal();
-      showToast(`Squashed Layer 1 into ${squashedPatch.patch_id}.json`);
-    });
-
     document.getElementById("btnClearLayer1").addEventListener("click", () => {
-      if (!confirm("Discard all Layer 1 UI overrides?")) return;
+      if (!confirm("Are you sure you want to discard all local edits and custom topics?")) return;
       layer1Overrides = EMPTY_OVERRIDES();
       persistAll();
       renderAll();
@@ -3942,10 +3931,9 @@ code.inline {
         state: layer2State
       });
     });
-    document.getElementById("btnExportState").addEventListener("click", () => downloadJson("state.json", layer2State));
-    document.getElementById("btnExportOverrides").addEventListener("click", () => downloadJson("user_overrides.json", layer1Overrides));
+
     document.getElementById("btnResetDemo").addEventListener("click", () => {
-      if (!confirm("Reset patches, overrides, and progress back to the initial Seed Demo?")) return;
+      if (!confirm("Reset all topics, progress, and edits back to initial demo?")) return;
       layer0Patches = [structuredClone(SEED_PATCH_001)];
       layer1Overrides = EMPTY_OVERRIDES();
       layer2State = structuredClone(SEED_STATE);
@@ -3954,7 +3942,7 @@ code.inline {
       renderAll();
       closeModal();
       fitVisibleGraph();
-      showToast("Reset to Seed Demo.");
+      showToast("Reset to initial starter demo.");
     });
 
     document.getElementById("importBundleInput").addEventListener("change", (e) => {
@@ -3971,9 +3959,9 @@ code.inline {
           renderAll();
           closeModal();
           fitVisibleGraph();
-          showToast("Backup bundle restored.");
+          showToast("Backup restored successfully.");
         } catch (err) {
-          alert("Invalid backup JSON: " + err.message);
+          alert("Invalid backup file: " + err.message);
         }
       };
       reader.readAsText(file);
@@ -3992,28 +3980,27 @@ code.inline {
     URL.revokeObjectURL(url);
   }
 
-  /* 12.4 In-App [? Manual] Tabbed Modal (Section 10.3) */
+  /* Help & Guide Modal */
   function openManualModal() {
-    openModal("POLYMATHY // FIELD MANUAL", `
+    openModal("POLYMATHY // FIELD GUIDE & LEGEND", `
       <div class="manual-tabs">
         <button type="button" class="manual-tab-btn active" data-mtab="tab1">1. Map Legend</button>
-        <button type="button" class="manual-tab-btn" data-mtab="tab2">2. Detours & Locators</button>
-        <button type="button" class="manual-tab-btn" data-mtab="tab3">3. LLM Patches</button>
-        <button type="button" class="manual-tab-btn" data-mtab="tab4">4. Shortcuts</button>
+        <button type="button" class="manual-tab-btn" data-mtab="tab2">2. How to Study</button>
+        <button type="button" class="manual-tab-btn" data-mtab="tab3">3. Controls & Gestures</button>
       </div>
 
       <div class="manual-tab-panel active" id="tab1">
         <div class="box">
-          <div class="box-header"><span class="box-title">COMPOUND DAG VISUAL GRAMMAR</span><span class="tag">[G = (V, E_tree, E_prereq, S)]</span></div>
+          <div class="box-header"><span class="box-title">MAP VISUAL ELEMENTS</span><span class="tag ready">Legend</span></div>
           <table class="spec-table">
-            <thead><tr><th>Visual Element</th><th>Meaning & Behavior</th></tr></thead>
+            <thead><tr><th>Visual Symbol</th><th>Meaning</th></tr></thead>
             <tbody>
-              <tr><td><strong>Origin Dot (o)</strong></td><td>Root <code class="inline">Knowledge</code> vertex at $(0,0)$. Click domains to progressively multifurcate.</td></tr>
-              <tr><td><strong>Hollow Conduit + Crossbar</strong></td><td>Hierarchy containment edge ($E_{\\text{tree}}$). Inner fill tracks completion ratio $r_v$; perpendicular crossbar marks achievement frontier.</td></tr>
-              <tr><td><strong>Double-Bar Gate</strong></td><td>Stamped on a conduit when <code class="inline">baselineDone = true</code> and deeper subtopics are added later, preserving downstream unlocks.</td></tr>
-              <tr><td><strong><span class="tag flag-X">SOLID RED ARROW</span></strong></td><td>Incomplete cross-branch prerequisite ($p.\\text{baselineDone} = \\text{false}$). Click arrow or directory pill to detour.</td></tr>
-              <tr><td><strong><span class="tag flag-C">DOTTED GREEN ARROW</span></strong></td><td>Completed prerequisite ($p.\\text{baselineDone} = \\text{true}$). Latched permanently once baseline is marked complete.</td></tr>
-              <tr><td><strong><span class="tag stub">[STUB NODE]</span></strong></td><td>Auto-hydrated placeholder created by a forward cross-branch reference; hydrates cleanly when a patch defines it.</td></tr>
+              <tr><td><strong>Knowledge (o)</strong></td><td>Origin root of the graph. All disciplines branch outward from here.</td></tr>
+              <tr><td><strong>Hollow Conduit + Crossbar</strong></td><td>Connects parent topics to subtopics. Fills as you complete material; crossbar marks achievement frontier.</td></tr>
+              <tr><td><strong>Red Arrow (Solid)</strong></td><td>Unmet prerequisite needed before this topic can be fully understood. Click arrow to jump directly to it!</td></tr>
+              <tr><td><strong>Green Arrow (Dotted)</strong></td><td>Completed prerequisite foundation.</td></tr>
+              <tr><td><strong>Blue MAIN Beacon</strong></td><td>Your primary, long-term study objective.</td></tr>
+              <tr><td><strong>Purple HEAD Reticle</strong></td><td>The topic currently open in the side panel for study or editing.</td></tr>
             </tbody>
           </table>
         </div>
@@ -4021,44 +4008,27 @@ code.inline {
 
       <div class="manual-tab-panel" id="tab2">
         <div class="box">
-          <div class="box-header"><span class="box-title">GIT-STYLE LOCATORS & DETOUR CALL STACK</span><span class="tag head-tag">[MAIN vs HEAD]</span></div>
-          <p style="margin-bottom:8px;"><strong>MAIN</strong> (Blue Beacon) anchors your primary study objective. <strong>HEAD</strong> (Purple Reticle) tracks the topic currently inspected in the side panel.</p>
-          <ul style="padding-left:18px;margin-bottom:8px;">
-            <li>Click any solid/dotted prerequisite arrow or <strong>[Detour →]</strong> button to glide smoothly to that prerequisite and push your previous <strong>HEAD</strong> onto the <strong>Detour Call Stack</strong>.</li>
-            <li>Use <strong>[← Get Back]</strong> (or <code class="inline">Esc</code>) to pop the stack and glide back, or click any ancestor frame in the breadcrumb chain.</li>
-            <li>Click <strong>[Checkout HEAD as MAIN]</strong> to re-anchor your primary goal to your current inspection node.</li>
-          </ul>
+          <div class="box-header"><span class="box-title">4-STEP STUDY WORKFLOW</span><span class="tag ready">Workflow</span></div>
+          <ol style="padding-left:18px;line-height:1.7;">
+            <li><strong>Pick a Goal:</strong> Click any topic on the map and click <strong>[Set as Main Target]</strong> to anchor your beacon.</li>
+            <li><strong>Check Prerequisites:</strong> Check the Prerequisites card. If red, click <strong>Detour →</strong> to jump to prerequisites and push your origin to the Detour History stack. Use <strong>[← Back]</strong> anytime to return.</li>
+            <li><strong>Learn & Check Off:</strong> Read the overview, study attached textbooks or video links, and check off component subtopics.</li>
+            <li><strong>Mark Complete:</strong> Click <strong>[Mark Topic Completed]</strong> to permanently unlock all future topics that depend on it!</li>
+          </ol>
         </div>
       </div>
 
       <div class="manual-tab-panel" id="tab3">
         <div class="box">
-          <div class="box-header"><span class="box-title">3-LAYER OVERLAYFS & LLM EXPANSION WORKFLOW</span><span class="tag">[L0 ⊕ L1 ⋈ L2]</span></div>
-          <ol style="padding-left:18px;margin-bottom:10px;">
-            <li>Select any topic and click <strong>[Copy LLM Expansion Context]</strong> in Module 5 to copy a token-minimal slice with canonical IDs.</li>
-            <li>Paste into any LLM to generate a strict Layer 0 Delta Patch JSON.</li>
-            <li>Click <strong>[+ Import Patch]</strong> in the top bar to validate acyclicity (DFS) and merge without overwriting your progress (<code class="inline">state</code>) or UI edits (<code class="inline">user_overrides</code>).</li>
-          </ol>
-          <pre class="code-block">{
-  "patch_id": "2026-11-12_topic_ext",
-  "extensions": [{ "targetId": "math.graph_theory", "addPrereqs": [], "addSources": [] }],
-  "nodes": [{ "id": "math.graph_theory.colorings", "title": "Graph Colorings", "parentId": "math.graph_theory", "prereqIds": ["math.graph_theory.planar_graphs"], "intro": "...", "sources": [] }]
-}</pre>
-        </div>
-      </div>
-
-      <div class="manual-tab-panel" id="tab4">
-        <div class="box">
-          <div class="box-header"><span class="box-title">KEYBOARD & CANVAS SHORTCUTS</span><span class="tag">[HOTKEYS]</span></div>
+          <div class="box-header"><span class="box-title">CONTROLS & SHORTCUTS</span><span class="tag ready">Shortcuts</span></div>
           <table class="spec-table">
-            <thead><tr><th>Input</th><th>Action</th></tr></thead>
+            <thead><tr><th>Action</th><th>How To</th></tr></thead>
             <tbody>
-              <tr><td><code class="inline">Drag Canvas</code> or <code class="inline">Space + Drag</code></td><td>Pan infinite 2D SVG canvas</td></tr>
-              <tr><td><code class="inline">Mouse Wheel</code></td><td>Zoom anchored at cursor</td></tr>
-              <tr><td><code class="inline">M</code></td><td>Smoothly locate <strong>MAIN</strong> beacon</td></tr>
-              <tr><td><code class="inline">H</code></td><td>Smoothly locate <strong>HEAD</strong> reticle</td></tr>
-              <tr><td><code class="inline">Esc</code></td><td>Close active modal, or pop top frame from Detour Stack</td></tr>
-              <tr><td><code class="inline">Drag Minimap</code></td><td>Jump viewport camera directly from minimap</td></tr>
+              <tr><td><strong>Pan / Scroll Canvas</strong></td><td>Mouse drag on background • 2-finger swipe on trackpad • 1-finger swipe on touch screens • On-screen arrow buttons ◀ ▲ ▼ ▶</td></tr>
+              <tr><td><strong>Zoom In / Out</strong></td><td>Mouse wheel (or Ctrl+Scroll) • Pinch gesture with 2 fingers on touch screens / trackpads • HUD [+][-] buttons</td></tr>
+              <tr><td><strong>Jump to Main Goal</strong></td><td>Press key <code class="inline">M</code> or click <strong>[Locate]</strong> in topbar</td></tr>
+              <tr><td><strong>Jump to Inspected Topic</strong></td><td>Press key <code class="inline">H</code> or click <strong>[Locate]</strong> in topbar</td></tr>
+              <tr><td><strong>Return from Detour / Close Modal</strong></td><td>Press key <code class="inline">Esc</code> or click <strong>[← Back]</strong></td></tr>
             </tbody>
           </table>
         </div>
@@ -4078,56 +4048,122 @@ code.inline {
   }
 
   /* =========================================================================
-   * 13. CANVAS PAN / ZOOM, MINIMAP DRAG, SPLITTER & HOTKEYS
+   * 11. CANVAS INTERACTION ENGINE (Mouse Pan, Wheel Scroll/Zoom, Touch Gestures)
    * ========================================================================= */
   function setupInteractions() {
     const svg = document.getElementById("dagSvg");
     const canvasPane = document.getElementById("canvasPane");
-    let isPanning = false;
-    let panStart = { x: 0, y: 0, camX: 0, camY: 0 };
-    let spaceHeld = false;
 
+    let isMousePanning = false;
+    let panStart = { x: 0, y: 0, camX: 0, camY: 0 };
+    let dragDistance = 0;
+
+    /* Mouse Panning */
     svg.addEventListener("mousedown", (e) => {
       if (e.button !== 0 && e.button !== 1) return;
-      if (e.target.closest(".svg-node") || e.target.closest(".prereq-hit") || e.target.closest(".svg-expand-badge")) {
-        if (!spaceHeld) return;
-      }
       cancelCameraAnim();
-      isPanning = true;
+      isMousePanning = true;
       svg.classList.add("panning");
+      dragDistance = 0;
       panStart = { x: e.clientX, y: e.clientY, camX: camera.x, camY: camera.y };
     });
 
     window.addEventListener("mousemove", (e) => {
-      if (!isPanning) return;
-      camera.x = panStart.camX + (e.clientX - panStart.x);
-      camera.y = panStart.camY + (e.clientY - panStart.y);
+      if (!isMousePanning) return;
+      const dx = e.clientX - panStart.x;
+      const dy = e.clientY - panStart.y;
+      dragDistance = Math.hypot(dx, dy);
+      camera.x = panStart.camX + dx;
+      camera.y = panStart.camY + dy;
       applyWorldTransform();
     });
 
     window.addEventListener("mouseup", () => {
-      if (!isPanning) return;
-      isPanning = false;
+      if (!isMousePanning) return;
+      isMousePanning = false;
       svg.classList.remove("panning");
     });
 
+    /* Wheel Handling: Natural Canvas Scrolling vs Zooming */
     canvasPane.addEventListener("wheel", (e) => {
       e.preventDefault();
       cancelCameraAnim();
-      const rect = canvasPane.getBoundingClientRect();
-      const mx = e.clientX - rect.left - rect.width / 2;
-      const my = e.clientY - rect.top - rect.height / 2;
-      const worldX = (mx - camera.x) / camera.k;
-      const worldY = (my - camera.y) / camera.k;
-      const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
-      const nextK = Math.max(0.22, Math.min(2.6, camera.k * factor));
-      camera.k = nextK;
-      camera.x = mx - worldX * nextK;
-      camera.y = my - worldY * nextK;
+
+      if (e.ctrlKey || e.metaKey || uiSettings.wheelMode === "zoom") {
+        // Zoom anchored at cursor
+        const rect = canvasPane.getBoundingClientRect();
+        const mx = e.clientX - rect.left - rect.width / 2;
+        const my = e.clientY - rect.top - rect.height / 2;
+        const worldX = (mx - camera.x) / camera.k;
+        const worldY = (my - camera.y) / camera.k;
+        const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+        const nextK = Math.max(0.2, Math.min(2.8, camera.k * factor));
+        camera.k = nextK;
+        camera.x = mx - worldX * nextK;
+        camera.y = my - worldY * nextK;
+      } else {
+        // Natural Pan / Scroll by wheel / 2-finger trackpad delta
+        camera.x -= e.deltaX;
+        camera.y -= e.deltaY;
+      }
       applyWorldTransform();
     }, { passive: false });
 
-    // Minimap Drag-to-Pan
+    /* Native Multi-Touch Handling (1-finger Pan, 2-finger Pinch Zoom) */
+    let touchState = {
+      active: false,
+      mode: null,
+      startX: 0,
+      startY: 0,
+      camStartX: 0,
+      camStartY: 0,
+      startDist: 0,
+      startK: 1
+    };
+
+    canvasPane.addEventListener("touchstart", (e) => {
+      cancelCameraAnim();
+      if (e.touches.length === 1) {
+        touchState.active = true;
+        touchState.mode = "pan";
+        touchState.startX = e.touches[0].clientX;
+        touchState.startY = e.touches[0].clientY;
+        touchState.camStartX = camera.x;
+        touchState.camStartY = camera.y;
+      } else if (e.touches.length >= 2) {
+        touchState.active = true;
+        touchState.mode = "pinch";
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        touchState.startDist = Math.hypot(dx, dy) || 1;
+        touchState.startK = camera.k;
+      }
+    }, { passive: true });
+
+    canvasPane.addEventListener("touchmove", (e) => {
+      if (!touchState.active) return;
+      if (touchState.mode === "pan" && e.touches.length === 1) {
+        const dx = e.touches[0].clientX - touchState.startX;
+        const dy = e.touches[0].clientY - touchState.startY;
+        camera.x = touchState.camStartX + dx;
+        camera.y = touchState.camStartY + dy;
+        applyWorldTransform();
+      } else if (touchState.mode === "pinch" && e.touches.length >= 2) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.hypot(dx, dy) || 1;
+        const scale = dist / touchState.startDist;
+        camera.k = Math.max(0.2, Math.min(2.8, touchState.startK * scale));
+        applyWorldTransform();
+      }
+    }, { passive: true });
+
+    canvasPane.addEventListener("touchend", () => {
+      touchState.active = false;
+      touchState.mode = null;
+    });
+
+    /* Minimap Drag & Toggle */
     const miniSvg = document.getElementById("minimapSvg");
     let miniDragging = false;
     function panFromMinimapEvent(e) {
@@ -4145,13 +4181,23 @@ code.inline {
     window.addEventListener("mousemove", (e) => { if (miniDragging) panFromMinimapEvent(e); });
     window.addEventListener("mouseup", () => { miniDragging = false; });
 
-    // Resizable Splitter
+    document.getElementById("btnToggleMinimap").addEventListener("click", () => {
+      uiSettings.minimapMinimized = !uiSettings.minimapMinimized;
+      document.getElementById("minimapWrap").classList.toggle("minimized", uiSettings.minimapMinimized);
+      document.getElementById("btnToggleMinimap").textContent = uiSettings.minimapMinimized ? "+" : "−";
+      persistAll();
+    });
+    if (uiSettings.minimapMinimized) {
+      document.getElementById("minimapWrap").classList.add("minimized");
+      document.getElementById("btnToggleMinimap").textContent = "+";
+    }
+
+    /* Resizable Splitter */
     const splitter = document.getElementById("splitter");
     const sidePane = document.getElementById("sidePane");
-    if (uiSettings.sidePaneWidth) {
-      sidePane.style.width = uiSettings.sidePaneWidth + "px";
-    }
+    if (uiSettings.sidePaneWidth) sidePane.style.width = uiSettings.sidePaneWidth + "px";
     let splitDragging = false;
+
     splitter.addEventListener("mousedown", () => {
       splitDragging = true;
       splitter.classList.add("dragging");
@@ -4159,7 +4205,7 @@ code.inline {
     window.addEventListener("mousemove", (e) => {
       if (!splitDragging) return;
       const totalW = document.getElementById("workspace").clientWidth;
-      const newSideW = Math.max(320, Math.min(totalW - 340, totalW - e.clientX));
+      const newSideW = Math.max(300, Math.min(totalW - 320, totalW - e.clientX));
       sidePane.style.width = newSideW + "px";
       uiSettings.sidePaneWidth = newSideW;
       applyWorldTransform();
@@ -4171,17 +4217,19 @@ code.inline {
       persistAll();
     });
 
-    // Topbar & HUD Controls
+    /* Topbar Controls */
     document.getElementById("btnLocateMain").addEventListener("click", () => locateNode(liveGraph.navigation.MAIN, 0.98));
     document.getElementById("btnLocateHead").addEventListener("click", () => locateNode(liveGraph.navigation.HEAD, 0.98));
+    document.getElementById("btnNewTopicTop").addEventListener("click", () => openNewTopicModal());
     document.getElementById("btnFloatingGetBack").addEventListener("click", popDetour);
 
     document.getElementById("btnToggleLayout").addEventListener("click", () => {
-      uiSettings.layoutMode = uiSettings.layoutMode === "radial" ? "tree" : "radial";
+      uiSettings.layoutMode = uiSettings.layoutMode === "tree" ? "radial" : "tree";
       persistAll();
       renderAll();
       fitVisibleGraph();
     });
+
     document.getElementById("btnFrontierRadar").addEventListener("click", openFrontierRadarModal);
     document.getElementById("btnImportPatch").addEventListener("click", openImportPatchModal);
     document.getElementById("btnLayerInspector").addEventListener("click", openLayerInspectorModal);
@@ -4191,17 +4239,31 @@ code.inline {
       if (e.target === document.getElementById("modalBackdrop")) closeModal();
     });
 
+    /* HUD Directional Pan Controls */
+    document.getElementById("btnPanLeft").addEventListener("click", () => panCameraBy(130, 0));
+    document.getElementById("btnPanRight").addEventListener("click", () => panCameraBy(-130, 0));
+    document.getElementById("btnPanUp").addEventListener("click", () => panCameraBy(0, 130));
+    document.getElementById("btnPanDown").addEventListener("click", () => panCameraBy(0, -130));
+
     document.getElementById("btnZoomIn").addEventListener("click", () => {
       cancelCameraAnim();
-      camera.k = Math.min(2.6, camera.k * 1.18);
+      camera.k = Math.min(2.8, camera.k * 1.18);
       applyWorldTransform();
     });
     document.getElementById("btnZoomOut").addEventListener("click", () => {
       cancelCameraAnim();
-      camera.k = Math.max(0.22, camera.k / 1.18);
+      camera.k = Math.max(0.2, camera.k / 1.18);
       applyWorldTransform();
     });
     document.getElementById("btnFitMap").addEventListener("click", fitVisibleGraph);
+
+    document.getElementById("btnToggleWheelMode").addEventListener("click", () => {
+      uiSettings.wheelMode = uiSettings.wheelMode === "scroll" ? "zoom" : "scroll";
+      document.getElementById("btnToggleWheelMode").textContent = uiSettings.wheelMode === "scroll" ? "Wheel: Scroll" : "Wheel: Zoom";
+      persistAll();
+    });
+    document.getElementById("btnToggleWheelMode").textContent = uiSettings.wheelMode === "scroll" ? "Wheel: Scroll" : "Wheel: Zoom";
+
     document.getElementById("btnExpandAll").addEventListener("click", () => {
       for (const n of liveGraph.nodes.values()) {
         if (n.childrenIds.length > 0) ensureNodeState(n.id).expandedOnMap = true;
@@ -4224,9 +4286,8 @@ code.inline {
       renderAll();
     });
 
-    // Global Keyboard Shortcuts
+    /* Global Keyboard Hotkeys */
     window.addEventListener("keydown", (e) => {
-      if (e.code === "Space") spaceHeld = true;
       const tag = (document.activeElement?.tagName || "").toLowerCase();
       const inInput = tag === "input" || tag === "textarea" || tag === "select";
       if (e.key === "Escape") {
@@ -4238,33 +4299,24 @@ code.inline {
         return;
       }
       if (inInput) return;
-      if (e.key === "m" || e.key === "M") {
-        locateNode(liveGraph.navigation.MAIN, 0.98);
-      } else if (e.key === "h" || e.key === "H") {
-        locateNode(liveGraph.navigation.HEAD, 0.98);
-      }
+      if (e.key === "m" || e.key === "M") locateNode(liveGraph.navigation.MAIN, 0.98);
+      if (e.key === "h" || e.key === "H") locateNode(liveGraph.navigation.HEAD, 0.98);
     });
-    window.addEventListener("keyup", (e) => {
-      if (e.code === "Space") spaceHeld = false;
-    });
+
     window.addEventListener("resize", applyWorldTransform);
   }
 
   /* =========================================================================
-   * 14. BOOTSTRAP
+   * 12. INITIALIZATION
    * ========================================================================= */
   setupInteractions();
   renderAll();
-  // Gently center HEAD on initial load after layout
+
+  // Focus and fit visible graph nicely on first load
   requestAnimationFrame(() => {
-    const headPos = layoutPositions.get(liveGraph.navigation.HEAD);
-    if (headPos) {
-      camera.k = 0.82;
-      camera.x = -headPos.x * 0.45 * camera.k;
-      camera.y = -headPos.y * 0.45 * camera.k;
-    }
-    applyWorldTransform();
+    fitVisibleGraph();
   });
+
   window.addEventListener("load", () => {
     renderMathInContainer(document.getElementById("sidePane"));
   });
