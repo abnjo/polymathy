@@ -42,9 +42,9 @@ The live graph is materialized via a deterministic three-layer fold:
 
 $$\text{LiveGraph} = \big(\text{fold}(\text{Layer 0}) \oplus \text{fold}(\text{Layer 1})\big) \bowtie \text{Layer 2}$$
 
-### 2.1 Layer 0 — Append-Only Curriculum Patches (`patches/*.json`)
+### 2.1 Layer 0 — Decoupled Base Curriculum (`curriculum.json` / `curriculum.js` & `patches/*.json`)
 
-Never mutated by UI edits. Patches are applied sequentially; `nodes[]` add or idempotently upgrade nodes, while `extensions[]` append prerequisites or sources to existing targets.
+Never mutated by UI edits. The base graph is decoupled from `index.html` into `curriculum.json` (and the `curriculum.js` browser-companion wrapper). Layer 0 patches are applied sequentially; `nodes[]` add or idempotently upgrade nodes, while `extensions[]` append prerequisites or sources to existing targets. When `curriculum.json` is edited on disk and served locally, `index.html` dynamically ingests the new nodes without resetting user progress.
 
 ### 2.2 Layer 1 — User UI Overrides (`user_overrides.json`)
 

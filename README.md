@@ -59,8 +59,16 @@ No build tools, Node.js, or `npm install` are required.
 
 ---
 
-## Full UI Editing Capabilities
+## Full UI Editing & File Architecture
 
+### Decoupled Graph File (`curriculum.json` & `curriculum.js`)
+The entire STEM curriculum knowledge graph is completely separated from `index.html` into standalone external files:
+- **`curriculum.json`**: Standalone pure JSON file containing all 50 topics, mathematical definitions ($LaTeX$), prerequisite links, and textbook references. You can inspect or edit this file directly in any text editor.
+- **`curriculum.js`**: Synchronously auto-loadable companion script enabling instant out-of-the-box operation via direct browser double-click (`file://`), bypassing browser local fetch CORS restrictions. When served via HTTP (`python3 -m http.server`), `index.html` dynamically fetches and live-reloads `curriculum.json`.
+- **`[Load File]` button in Topbar**: Select and load any custom `.json` graph file on demand directly through your browser.
+- **`[Export curriculum.json]` in Storage & Backups**: Export the current graph back into clean standalone JSON format anytime.
+
+### Direct In-App Editing
 Everything in Polymathy is directly editable from the user interface:
 
 - **Edit Topics:** Click **`[Edit Topic]`** on any topic to change its title, move it to a different parent category in the hierarchy (reparenting), edit overview notes (with KaTeX math support), or delete it.
