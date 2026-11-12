@@ -1,0 +1,4274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POLYMATHY // Compound DAG Knowledge Tracker</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+:root {
+  /* Core Surfaces (Technical Paper & Blueprint Ink) */
+  --bg: #f8f9fa;
+  --bg-alt: #f1f3f5;
+  --surface: #ffffff;
+  --surface-hover: #f4f6f8;
+  --border: #d0d7de;
+  --border-strong: #8c959f;
+  --border-dark: #1f2328;
+
+  /* Typography */
+  --text: #1f2328;
+  --text-muted: #59636e;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Semantic Status & Locator Colors */
+  --accent: #0969da;
+  --accent-soft: #ddf4ff;
+  --head-color: #8250df;
+  --head-soft: #fbefff;
+
+  --flag-c-bg: #dafbe1;
+  --flag-c-text: #116329;
+  --flag-c-border: #4ac26b;
+
+  --flag-w-bg: #fff8c5;
+  --flag-w-text: #7d4e00;
+  --flag-w-border: #d4a72c;
+
+  --flag-x-bg: #ffebe9;
+  --flag-x-text: #a40e26;
+  --flag-x-border: #ff8182;
+
+  --stub-bg: #eaeef2;
+  --stub-text: #57606a;
+
+  --shadow-sm: 0 1px 2px rgba(31, 35, 40, 0.06);
+  --shadow-md: 0 4px 10px rgba(31, 35, 40, 0.10);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; width: 100%; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.48;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form & Button Primitives (STEM Manual) */
+button, input, select, textarea {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: 4px 8px;
+  outline: none;
+}
+button {
+  cursor: pointer;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: background 0.1s ease, border-color 0.1s ease, transform 0.06s ease;
+}
+button:hover:not(:disabled) { background: var(--surface-hover); border-color: var(--border-dark); }
+button:active:not(:disabled) { transform: translateY(1px); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
+button.primary {
+  background: var(--text);
+  color: var(--surface);
+  border-color: var(--text);
+}
+button.primary:hover:not(:disabled) { background: #32383f; }
+button.accent-btn {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+button.accent-btn:hover:not(:disabled) { background: #cbe8ff; }
+button.head-btn {
+  background: var(--head-soft);
+  color: var(--head-color);
+  border-color: var(--head-color);
+}
+button.head-btn:hover:not(:disabled) { background: #f3dcff; }
+button.success-btn {
+  background: var(--flag-c-bg);
+  color: var(--flag-c-text);
+  border-color: var(--flag-c-border);
+}
+button.danger-btn {
+  background: var(--flag-x-bg);
+  color: var(--flag-x-text);
+  border-color: var(--flag-x-border);
+}
+button.btn-xs { padding: 2px 6px; font-size: 10.5px; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+textarea { font-family: var(--font-sans); resize: vertical; }
+
+/* Top Telemetry & Locator Bar */
+.topbar {
+  height: 44px;
+  min-height: 44px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1.5px solid var(--border-dark);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  z-index: 30;
+  overflow-x: auto;
+}
+.topbar-left, .topbar-center, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.brand {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.telemetry-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 2px 7px;
+  color: var(--text-muted);
+}
+.locator-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  max-width: 260px;
+}
+.locator-chip.main {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.locator-chip.head {
+  background: var(--head-soft);
+  border-color: var(--head-color);
+  color: var(--head-color);
+}
+.locator-label {
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+}
+.locator-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Main Workspace Split */
+.workspace {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+.canvas-pane {
+  flex: 1 1 68%;
+  min-width: 320px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--border) 1px, transparent 1px);
+  background-size: 20px 20px;
+  user-select: none;
+}
+.splitter {
+  width: 5px;
+  flex-shrink: 0;
+  background: var(--bg-alt);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  cursor: col-resize;
+  transition: background 0.12s;
+  z-index: 20;
+}
+.splitter:hover, .splitter.dragging { background: var(--accent); }
+
+.side-pane {
+  width: 34%;
+  min-width: 340px;
+  max-width: 680px;
+  flex-shrink: 0;
+  background: var(--bg);
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* SVG Map Canvas & Overlays */
+#dagSvg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+#dagSvg.panning { cursor: grabbing; }
+
+.detour-banner {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 15;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1.5px solid var(--head-color);
+  border-radius: 4px;
+  padding: 5px 10px;
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.detour-banner.visible { display: flex; }
+
+.canvas-hud-bottom {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.hud-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.minimap-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 184px;
+  height: 144px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1.5px solid var(--border-dark);
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+  z-index: 15;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.minimap-header {
+  height: 18px;
+  background: var(--bg-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#minimapSvg {
+  width: 100%;
+  flex: 1 1 0;
+  display: block;
+  cursor: crosshair;
+}
+
+/* Signature STEM Manual UI Primitives */
+.box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+.box.inset {
+  background: var(--bg-alt);
+  padding: 9px 11px;
+  margin-bottom: 8px;
+  box-shadow: none;
+}
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+.box-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.tag.flag-C {
+  background: var(--flag-c-bg);
+  color: var(--flag-c-text);
+  border-color: var(--flag-c-border);
+}
+.tag.flag-W {
+  background: var(--flag-w-bg);
+  color: var(--flag-w-text);
+  border-color: var(--flag-w-border);
+}
+.tag.flag-X {
+  background: var(--flag-x-bg);
+  color: var(--flag-x-text);
+  border-color: var(--flag-x-border);
+}
+.tag.stub {
+  background: var(--stub-bg);
+  color: var(--stub-text);
+  border-color: var(--border-strong);
+  border-style: dashed;
+}
+.tag.edited {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.tag.head-tag {
+  background: var(--head-soft);
+  color: var(--head-color);
+  border-color: var(--head-color);
+}
+
+/* Collapsible Drawers */
+details.audit-drawer {
+  border: 1.5px solid var(--border-dark);
+  border-radius: 4px;
+  background: var(--bg-alt);
+  padding: 8px 11px;
+  margin-bottom: 12px;
+}
+details.audit-drawer.detour-drawer {
+  border-color: var(--head-color);
+  background: var(--head-soft);
+}
+details.audit-drawer summary {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  list-style: none;
+}
+details.audit-drawer summary::-webkit-details-marker { display: none; }
+details.audit-drawer[open] summary {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+
+.detour-chain {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.detour-link {
+  color: var(--head-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.detour-link:hover { background: rgba(130, 80, 223, 0.14); }
+.detour-current {
+  font-weight: 800;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--head-color);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* Side Panel Topic Header & Module Items */
+.topic-breadcrumb {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+.topic-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.topic-title {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--text);
+}
+.topic-meta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border-strong);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 8px 0 4px 0;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--flag-w-border);
+  transition: width 0.2s ease;
+}
+.progress-fill.done { background: var(--flag-c-border); }
+
+.item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.list-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.list-row-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.list-row-left input[type="checkbox"] {
+  margin-top: 2px;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.list-row-main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.list-row-title {
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--text);
+  word-break: break-word;
+}
+.list-row-title.checked {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.list-row-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  word-break: break-all;
+}
+.list-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.intro-prose {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background: var(--bg-alt);
+  border-left: 3px solid var(--border-strong);
+  border-radius: 2px;
+}
+.inline-add-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.inline-add-row input {
+  flex: 1 1 140px;
+  min-width: 0;
+}
+.diag-warn {
+  margin-top: 8px;
+  padding: 7px 9px;
+  background: var(--flag-x-bg);
+  border: 1px solid var(--flag-x-border);
+  color: var(--flag-x-text);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.diag-info {
+  margin-top: 8px;
+  padding: 7px 9px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(31, 35, 40, 0.48);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1.5px solid var(--border-dark);
+  border-radius: 5px;
+  width: 100%;
+  max-width: 780px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-md);
+}
+.modal-head {
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-body {
+  padding: 14px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+/* Manual Tabs */
+.manual-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1.5px solid var(--border-dark);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.manual-tab-btn {
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  padding: 5px 10px;
+  font-size: 11px;
+}
+.manual-tab-btn.active {
+  background: var(--text);
+  color: var(--surface);
+  border-color: var(--text);
+}
+.manual-tab-panel { display: none; }
+.manual-tab-panel.active { display: block; }
+
+table.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin: 8px 0;
+}
+table.spec-table th, table.spec-table td {
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  text-align: left;
+  vertical-align: top;
+}
+table.spec-table th {
+  background: var(--bg-alt);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+pre.code-block {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 9px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+code.inline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 1px 4px;
+}
+
+/* SVG Element Classes */
+.svg-node { cursor: pointer; }
+.svg-node:hover .node-card { stroke: var(--text); stroke-width: 1.8px; }
+.svg-expand-badge { cursor: pointer; }
+.svg-expand-badge:hover rect { fill: var(--text); }
+.svg-expand-badge:hover text { fill: var(--surface); }
+.prereq-hit { cursor: pointer; }
+.prereq-hit:hover .prereq-pill-rect { stroke-width: 1.8px; filter: brightness(0.96); }
+.dimmed { opacity: 0.2; transition: opacity 0.15s; }
+
+@keyframes mainPulse {
+  0%, 100% { stroke-opacity: 0.95; r: 10; }
+  50% { stroke-opacity: 0.25; r: 14; }
+}
+.main-beacon-pulse { animation: mainPulse 2s ease-in-out infinite; }
+
+.toast {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 200;
+  background: var(--text);
+  color: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 7px 12px;
+  border-radius: 4px;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity 0.18s, transform 0.18s;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 900px) {
+  .workspace { flex-direction: column; }
+  .canvas-pane { flex: 1 1 52%; min-width: 0; }
+  .splitter { width: 100%; height: 5px; cursor: row-resize; border: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .side-pane { width: 100% !important; max-width: none; min-width: 0; flex: 1 1 48%; }
+  .minimap-wrap { width: 140px; height: 110px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP TELEMETRY & LOCATOR BAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <div class="brand">
+      <span>[POLYMATHY // COMPOUND DAG]</span>
+    </div>
+    <span class="telemetry-pill" id="globalProgressPill">Baseline: 0 / 0 Topics</span>
+  </div>
+
+  <div class="topbar-center">
+    <div class="locator-chip main" title="Primary Study Goal (MAIN)">
+      <span class="locator-label">MAIN:</span>
+      <span class="locator-title" id="topMainTitle">—</span>
+      <button class="btn-xs accent-btn" id="btnLocateMain" title="Locate MAIN (M)">Locate</button>
+    </div>
+    <div class="locator-chip head" title="Active Side-Panel Topic (HEAD)">
+      <span class="locator-label">HEAD:</span>
+      <span class="locator-title" id="topHeadTitle">—</span>
+      <button class="btn-xs head-btn" id="btnLocateHead" title="Locate HEAD (H)">Locate</button>
+    </div>
+  </div>
+
+  <div class="topbar-right">
+    <button class="btn-xs" id="btnToggleLayout" title="Toggle Radial Wedge / Top-Down Tree">Layout: Radial</button>
+    <button class="btn-xs" id="btnFrontierRadar">Frontier Radar</button>
+    <button class="btn-xs" id="btnImportPatch">+ Import Patch</button>
+    <button class="btn-xs" id="btnLayerInspector">Layer Inspector</button>
+    <button class="btn-xs" id="btnManual">? Manual</button>
+  </div>
+</header>
+
+<!-- MAIN WORKSPACE -->
+<main class="workspace" id="workspace">
+  <!-- LEFT: COMPOUND DAG CANVAS -->
+  <section class="canvas-pane" id="canvasPane">
+    <div class="detour-banner" id="floatingDetourBanner">
+      <button class="btn-xs head-btn" id="btnFloatingGetBack">← Get Back</button>
+      <span id="floatingDetourLabel">Detour active</span>
+    </div>
+
+    <div class="minimap-wrap" id="minimapWrap">
+      <div class="minimap-header">
+        <span>MINIMAP</span>
+        <span id="minimapZoomPct">88%</span>
+      </div>
+      <svg id="minimapSvg" viewBox="-100 -80 200 160"></svg>
+    </div>
+
+    <div class="canvas-hud-bottom">
+      <div class="hud-box">
+        <button class="btn-xs" id="btnZoomOut" title="Zoom Out">-</button>
+        <span id="zoomPctLabel">88%</span>
+        <button class="btn-xs" id="btnZoomIn" title="Zoom In">+</button>
+        <button class="btn-xs" id="btnFitMap" title="Fit Visible Graph">Fit</button>
+        <button class="btn-xs" id="btnExpandAll" title="Expand All Branches">Expand All</button>
+        <button class="btn-xs" id="btnCollapseDomains" title="Collapse to Top Domains">Reset Fold</button>
+      </div>
+      <div class="hud-box" id="spotlightHudBox" style="display:none; border-color: var(--accent); color: var(--accent);">
+        <span>MAIN SUBGRAPH SPOTLIGHT</span>
+        <button class="btn-xs accent-btn" id="btnClearSpotlight">Clear</button>
+      </div>
+    </div>
+
+    <svg id="dagSvg" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrow-solid-x" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#a40e26"></path>
+        </marker>
+        <marker id="arrow-dotted-c" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <path d="M 0 1.2 L 9 5 L 0 8.8 z" fill="#116329"></path>
+        </marker>
+        <marker id="arrow-dim" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="#8c959f"></path>
+        </marker>
+      </defs>
+      <g id="svgWorld">
+        <g id="layerConduits"></g>
+        <g id="layerPrereqs"></g>
+        <g id="layerSources"></g>
+        <g id="layerNodes"></g>
+        <g id="layerPrereqPills"></g>
+      </g>
+    </svg>
+  </section>
+
+  <!-- RESIZABLE SPLITTER -->
+  <div class="splitter" id="splitter" title="Drag to resize side panel"></div>
+
+  <!-- RIGHT: 5-STAGE EXECUTION SIDE PANEL -->
+  <aside class="side-pane" id="sidePane"></aside>
+</main>
+
+<!-- MODAL BACKDROP -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <span id="modalTitle">MODAL</span>
+      <button class="btn-xs" id="btnCloseModal">✕ Close (Esc)</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* =========================================================================
+   * 1. SEED DATASET (Layer 0 Base Patch + Realistic Initial Layer 2 State)
+   * ========================================================================= */
+  const SEED_PATCH_001 = {
+    patch_id: "001_seed_polymath_dag",
+    nodes: [
+      {
+        id: "knowledge",
+        title: "Knowledge",
+        parentId: null,
+        prereqIds: [],
+        intro: "Origin vertex $v_0$ of the Compound DAG $G = (V, E_{\\text{tree}}, E_{\\text{prereq}}, S)$. Every conceptual domain expands radially outward with hollow progress conduits.",
+        sources: []
+      },
+
+      /* --- TOP-LEVEL DOMAINS --- */
+      {
+        id: "math",
+        title: "Mathematics",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Formal study of structure, space, change, and discrete relations.",
+        sources: [{ id: "src_math_princeton", title: "Gowers — Princeton Companion to Mathematics" }]
+      },
+      {
+        id: "physics",
+        title: "Physics",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Quantitative modeling of matter, energy, fields, and spacetime geometry.",
+        sources: [{ id: "src_phys_feynman", title: "Feynman Lectures on Physics (Vol. I–III)" }]
+      },
+      {
+        id: "cs",
+        title: "Computer Science",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Computation, algorithmic complexity, information encoding, and statistical learning.",
+        sources: [{ id: "src_cs_sicp", title: "Abelson & Sussman — SICP" }]
+      },
+      {
+        id: "philosophy",
+        title: "Philosophy",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Formal foundations of inference, epistemology, and scientific reasoning.",
+        sources: [{ id: "src_phil_sep", title: "Stanford Encyclopedia of Philosophy — Logic & Epistemology" }]
+      },
+
+      /* --- MATHEMATICS --- */
+      {
+        id: "math.linear_algebra",
+        title: "Linear Algebra",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Vector spaces, linear transformations $T: V \\to W$, spectral decomposition, and inner product geometry.",
+        sources: [{ id: "src_la_axler", title: "Axler — Linear Algebra Done Right" }]
+      },
+      {
+        id: "math.linear_algebra.vectors_matrices",
+        title: "Vectors, Spaces & Linear Maps",
+        parentId: "math.linear_algebra",
+        prereqIds: [],
+        intro: "Basis, dimension, rank-nullity theorem $\\dim V = \\operatorname{rank}(T) + \\operatorname{nullity}(T)$, and matrix representations.",
+        sources: [
+          { id: "src_vec_strang", title: "Strang — MIT 18.06 Lectures 1–10" },
+          { id: "src_vec_3b1b", title: "3Blue1Brown — Essence of Linear Algebra" }
+        ]
+      },
+      /* Post-baseline deeper subtopics demonstrating double-bar gate! */
+      {
+        id: "math.linear_algebra.vectors_matrices.inner_products",
+        title: "Inner Products & Gram-Schmidt",
+        parentId: "math.linear_algebra.vectors_matrices",
+        prereqIds: [],
+        intro: "Orthogonal projections, Cauchy-Schwarz $|\\langle u, v\\rangle| \\le \\|u\\|\\|v\\|$, and orthonormal bases.",
+        sources: []
+      },
+      {
+        id: "math.linear_algebra.vectors_matrices.svd_geometry",
+        title: "Singular Value Decomposition (SVD)",
+        parentId: "math.linear_algebra.vectors_matrices",
+        prereqIds: [],
+        intro: "Factorization $A = U\\Sigma V^T$ mapping orthonormal input bases to scaled orthonormal output bases.",
+        sources: []
+      },
+      {
+        id: "math.linear_algebra.determinants",
+        title: "Determinants & Oriented Volume",
+        parentId: "math.linear_algebra",
+        prereqIds: ["math.linear_algebra.vectors_matrices"],
+        intro: "Alternating multilinear forms measuring signed $n$-volume scaling $\\det(AB) = \\det(A)\\det(B)$.",
+        sources: [{ id: "src_det_1", title: "Axler Ch. 10 — Determinants" }]
+      },
+      {
+        id: "math.linear_algebra.eigenvalues",
+        title: "Eigenvalues & Spectral Theorem",
+        parentId: "math.linear_algebra",
+        prereqIds: ["math.linear_algebra.vectors_matrices", "math.linear_algebra.determinants"],
+        intro: "Invariant subspaces $Av = \\lambda v$, characteristic polynomial $\\det(A - \\lambda I) = 0$, and orthogonal diagonalization of symmetric operators.",
+        sources: [
+          { id: "src_eig_axler", title: "Axler Ch. 5 & 7 — Eigenvalues and Spectral Theorem" },
+          { id: "src_eig_notes", title: "Diagonalization & Quadratic Forms Problem Set" }
+        ]
+      },
+
+      {
+        id: "math.multivariable_calculus",
+        title: "Multivariable Calculus",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Differential and integral calculus on $\\mathbb{R}^n$, gradients, Jacobians, and exterior Stokes theorem.",
+        sources: [{ id: "src_mvc_hubbard", title: "Hubbard & Hubbard — Vector Calculus, Linear Algebra, and Differential Forms" }]
+      },
+      {
+        id: "math.multivariable_calculus.partial_derivatives",
+        title: "Gradients, Jacobians & Taylor Maps",
+        parentId: "math.multivariable_calculus",
+        prereqIds: [],
+        intro: "Total derivative $Df(x)$ as the best linear approximation $f(x+h) = f(x) + Df(x)h + o(\\|h\\|)$.",
+        sources: [{ id: "src_pd_1", title: "MIT 18.02 Multivariable Calculus Notes" }]
+      },
+      {
+        id: "math.multivariable_calculus.vector_fields_stokes",
+        title: "Vector Fields & Stokes' Theorem",
+        parentId: "math.multivariable_calculus",
+        prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
+        intro: "Unification of Green, Gauss, and classical Stokes via differential forms: $$\\int_{\\partial \\Omega} \\omega = \\int_{\\Omega} d\\omega$$",
+        sources: [{ id: "src_stokes_1", title: "Schey — Div, Grad, Curl, and All That" }]
+      },
+
+      {
+        id: "math.differential_geometry",
+        title: "Differential Geometry",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Smooth manifolds, tangent bundles, connections, and intrinsic curvature.",
+        sources: [{ id: "src_dg_lee", title: "John M. Lee — Introduction to Smooth Manifolds" }]
+      },
+      {
+        id: "math.differential_geometry.manifolds",
+        title: "Smooth Manifolds & Tangent Bundles",
+        parentId: "math.differential_geometry",
+        prereqIds: ["math.multivariable_calculus.vector_fields_stokes", "math.linear_algebra.eigenvalues"],
+        intro: "Topological spaces locally homeomorphic to $\\mathbb{R}^n$ with $C^\\infty$ transition maps $\\psi \\circ \\varphi^{-1}$, supporting intrinsic tangent vectors $T_p M$ and tensor fields.",
+        sources: [
+          { id: "src_man_lee", title: "Lee — Smooth Manifolds (Ch. 1–3)" },
+          { id: "src_man_schuller", title: "Frederic Schuller — Lectures on Geometric Anatomy" }
+        ]
+      },
+      {
+        id: "math.differential_geometry.riemannian_metrics",
+        title: "Riemannian Metrics & Curvature",
+        parentId: "math.differential_geometry",
+        prereqIds: ["math.differential_geometry.manifolds"],
+        intro: "Metric tensor $g_{\\mu\\nu}$, Levi-Civita connection $\\Gamma^\\lambda_{\\mu\\nu}$, geodesics, and Riemann curvature tensor $R^\\rho_{\\sigma\\mu\\nu}$.",
+        sources: [{ id: "src_riem_docarmo", title: "do Carmo — Riemannian Geometry" }]
+      },
+
+      {
+        id: "math.graph_theory",
+        title: "Graph Theory",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Combinatorial and structural properties of graphs $G=(V,E)$, connectivity, minors, and colorings.",
+        sources: [{ id: "src_gt_diestel", title: "Diestel — Graph Theory (5th ed.)" }]
+      },
+      {
+        id: "math.graph_theory.connectivity",
+        title: "Paths, Cycles & Connectivity",
+        parentId: "math.graph_theory",
+        prereqIds: [],
+        intro: "Vertex/edge cuts, Menger's theorem, and connected components.",
+        sources: [{ id: "src_gt_conn", title: "Diestel Ch. 1 & 3 — Basics & Connectivity" }]
+      },
+      {
+        id: "math.graph_theory.trees",
+        title: "Trees & Spanning Structures",
+        parentId: "math.graph_theory",
+        prereqIds: ["math.graph_theory.connectivity"],
+        intro: "Acyclic connected graphs ($|E| = |V| - 1$), Cayley's formula $n^{n-2}$, and minimum spanning trees.",
+        sources: [{ id: "src_gt_trees", title: "Bondy & Murty — Trees and Forests" }]
+      },
+      {
+        id: "math.graph_theory.planar_graphs",
+        title: "Planar Graphs & Kuratowski",
+        parentId: "math.graph_theory",
+        prereqIds: ["math.graph_theory.connectivity", "math.topology.point_set_basics"],
+        intro: "Embeddings in $\\mathbb{R}^2$ without crossings, Euler's formula $V - E + F = 2$, and forbidden minors $K_5, K_{3,3}$.",
+        sources: [{ id: "src_gt_planar", title: "Diestel Ch. 4 — Planar Graphs" }]
+      },
+
+      {
+        id: "math.probability",
+        title: "Probability Theory",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Measure-theoretic uncertainty, stochastic processes, and Bayesian conditioning.",
+        sources: [{ id: "src_prob_blitz", title: "Blitzstein & Hwang — Introduction to Probability" }]
+      },
+      {
+        id: "math.probability.axioms_distributions",
+        title: "Probability Spaces & Distributions",
+        parentId: "math.probability",
+        prereqIds: [],
+        intro: "Kolmogorov axioms $(\\Omega, \\mathcal{F}, P)$, expectation $\\mathbb{E}[X]$, variance, and Central Limit Theorem.",
+        sources: [{ id: "src_prob_1", title: "Stat 110 Lectures (Harvard)" }]
+      },
+      {
+        id: "math.probability.bayes_markov",
+        title: "Bayesian Inference & Markov Chains",
+        parentId: "math.probability",
+        prereqIds: ["math.probability.axioms_distributions", "math.linear_algebra.eigenvalues"],
+        intro: "Posterior updates $P(\\theta|D) \\propto P(D|\\theta)P(\\theta)$ and stationary distributions $\\pi P = \\pi$ via Perron-Frobenius eigenvectors.",
+        sources: [{ id: "src_prob_mackay", title: "MacKay — Information Theory, Inference, and Learning" }]
+      },
+
+      /* --- PHYSICS --- */
+      {
+        id: "physics.classical_mechanics",
+        title: "Classical Mechanics",
+        parentId: "physics",
+        prereqIds: [],
+        intro: "Kinematics, variational principles, and symplectic Hamiltonian phase space.",
+        sources: [{ id: "src_cm_taylor", title: "Taylor — Classical Mechanics" }]
+      },
+      {
+        id: "physics.classical_mechanics.newtonian",
+        title: "Newtonian Dynamics & Conservation",
+        parentId: "physics.classical_mechanics",
+        prereqIds: [],
+        intro: "Inertial frames, $\\mathbf{F} = \\dot{\\mathbf{p}}$, angular momentum, and central force orbits.",
+        sources: [{ id: "src_newt_1", title: "Kleppner & Kolenkow — An Introduction to Mechanics" }]
+      },
+      {
+        id: "physics.classical_mechanics.lagrangian_hamiltonian",
+        title: "Lagrangian & Hamiltonian Action",
+        parentId: "physics.classical_mechanics",
+        prereqIds: ["physics.classical_mechanics.newtonian", "math.multivariable_calculus.partial_derivatives"],
+        intro: "Stationary action $\\delta S = \\delta \\int L(q, \\dot{q}, t)\\,dt = 0$, Euler-Lagrange equations, and Noether's symmetry theorem.",
+        sources: [{ id: "src_lag_landau", title: "Landau & Lifshitz — Mechanics (Vol. 1)" }]
+      },
+
+      {
+        id: "physics.electromagnetism",
+        title: "Electromagnetism",
+        parentId: "physics",
+        prereqIds: [],
+        intro: "Classical field theory of electric and magnetic phenomena and electromagnetic radiation.",
+        sources: [{ id: "src_em_griffiths", title: "Griffiths — Introduction to Electrodynamics" }]
+      },
+      {
+        id: "physics.electromagnetism.maxwell_equations",
+        title: "Maxwell's Equations & Waves",
+        parentId: "physics.electromagnetism",
+        prereqIds: ["math.multivariable_calculus.vector_fields_stokes"],
+        intro: "Coupled PDEs $\\nabla \\cdot \\mathbf{E} = \\rho/\\varepsilon_0$, $\\nabla \\times \\mathbf{B} = \\mu_0\\mathbf{J} + \\mu_0\\varepsilon_0\\partial_t\\mathbf{E}$, and light speed $c = (\\mu_0\\varepsilon_0)^{-1/2}$.",
+        sources: [{ id: "src_max_purcell", title: "Purcell & Morin — Electricity and Magnetism" }]
+      },
+      {
+        id: "physics.electromagnetism.tensor_em",
+        title: "Covariant Field Tensor $F^{\\mu\\nu}$",
+        parentId: "physics.electromagnetism",
+        prereqIds: ["physics.electromagnetism.maxwell_equations", "physics.relativity.special_relativity"],
+        intro: "Unification of $\\mathbf{E}$ and $\\mathbf{B}$ into antisymmetric 2-form $F = dA$ with $\\partial_\\mu F^{\\mu\\nu} = \\mu_0 J^\\nu$.",
+        sources: [{ id: "src_tem_jackson", title: "Jackson — Classical Electrodynamics Ch. 11" }]
+      },
+
+      {
+        id: "physics.relativity",
+        title: "Relativity",
+        parentId: "physics",
+        prereqIds: [],
+        intro: "Lorentz invariance of Minkowski spacetime and Einstein's geometric theory of gravitation.",
+        sources: [{ id: "src_rel_carroll", title: "Sean Carroll — Spacetime and Geometry" }]
+      },
+      {
+        id: "physics.relativity.special_relativity",
+        title: "Special Relativity & Minkowski Space",
+        parentId: "physics.relativity",
+        prereqIds: ["physics.classical_mechanics.newtonian", "math.linear_algebra.vectors_matrices"],
+        intro: "Invariant interval $ds^2 = -c^2 dt^2 + dx^2 + dy^2 + dz^2$, Lorentz boosts, and 4-momentum $E^2 - (pc)^2 = (mc^2)^2$.",
+        sources: [{ id: "src_sr_taylor", title: "Taylor & Wheeler — Spacetime Physics" }]
+      },
+      {
+        id: "physics.relativity.general_relativity",
+        title: "General Relativity & Einstein Equations",
+        parentId: "physics.relativity",
+        prereqIds: [
+          "physics.relativity.special_relativity",
+          "math.differential_geometry.riemannian_metrics",
+          "physics.classical_mechanics.lagrangian_hamiltonian"
+        ],
+        intro: "Spacetime curvature coupled to stress-energy via $$G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$$ where $\\nabla_\\mu G^{\\mu\\nu} = 0$.",
+        sources: [
+          { id: "src_gr_carroll", title: "Carroll — Spacetime and Geometry Ch. 4–5" },
+          { id: "src_gr_wald", title: "Wald — General Relativity" }
+        ]
+      },
+
+      /* --- COMPUTER SCIENCE --- */
+      {
+        id: "cs.algorithms_graphs",
+        title: "Algorithms & Graph Search",
+        parentId: "cs",
+        prereqIds: [],
+        intro: "Asymptotic complexity, combinatorial search, shortest paths, and duality in network flows.",
+        sources: [{ id: "src_algo_clrs", title: "CLRS — Introduction to Algorithms" }]
+      },
+      {
+        id: "cs.algorithms_graphs.traversal_shortest_paths",
+        title: "BFS, DFS & Shortest Paths",
+        parentId: "cs.algorithms_graphs",
+        prereqIds: ["math.graph_theory.connectivity", "math.graph_theory.trees"],
+        intro: "Linear-time $O(V + E)$ traversal, topological DAG sorting, and Dijkstra/Bellman-Ford relaxations.",
+        sources: [{ id: "src_algo_erickson", title: "Jeff Erickson — Algorithms (Graph Chapters)" }]
+      },
+      {
+        id: "cs.algorithms_graphs.network_flows",
+        title: "Max-Flow Min-Cut Theorem",
+        parentId: "cs.algorithms_graphs",
+        prereqIds: ["cs.algorithms_graphs.traversal_shortest_paths"],
+        intro: "Ford-Fulkerson augmenting paths, residual graphs, and bipartite matching reductions.",
+        sources: [{ id: "src_flow_kt", title: "Kleinberg & Tardos — Algorithm Design Ch. 7" }]
+      },
+
+      {
+        id: "cs.information_theory",
+        title: "Information Theory",
+        parentId: "cs",
+        prereqIds: [],
+        intro: "Quantifying uncertainty, lossless compression limits, and noisy channel capacity.",
+        sources: [{ id: "src_it_cover", title: "Cover & Thomas — Elements of Information Theory" }]
+      },
+      {
+        id: "cs.information_theory.shannon_entropy",
+        title: "Shannon Entropy & Source Coding",
+        parentId: "cs.information_theory",
+        prereqIds: ["math.probability.axioms_distributions"],
+        intro: "Expected surprise $H(X) = -\\sum p(x) \\log_2 p(x)$ bounding optimal prefix-free code lengths.",
+        sources: [{ id: "src_shan_1", title: "Shannon (1948) — A Mathematical Theory of Communication" }]
+      },
+      {
+        id: "cs.information_theory.kl_divergence",
+        title: "KL Divergence & Mutual Information",
+        parentId: "cs.information_theory",
+        prereqIds: ["cs.information_theory.shannon_entropy", "math.multivariable_calculus.partial_derivatives"],
+        intro: "Relative entropy $D_{\\mathrm{KL}}(P \\parallel Q) = \\sum P(x)\\log \\frac{P(x)}{Q(x)} \\ge 0$ by Gibbs' inequality.",
+        sources: []
+      },
+
+      {
+        id: "cs.machine_learning",
+        title: "Machine Learning",
+        parentId: "cs",
+        prereqIds: [],
+        intro: "Empirical risk minimization, convex/non-convex optimization, and generative probabilistic inference.",
+        sources: [{ id: "src_ml_bishop", title: "Bishop — Pattern Recognition and Machine Learning" }]
+      },
+      {
+        id: "cs.machine_learning.optimization_sgd",
+        title: "Gradient Descent & Convexity",
+        parentId: "cs.machine_learning",
+        prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
+        intro: "First-order updates $\\theta_{t+1} = \\theta_t - \\eta \\nabla \\mathcal{L}(\\theta_t)$, conditioning, and momentum.",
+        sources: [{ id: "src_opt_boyd", title: "Boyd & Vandenberghe — Convex Optimization" }]
+      },
+      {
+        id: "cs.machine_learning.probabilistic_models",
+        title: "Variational & Probabilistic Models",
+        parentId: "cs.machine_learning",
+        prereqIds: ["math.probability.bayes_markov", "cs.information_theory.kl_divergence", "cs.machine_learning.optimization_sgd"],
+        intro: "Maximizing the Evidence Lower Bound (ELBO) $\\log p(x) \\ge \\mathbb{E}_q[\\log p(x,z)] - \\mathbb{E}_q[\\log q(z)]$.",
+        sources: [{ id: "src_ml_murphy", title: "Murphy — Probabilistic Machine Learning" }]
+      },
+
+      /* --- PHILOSOPHY --- */
+      {
+        id: "philosophy.formal_logic",
+        title: "Formal Logic",
+        parentId: "philosophy",
+        prereqIds: [],
+        intro: "Syntax, semantics, completeness, and the limits of formal axiomatic systems.",
+        sources: [{ id: "src_log_enderton", title: "Enderton — A Mathematical Introduction to Logic" }]
+      },
+      {
+        id: "philosophy.formal_logic.propositional_predicate",
+        title: "First-Order Logic & Completeness",
+        parentId: "philosophy.formal_logic",
+        prereqIds: [],
+        intro: "Quantifiers $\\forall, \\exists$, Tarskian model satisfaction $\\mathcal{M} \\models \\varphi$, and Gödel's completeness theorem ($\\Gamma \\vdash \\varphi \\iff \\Gamma \\models \\varphi$).",
+        sources: [{ id: "src_fol_1", title: "Smith — An Introduction to Formal Logic" }]
+      },
+      {
+        id: "philosophy.formal_logic.godel_incompleteness",
+        title: "Gödel's Incompleteness Theorems",
+        parentId: "philosophy.formal_logic",
+        prereqIds: ["philosophy.formal_logic.propositional_predicate"],
+        intro: "Arithmetization of syntax and diagonalization showing any consistent recursively enumerable system strong enough for PA is incomplete.",
+        sources: [{ id: "src_godel_smith", title: "Peter Smith — An Introduction to Gödel's Theorems" }]
+      },
+
+      {
+        id: "philosophy.epistemology",
+        title: "Epistemology",
+        parentId: "philosophy",
+        prereqIds: [],
+        intro: "Justification, rationality, and formal models of belief revision.",
+        sources: [{ id: "src_epi_1", title: "SEP — Formal Epistemology" }]
+      },
+      {
+        id: "philosophy.epistemology.bayesian_confirmation",
+        title: "Bayesian Confirmation Theory",
+        parentId: "philosophy.epistemology",
+        prereqIds: ["philosophy.formal_logic.propositional_predicate", "math.probability.bayes_markov"],
+        intro: "Dutch book coherence arguments and degree-of-belief updating under empirical evidence.",
+        sources: [{ id: "src_bc_talbott", title: "Talbott — Bayesian Epistemology" }]
+      }
+    ]
+  };
+
+  const SEED_STATE = {
+    navigation: {
+      MAIN: "physics.relativity.general_relativity",
+      HEAD: "math.differential_geometry.manifolds",
+      detourStack: [
+        "physics.relativity.general_relativity",
+        "math.differential_geometry.riemannian_metrics"
+      ]
+    },
+    nodes: {
+      "knowledge": { introDone: true, baselineDone: true, completedSourceIds: [], expandedOnMap: true },
+      "math": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "physics": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "cs": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+      "philosophy": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+
+      "math.linear_algebra": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "math.linear_algebra.vectors_matrices": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_vec_strang", "src_vec_3b1b"],
+        expandedOnMap: false
+      },
+      "math.linear_algebra.vectors_matrices.inner_products": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: [],
+        expandedOnMap: false
+      },
+      "math.linear_algebra.vectors_matrices.svd_geometry": {
+        introDone: false,
+        baselineDone: false,
+        completedSourceIds: [],
+        expandedOnMap: false
+      },
+      "math.linear_algebra.determinants": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_det_1"],
+        expandedOnMap: false
+      },
+      "math.linear_algebra.eigenvalues": {
+        introDone: true,
+        baselineDone: false,
+        completedSourceIds: ["src_eig_axler"],
+        expandedOnMap: false
+      },
+
+      "math.multivariable_calculus": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "math.multivariable_calculus.partial_derivatives": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_pd_1"],
+        expandedOnMap: false
+      },
+      "math.multivariable_calculus.vector_fields_stokes": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_stokes_1"],
+        expandedOnMap: false
+      },
+
+      "math.differential_geometry": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "math.differential_geometry.manifolds": {
+        introDone: true,
+        baselineDone: false,
+        completedSourceIds: ["src_man_schuller"],
+        expandedOnMap: false
+      },
+      "math.differential_geometry.riemannian_metrics": {
+        introDone: false,
+        baselineDone: false,
+        completedSourceIds: [],
+        expandedOnMap: false
+      },
+
+      "math.graph_theory": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+      "math.graph_theory.connectivity": { introDone: true, baselineDone: true, completedSourceIds: ["src_gt_conn"], expandedOnMap: false },
+
+      "math.probability": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+      "math.probability.axioms_distributions": { introDone: true, baselineDone: true, completedSourceIds: ["src_prob_1"], expandedOnMap: false },
+
+      "physics.classical_mechanics": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+      "physics.classical_mechanics.newtonian": { introDone: true, baselineDone: true, completedSourceIds: ["src_newt_1"], expandedOnMap: false },
+
+      "physics.relativity": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "physics.relativity.special_relativity": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_sr_taylor"],
+        expandedOnMap: false
+      },
+      "physics.relativity.general_relativity": {
+        introDone: true,
+        baselineDone: false,
+        completedSourceIds: [],
+        expandedOnMap: false
+      },
+
+      "philosophy.formal_logic.propositional_predicate": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_fol_1"],
+        expandedOnMap: false
+      }
+    }
+  };
+
+  const EMPTY_OVERRIDES = () => ({
+    custom_nodes: [],
+    field_overrides: {},
+    edge_deltas: {},
+    reparents: {},
+    tombstones: []
+  });
+
+  /* =========================================================================
+   * 2. PERSISTENCE & 3-LAYER OVERLAYFS ENGINE
+   * ========================================================================= */
+  const STORAGE_KEYS = {
+    patches: "polymathy_v1_patches",
+    overrides: "polymathy_v1_overrides",
+    state: "polymathy_v1_state",
+    ui: "polymathy_v1_ui"
+  };
+
+  function safeReadJSON(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return structuredClone(fallback);
+      return JSON.parse(raw);
+    } catch {
+      return structuredClone(fallback);
+    }
+  }
+
+  function safeWriteJSON(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* Ignore storage quota errors in private mode */
+    }
+  }
+
+  let layer0Patches = safeReadJSON(STORAGE_KEYS.patches, [SEED_PATCH_001]);
+  if (!Array.isArray(layer0Patches) || layer0Patches.length === 0) {
+    layer0Patches = [structuredClone(SEED_PATCH_001)];
+  }
+  let layer1Overrides = Object.assign(EMPTY_OVERRIDES(), safeReadJSON(STORAGE_KEYS.overrides, EMPTY_OVERRIDES()));
+  let layer2State = safeReadJSON(STORAGE_KEYS.state, SEED_STATE);
+  if (!layer2State.navigation) layer2State.navigation = structuredClone(SEED_STATE.navigation);
+  if (!layer2State.nodes) layer2State.nodes = {};
+
+  let uiSettings = safeReadJSON(STORAGE_KEYS.ui, {
+    layoutMode: "radial", // "radial" | "tree"
+    learnChecklistActive: {},
+    spotlightMain: false,
+    sidePaneWidth: null
+  });
+
+  function persistAll() {
+    safeWriteJSON(STORAGE_KEYS.patches, layer0Patches);
+    safeWriteJSON(STORAGE_KEYS.overrides, layer1Overrides);
+    safeWriteJSON(STORAGE_KEYS.state, layer2State);
+    safeWriteJSON(STORAGE_KEYS.ui, uiSettings);
+  }
+
+  function cloneNode(n) {
+    return {
+      id: n.id,
+      title: n.title || prettifySlug(n.id),
+      parentId: n.parentId ?? null,
+      prereqIds: Array.isArray(n.prereqIds) ? [...n.prereqIds] : [],
+      intro: n.intro || "",
+      sources: Array.isArray(n.sources) ? n.sources.map(s => ({ ...s })) : [],
+      isStub: !!n.isStub,
+      isCustom: !!n.isCustom,
+      isOverridden: !!n.isOverridden
+    };
+  }
+
+  function prettifySlug(id) {
+    const last = String(id).split(".").pop() || id;
+    return last.replace(/[_-]+/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  function inferParentFromSlug(id, nodeMap) {
+    if (id === "knowledge") return null;
+    const parts = String(id).split(".");
+    while (parts.length > 1) {
+      parts.pop();
+      const candidate = parts.join(".");
+      if (nodeMap.has(candidate)) return candidate;
+      // Also allow creating intermediate stub prefix if dotted hierarchy exists
+      return candidate;
+    }
+    return "knowledge";
+  }
+
+  /* Fold Layer 0: append-only curriculum patches */
+  function foldLayer0(patches) {
+    const map = new Map();
+    for (const patch of patches) {
+      if (Array.isArray(patch.nodes)) {
+        for (const raw of patch.nodes) {
+          if (!raw || !raw.id) continue;
+          const existing = map.get(raw.id);
+          if (!existing) {
+            map.set(raw.id, cloneNode(raw));
+          } else {
+            // Idempotent re-merge / upgrade
+            if (raw.title) existing.title = raw.title;
+            if (raw.parentId !== undefined) existing.parentId = raw.parentId;
+            if (raw.intro) existing.intro = raw.intro;
+            if (Array.isArray(raw.prereqIds)) {
+              for (const p of raw.prereqIds) {
+                if (!existing.prereqIds.includes(p)) existing.prereqIds.push(p);
+              }
+            }
+            if (Array.isArray(raw.sources)) {
+              for (const s of raw.sources) {
+                if (!existing.sources.some(es => es.id === s.id)) existing.sources.push({ ...s });
+              }
+            }
+          }
+        }
+      }
+      if (Array.isArray(patch.extensions)) {
+        for (const ext of patch.extensions) {
+          const target = map.get(ext.targetId);
+          if (!target) continue;
+          if (Array.isArray(ext.addPrereqs)) {
+            for (const p of ext.addPrereqs) {
+              if (!target.prereqIds.includes(p)) target.prereqIds.push(p);
+            }
+          }
+          if (Array.isArray(ext.addSources)) {
+            for (const s of ext.addSources) {
+              if (!target.sources.some(es => es.id === s.id)) target.sources.push({ ...s });
+            }
+          }
+        }
+      }
+    }
+    return map;
+  }
+
+  /* Fold Layer 0 (+) Layer 1 + Auto-hydrate Stubs */
+  function foldLayer0And1(patches, overrides) {
+    const baseMap = foldLayer0(patches);
+    const map = new Map();
+    for (const [id, n] of baseMap) map.set(id, cloneNode(n));
+
+    const tombstones = new Set(overrides.tombstones || []);
+    const overriddenIds = new Set();
+
+    // Custom nodes created in UI
+    for (const raw of (overrides.custom_nodes || [])) {
+      if (!raw || !raw.id || tombstones.has(raw.id)) continue;
+      const node = cloneNode(raw);
+      node.isCustom = true;
+      map.set(node.id, node);
+      overriddenIds.add(node.id);
+    }
+
+    // Tombstones
+    for (const deadId of tombstones) {
+      if (deadId !== "knowledge") map.delete(deadId);
+    }
+
+    // Field overrides
+    for (const [id, patchFields] of Object.entries(overrides.field_overrides || {})) {
+      const node = map.get(id);
+      if (!node) continue;
+      if (patchFields.title !== undefined) node.title = patchFields.title;
+      if (patchFields.intro !== undefined) node.intro = patchFields.intro;
+      node.isOverridden = true;
+      overriddenIds.add(id);
+    }
+
+    // Reparents
+    for (const [id, newParent] of Object.entries(overrides.reparents || {})) {
+      const node = map.get(id);
+      if (!node || id === "knowledge") continue;
+      node.parentId = newParent;
+      node.isOverridden = true;
+      overriddenIds.add(id);
+    }
+
+    // 2P-Set Edge Deltas (prereqIds + sources)
+    for (const [id, delta] of Object.entries(overrides.edge_deltas || {})) {
+      const node = map.get(id);
+      if (!node) continue;
+      const addP = new Set(delta.addPrereqs || []);
+      const remP = new Set(delta.removePrereqs || []);
+      for (const p of addP) {
+        if (!node.prereqIds.includes(p)) node.prereqIds.push(p);
+      }
+      node.prereqIds = node.prereqIds.filter(p => !remP.has(p));
+
+      const remS = new Set(delta.removeSourceIds || []);
+      node.sources = node.sources.filter(s => !remS.has(s.id));
+      for (const s of (delta.addSources || [])) {
+        if (!node.sources.some(es => es.id === s.id)) node.sources.push({ ...s });
+      }
+      node.isOverridden = true;
+      overriddenIds.add(id);
+    }
+
+    // Ghost / Stub Node Auto-Hydration (fixed-point loop for multi-segment dotted IDs)
+    let addedStub = true;
+    while (addedStub) {
+      addedStub = false;
+      const missingIds = new Set();
+      for (const node of map.values()) {
+        if (node.parentId && !map.has(node.parentId) && !tombstones.has(node.parentId)) {
+          missingIds.add(node.parentId);
+        }
+        for (const pId of node.prereqIds) {
+          if (!map.has(pId) && !tombstones.has(pId)) {
+            missingIds.add(pId);
+          }
+        }
+      }
+      for (const mId of missingIds) {
+        const inferredParent = inferParentFromSlug(mId, map);
+        map.set(mId, {
+          id: mId,
+          title: prettifySlug(mId),
+          parentId: inferredParent,
+          prereqIds: [],
+          intro: "",
+          sources: [],
+          isStub: true,
+          isCustom: false,
+          isOverridden: false
+        });
+        addedStub = true;
+      }
+    }
+
+    // Clean orphaned parentId or tombstoned prereqIds
+    for (const node of map.values()) {
+      if (node.id !== "knowledge" && (!node.parentId || !map.has(node.parentId))) {
+        node.parentId = "knowledge";
+      }
+      node.prereqIds = node.prereqIds.filter(p => map.has(p) && p !== node.id);
+    }
+
+    return { map, baseMap, overriddenIds };
+  }
+
+  /* Join Layer 2 Telemetry + Compute Recursive Conduit Progress Ratios */
+  function buildLiveGraph() {
+    const { map, baseMap, overriddenIds } = foldLayer0And1(layer0Patches, layer1Overrides);
+
+    // Build children adjacency & outgoing prereq dependents
+    const childrenMap = new Map();
+    const dependentsMap = new Map();
+    for (const id of map.keys()) {
+      childrenMap.set(id, []);
+      dependentsMap.set(id, []);
+    }
+    for (const node of map.values()) {
+      if (node.parentId && childrenMap.has(node.parentId)) {
+        childrenMap.get(node.parentId).push(node.id);
+      }
+      for (const pId of node.prereqIds) {
+        if (dependentsMap.has(pId)) dependentsMap.get(pId).push(node.id);
+      }
+    }
+
+    // Attach Layer 2 state per node
+    const nodeState = (id) => {
+      const s = layer2State.nodes[id];
+      return {
+        introDone: !!(s && s.introDone),
+        baselineDone: !!(s && s.baselineDone),
+        completedSourceIds: Array.isArray(s && s.completedSourceIds) ? s.completedSourceIds : [],
+        expandedOnMap: !!(s && s.expandedOnMap)
+      };
+    };
+
+    const progressMap = new Map();
+    function computeProgress(id, visiting = new Set()) {
+      if (progressMap.has(id)) return progressMap.get(id);
+      if (visiting.has(id)) return 0;
+      visiting.add(id);
+
+      const node = map.get(id);
+      const st = nodeState(id);
+      const kids = childrenMap.get(id) || [];
+
+      let r = 0;
+      if (kids.length === 0) {
+        const introVal = st.introDone ? 1 : 0;
+        const baseVal = st.baselineDone ? 1 : 0;
+        const totalSrc = node.sources.length;
+        if (totalSrc === 0) {
+          r = 0.50 * introVal + 0.50 * baseVal;
+        } else {
+          const doneSrc = node.sources.filter(s => st.completedSourceIds.includes(s.id)).length;
+          r = 0.30 * introVal + 0.40 * (doneSrc / totalSrc) + 0.30 * baseVal;
+        }
+      } else {
+        let sum = 0;
+        for (const cId of kids) sum += computeProgress(cId, visiting);
+        r = sum / kids.length;
+      }
+
+      progressMap.set(id, r);
+      visiting.delete(id);
+      return r;
+    }
+
+    for (const id of map.keys()) computeProgress(id);
+
+    // Enrich nodes with computed metrics
+    for (const [id, node] of map) {
+      const st = nodeState(id);
+      const kids = childrenMap.get(id) || [];
+      node.state = st;
+      node.childrenIds = kids;
+      node.dependentsIds = dependentsMap.get(id) || [];
+      node.progress = progressMap.get(id) || 0;
+      node.isBaselineDone = st.baselineDone;
+      node.isBlocked = !st.baselineDone && node.prereqIds.some(pId => !nodeState(pId).baselineDone);
+      node.isPostBaselineDeepened = st.baselineDone && kids.length > 0 && node.progress < 0.999;
+      node.depth = computeDepth(id, map);
+    }
+
+    // Ensure navigation pointers stay valid
+    if (!map.has(layer2State.navigation.MAIN)) layer2State.navigation.MAIN = "knowledge";
+    if (!map.has(layer2State.navigation.HEAD)) layer2State.navigation.HEAD = layer2State.navigation.MAIN;
+    layer2State.navigation.detourStack = (layer2State.navigation.detourStack || []).filter(id => map.has(id));
+
+    return {
+      nodes: map,
+      baseNodes: baseMap,
+      overriddenIds,
+      navigation: layer2State.navigation
+    };
+  }
+
+  function computeDepth(id, map) {
+    let d = 0;
+    let cur = map.get(id);
+    const seen = new Set();
+    while (cur && cur.parentId && map.has(cur.parentId) && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      d++;
+      cur = map.get(cur.parentId);
+    }
+    return d;
+  }
+
+  /* Strict Acyclicity DFS Check on E_prereq: returns cycle array or null */
+  function findPrereqCycle(graphNodes, prereqId, targetId) {
+    // Adding edge (prereqId -> targetId) creates a cycle iff prereqId is reachable from targetId
+    // via existing outgoing prerequisite edges (dependents)
+    if (prereqId === targetId) return [targetId, prereqId];
+    const adj = new Map();
+    for (const n of graphNodes.values()) adj.set(n.id, []);
+    for (const n of graphNodes.values()) {
+      for (const p of n.prereqIds) {
+        if (adj.has(p)) adj.get(p).push(n.id);
+      }
+    }
+    // Simulate adding edge prereqId -> targetId; check path from targetId to prereqId
+    const visited = new Set();
+    const path = [];
+    function dfs(curr) {
+      if (curr === prereqId) {
+        path.push(curr);
+        return true;
+      }
+      if (visited.has(curr)) return false;
+      visited.add(curr);
+      path.push(curr);
+      for (const nxt of (adj.get(curr) || [])) {
+        if (dfs(nxt)) return true;
+      }
+      path.pop();
+      return false;
+    }
+    if (dfs(targetId)) return path;
+    return null;
+  }
+
+  function validateFullDagAcyclicity(nodeMap) {
+    const adj = new Map();
+    for (const id of nodeMap.keys()) adj.set(id, []);
+    for (const n of nodeMap.values()) {
+      for (const p of n.prereqIds) {
+        if (adj.has(p)) adj.get(p).push(n.id);
+      }
+    }
+    const color = new Map(); // 0 unvisited, 1 visiting, 2 done
+    const stack = [];
+    for (const id of nodeMap.keys()) {
+      if ((color.get(id) || 0) !== 0) continue;
+      const cycle = dfsCycleCheck(id, adj, color, stack);
+      if (cycle) return cycle;
+    }
+    return null;
+  }
+
+  function dfsCycleCheck(u, adj, color, stack) {
+    color.set(u, 1);
+    stack.push(u);
+    for (const v of (adj.get(u) || [])) {
+      const c = color.get(v) || 0;
+      if (c === 1) {
+        const idx = stack.indexOf(v);
+        return [...stack.slice(idx), v];
+      }
+      if (c === 0) {
+        const res = dfsCycleCheck(v, adj, color, stack);
+        if (res) return res;
+      }
+    }
+    stack.pop();
+    color.set(u, 2);
+    return null;
+  }
+
+  /* =========================================================================
+   * 3. DIRECTORY TRUNCATION & FORMATTING HELPERS
+   * ========================================================================= */
+  function getAncestorChain(id, nodesMap) {
+    const chain = [];
+    let cur = nodesMap.get(id);
+    const seen = new Set();
+    while (cur && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      chain.unshift(cur);
+      cur = cur.parentId ? nodesMap.get(cur.parentId) : null;
+    }
+    return chain;
+  }
+
+  function formatTruncatedDirectory(id, nodesMap) {
+    const chain = getAncestorChain(id, nodesMap);
+    if (chain.length <= 1) return "Knowledge (Origin)";
+    // Drop root v_0 = Knowledge; indices [1..n]
+    const sub = chain.slice(1).map(n => n.title);
+    const n = sub.length;
+    if (n === 1) return sub[0];
+    if (n === 2) return `${sub[0]} / ${sub[1]}`;
+    return `${sub[0]} / ... / ${sub[n - 2]} / ${sub[n - 1]}`;
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderMathInContainer(el) {
+    if (!el || typeof window.renderMathInElement !== "function") return;
+    try {
+      window.renderMathInElement(el, {
+        delimiters: [
+          { left: "$$", right: "$$", display: true },
+          { left: "$", right: "$", display: false },
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+      });
+    } catch { /* Graceful fallback */ }
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2400);
+  }
+
+  /* =========================================================================
+   * 4. GRAPH LAYOUT ENGINE (Radial Wedge + Orthogonal Top-Down Tree)
+   * ========================================================================= */
+  let liveGraph = buildLiveGraph();
+  let layoutPositions = new Map(); // id -> { x, y, angle, depth, visibleChildren }
+  let visibleNodeIds = new Set();
+
+  function computeVisibleSet(graph) {
+    const vis = new Set(["knowledge"]);
+    function walk(id) {
+      const n = graph.nodes.get(id);
+      if (!n) return;
+      if (n.state.expandedOnMap || id === "knowledge") {
+        for (const cId of n.childrenIds) {
+          vis.add(cId);
+          walk(cId);
+        }
+      }
+    }
+    walk("knowledge");
+    return vis;
+  }
+
+  function computeLayout(graph) {
+    visibleNodeIds = computeVisibleSet(graph);
+    const pos = new Map();
+
+    // Leaf weight among visible nodes
+    const weightMap = new Map();
+    function calcWeight(id) {
+      const n = graph.nodes.get(id);
+      if (!n) return 1;
+      const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
+      if (visKids.length === 0) {
+        weightMap.set(id, 1);
+        return 1;
+      }
+      let sum = 0;
+      for (const c of visKids) sum += calcWeight(c);
+      const w = Math.max(1, sum);
+      weightMap.set(id, w);
+      return w;
+    }
+    calcWeight("knowledge");
+
+    if (uiSettings.layoutMode === "radial") {
+      // Count visible nodes at each depth to dynamically expand ring radii if dense
+      const depthCounts = new Map();
+      for (const id of visibleNodeIds) {
+        const d = graph.nodes.get(id).depth;
+        depthCounts.set(d, (depthCounts.get(d) || 0) + 1);
+      }
+      const ringRadius = new Map([[0, 0]]);
+      const maxDepth = Math.max(0, ...depthCounts.keys());
+      for (let d = 1; d <= maxDepth; d++) {
+        const prevR = ringRadius.get(d - 1);
+        const minCircumferenceR = ((depthCounts.get(d) || 1) * 185) / (2 * Math.PI);
+        ringRadius.set(d, Math.max(prevR + 195, minCircumferenceR));
+      }
+
+      pos.set("knowledge", { x: 0, y: 0, angle: 0, depth: 0 });
+
+      function assignRadial(id, thetaStart, thetaEnd) {
+        const n = graph.nodes.get(id);
+        const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
+        const totalW = visKids.reduce((acc, c) => acc + weightMap.get(c), 0) || 1;
+        let cur = thetaStart;
+        for (const cId of visKids) {
+          const w = weightMap.get(cId);
+          const span = ((thetaEnd - thetaStart) * w) / totalW;
+          const mid = cur + span / 2;
+          const d = graph.nodes.get(cId).depth;
+          const r = ringRadius.get(d) || d * 200;
+          pos.set(cId, {
+            x: r * Math.cos(mid),
+            y: r * Math.sin(mid),
+            angle: mid,
+            depth: d
+          });
+          assignRadial(cId, cur, cur + span);
+          cur += span;
+        }
+      }
+      assignRadial("knowledge", -Math.PI * 0.5, Math.PI * 1.5);
+    } else {
+      // Orthogonal Top-Down Tidy Tree Layout
+      const totalLeaves = weightMap.get("knowledge") || 1;
+      const unitWidth = 190;
+      const levelHeight = 165;
+      const totalWidth = totalLeaves * unitWidth;
+
+      function assignTree(id, xStart, xEnd) {
+        const n = graph.nodes.get(id);
+        const midX = (xStart + xEnd) / 2;
+        const y = n.depth * levelHeight - 180;
+        pos.set(id, { x: midX, y, angle: Math.PI / 2, depth: n.depth });
+
+        const visKids = n.childrenIds.filter(c => visibleNodeIds.has(c));
+        const totalW = visKids.reduce((acc, c) => acc + weightMap.get(c), 0) || 1;
+        let curX = xStart;
+        for (const cId of visKids) {
+          const w = weightMap.get(cId);
+          const span = ((xEnd - xStart) * w) / totalW;
+          assignTree(cId, curX, curX + span);
+          curX += span;
+        }
+      }
+      assignTree("knowledge", -totalWidth / 2, totalWidth / 2);
+    }
+
+    layoutPositions = pos;
+  }
+
+  /* =========================================================================
+   * 5. CAMERA (PAN, ZOOM, SMOOTH 450ms rAF INTERPOLATION) & MINIMAP
+   * ========================================================================= */
+  const camera = { x: 0, y: 0, k: 0.85 };
+  let animFrameId = null;
+
+  function applyWorldTransform() {
+    const canvas = document.getElementById("canvasPane");
+    const w = canvas.clientWidth || 800;
+    const h = canvas.clientHeight || 600;
+    const tx = w / 2 + camera.x;
+    const ty = h / 2 + camera.y;
+    document.getElementById("svgWorld").setAttribute("transform", `translate(${tx.toFixed(2)}, ${ty.toFixed(2)}) scale(${camera.k.toFixed(4)})`);
+    const pct = `${Math.round(camera.k * 100)}%`;
+    document.getElementById("zoomPctLabel").textContent = pct;
+    document.getElementById("minimapZoomPct").textContent = pct;
+    updateMinimapViewport();
+  }
+
+  function cancelCameraAnim() {
+    if (animFrameId !== null) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+  }
+
+  function animateCameraTo(worldX, worldY, targetK = null, duration = 450) {
+    cancelCameraAnim();
+    const startX = camera.x;
+    const startY = camera.y;
+    const startK = camera.k;
+    const endK = targetK !== null ? targetK : startK;
+    const endX = -worldX * endK;
+    const endY = -worldY * endK;
+    const t0 = performance.now();
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+
+    function step(now) {
+      const raw = Math.min(1, (now - t0) / duration);
+      const e = easeInOutCubic(raw);
+      camera.x = startX + (endX - startX) * e;
+      camera.y = startY + (endY - startY) * e;
+      camera.k = startK + (endK - startK) * e;
+      applyWorldTransform();
+      if (raw < 1) {
+        animFrameId = requestAnimationFrame(step);
+      } else {
+        animFrameId = null;
+      }
+    }
+    animFrameId = requestAnimationFrame(step);
+  }
+
+  function locateNode(id, zoomTarget = 0.98) {
+    ensureAncestorsExpanded(id);
+    const p = layoutPositions.get(id);
+    if (!p) return;
+    animateCameraTo(p.x, p.y, Math.max(camera.k, zoomTarget), 450);
+  }
+
+  function gentleCenterIfNearEdge(id) {
+    const p = layoutPositions.get(id);
+    if (!p) return;
+    const canvas = document.getElementById("canvasPane");
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    const sx = p.x * camera.k + w / 2 + camera.x;
+    const sy = p.y * camera.k + h / 2 + camera.y;
+    const marginX = Math.min(130, w * 0.18);
+    const marginY = Math.min(95, h * 0.18);
+    if (sx < marginX || sx > w - marginX || sy < marginY || sy > h - marginY) {
+      animateCameraTo(p.x, p.y, camera.k, 380);
+    }
+  }
+
+  function fitVisibleGraph() {
+    if (layoutPositions.size === 0) return;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    for (const p of layoutPositions.values()) {
+      minX = Math.min(minX, p.x - 95);
+      maxX = Math.max(maxX, p.x + 95);
+      minY = Math.min(minY, p.y - 45);
+      maxY = Math.max(maxY, p.y + 45);
+    }
+    const canvas = document.getElementById("canvasPane");
+    const w = canvas.clientWidth || 800;
+    const h = canvas.clientHeight || 600;
+    const spanX = Math.max(200, maxX - minX);
+    const spanY = Math.max(200, maxY - minY);
+    const k = Math.max(0.28, Math.min(1.25, Math.min((w - 80) / spanX, (h - 80) / spanY)));
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    animateCameraTo(cx, cy, k, 420);
+  }
+
+  function ensureAncestorsExpanded(id) {
+    let cur = liveGraph.nodes.get(id);
+    let changed = false;
+    const seen = new Set();
+    while (cur && cur.parentId && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      if (!layer2State.nodes[cur.parentId]) {
+        layer2State.nodes[cur.parentId] = { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: true };
+        changed = true;
+      } else if (!layer2State.nodes[cur.parentId].expandedOnMap) {
+        layer2State.nodes[cur.parentId].expandedOnMap = true;
+        changed = true;
+      }
+      cur = liveGraph.nodes.get(cur.parentId);
+    }
+    if (changed) {
+      persistAll();
+      liveGraph = buildLiveGraph();
+      computeLayout(liveGraph);
+      renderAll();
+    }
+  }
+
+  /* =========================================================================
+   * 6. SVG GEOMETRY HELPERS FOR HOLLOW PROGRESS CONDUITS
+   * ========================================================================= */
+  function sampleCubicBezier(p0, p1, p2, p3, steps = 40) {
+    const pts = [];
+    let totalLen = 0;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const mt = 1 - t;
+      const x = mt * mt * mt * p0.x + 3 * mt * mt * t * p1.x + 3 * mt * t * t * p2.x + t * t * t * p3.x;
+      const y = mt * mt * mt * p0.y + 3 * mt * mt * t * p1.y + 3 * mt * t * t * p2.y + t * t * t * p3.y;
+      if (i > 0) {
+        const dx = x - pts[i - 1].x;
+        const dy = y - pts[i - 1].y;
+        totalLen += Math.hypot(dx, dy);
+      }
+      pts.push({ x, y, len: totalLen });
+    }
+    return { pts, totalLen: Math.max(1, totalLen) };
+  }
+
+  function pointAndTangentAtFraction(sampled, frac) {
+    const clamped = Math.max(0, Math.min(1, frac));
+    const targetLen = clamped * sampled.totalLen;
+    const pts = sampled.pts;
+    for (let i = 1; i < pts.length; i++) {
+      if (pts[i].len >= targetLen || i === pts.length - 1) {
+        const a = pts[i - 1];
+        const b = pts[i];
+        const seg = Math.max(0.0001, b.len - a.len);
+        const u = Math.max(0, Math.min(1, (targetLen - a.len) / seg));
+        const x = a.x + (b.x - a.x) * u;
+        const y = a.y + (b.y - a.y) * u;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const d = Math.hypot(dx, dy) || 1;
+        return { x, y, tx: dx / d, ty: dy / d };
+      }
+    }
+    const p = pts[0];
+    return { x: p.x, y: p.y, tx: 1, ty: 0 };
+  }
+
+  function subPolylinePath(sampled, fracStart, fracEnd) {
+    const aLen = Math.max(0, fracStart) * sampled.totalLen;
+    const bLen = Math.min(1, fracEnd) * sampled.totalLen;
+    if (bLen <= aLen) return "";
+    const pts = sampled.pts;
+    const startPt = pointAndTangentAtFraction(sampled, fracStart);
+    const out = [`M ${startPt.x.toFixed(2)} ${startPt.y.toFixed(2)}`];
+    for (let i = 1; i < pts.length; i++) {
+      if (pts[i].len > aLen && pts[i].len < bLen) {
+        out.push(`L ${pts[i].x.toFixed(2)} ${pts[i].y.toFixed(2)}`);
+      }
+    }
+    const endPt = pointAndTangentAtFraction(sampled, fracEnd);
+    out.push(`L ${endPt.x.toFixed(2)} ${endPt.y.toFixed(2)}`);
+    return out.join(" ");
+  }
+
+  function makeSvgEl(tag, attrs = {}) {
+    const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      el.setAttribute(k, String(v));
+    }
+    return el;
+  }
+
+  /* =========================================================================
+   * 7. MAIN SUBGRAPH SPOTLIGHT HELPER (Frontier Radar)
+   * ========================================================================= */
+  function computeMainDependencySubgraph(graph) {
+    const mainId = graph.navigation.MAIN;
+    const activeSet = new Set();
+    // 1) Tree ancestors of MAIN
+    for (const anc of getAncestorChain(mainId, graph.nodes)) activeSet.add(anc.id);
+    // 2) Transitive prerequisites of MAIN (and their tree ancestors so paths remain clear)
+    const queue = [mainId];
+    while (queue.length > 0) {
+      const cur = queue.shift();
+      const node = graph.nodes.get(cur);
+      if (!node) continue;
+      for (const pId of node.prereqIds) {
+        if (!activeSet.has(pId)) {
+          activeSet.add(pId);
+          queue.push(pId);
+          for (const anc of getAncestorChain(pId, graph.nodes)) activeSet.add(anc.id);
+        }
+      }
+    }
+    return activeSet;
+  }
+
+  /* =========================================================================
+   * 8. RENDER ENGINE (SVG MAP + MINIMAP + SIDE PANEL + TOP TELEMETRY)
+   * ========================================================================= */
+  function renderAll() {
+    liveGraph = buildLiveGraph();
+    computeLayout(liveGraph);
+    renderTopbar();
+    renderFloatingDetour();
+    renderSvgScene();
+    renderMinimap();
+    renderSidePanel();
+    applyWorldTransform();
+  }
+
+  function renderTopbar() {
+    const nodesArr = [...liveGraph.nodes.values()].filter(n => n.id !== "knowledge" && !n.isStub);
+    const doneCount = nodesArr.filter(n => n.isBaselineDone).length;
+    document.getElementById("globalProgressPill").textContent = `Baseline: ${doneCount} / ${nodesArr.length} Topics`;
+
+    const mainNode = liveGraph.nodes.get(liveGraph.navigation.MAIN);
+    const headNode = liveGraph.nodes.get(liveGraph.navigation.HEAD);
+    document.getElementById("topMainTitle").textContent = mainNode ? mainNode.title : "—";
+    document.getElementById("topHeadTitle").textContent = headNode ? headNode.title : "—";
+    document.getElementById("btnToggleLayout").textContent = uiSettings.layoutMode === "radial" ? "Layout: Radial" : "Layout: Tree";
+
+    const spotHud = document.getElementById("spotlightHudBox");
+    spotHud.style.display = uiSettings.spotlightMain ? "flex" : "none";
+  }
+
+  function renderFloatingDetour() {
+    const banner = document.getElementById("floatingDetourBanner");
+    const stack = liveGraph.navigation.detourStack;
+    if (stack.length === 0) {
+      banner.classList.remove("visible");
+      return;
+    }
+    const prevId = stack[stack.length - 1];
+    const prevNode = liveGraph.nodes.get(prevId);
+    const btn = document.getElementById("btnFloatingGetBack");
+    btn.textContent = `← Get Back to ${prevNode ? prevNode.title : prevId}`;
+    document.getElementById("floatingDetourLabel").textContent = `Stack Depth: ${stack.length}`;
+    banner.classList.add("visible");
+  }
+
+  function findVisibleAnchor(id) {
+    if (visibleNodeIds.has(id) && layoutPositions.has(id)) {
+      return { id, pos: layoutPositions.get(id), proxied: false };
+    }
+    let cur = liveGraph.nodes.get(id);
+    const seen = new Set();
+    while (cur && cur.parentId && !seen.has(cur.id)) {
+      seen.add(cur.id);
+      if (visibleNodeIds.has(cur.parentId) && layoutPositions.has(cur.parentId)) {
+        return { id: cur.parentId, pos: layoutPositions.get(cur.parentId), proxied: true };
+      }
+      cur = liveGraph.nodes.get(cur.parentId);
+    }
+    return { id: "knowledge", pos: layoutPositions.get("knowledge"), proxied: true };
+  }
+
+  function renderSvgScene() {
+    const gConduits = document.getElementById("layerConduits");
+    const gPrereqs = document.getElementById("layerPrereqs");
+    const gSources = document.getElementById("layerSources");
+    const gNodes = document.getElementById("layerNodes");
+    const gPills = document.getElementById("layerPrereqPills");
+
+    gConduits.innerHTML = "";
+    gPrereqs.innerHTML = "";
+    gSources.innerHTML = "";
+    gNodes.innerHTML = "";
+    gPills.innerHTML = "";
+
+    const spotlightSet = uiSettings.spotlightMain ? computeMainDependencySubgraph(liveGraph) : null;
+    const isDimmed = (id) => spotlightSet && !spotlightSet.has(id);
+
+    /* 1) Hollow Progress Conduits & Perpendicular Crossbars */
+    for (const vId of visibleNodeIds) {
+      if (vId === "knowledge") continue;
+      const v = liveGraph.nodes.get(vId);
+      const uPos = layoutPositions.get(v.parentId);
+      const vPos = layoutPositions.get(vId);
+      if (!uPos || !vPos) continue;
+
+      let p1, p2;
+      if (uiSettings.layoutMode === "radial") {
+        const dx = vPos.x - uPos.x;
+        const dy = vPos.y - uPos.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        // Slight outward radial curve
+        const ux = uPos.x === 0 && uPos.y === 0 ? dx / dist : uPos.x / (Math.hypot(uPos.x, uPos.y) || 1);
+        const uy = uPos.x === 0 && uPos.y === 0 ? dy / dist : uPos.y / (Math.hypot(uPos.x, uPos.y) || 1);
+        p1 = { x: uPos.x + ux * dist * 0.35, y: uPos.y + uy * dist * 0.35 };
+        p2 = { x: vPos.x - dx * 0.32, y: vPos.y - dy * 0.32 };
+      } else {
+        const midY = (uPos.y + vPos.y) / 2;
+        p1 = { x: uPos.x, y: midY };
+        p2 = { x: vPos.x, y: midY };
+      }
+
+      const sampled = sampleCubicBezier(uPos, p1, p2, vPos, 40);
+      const fullPath = subPolylinePath(sampled, 0, 1);
+
+      const conduitGroup = makeSvgEl("g", { class: isDimmed(vId) ? "dimmed" : "" });
+
+      // Outer wall (width 9 -> 6px core + 1.5px wall each side)
+      conduitGroup.appendChild(makeSvgEl("path", {
+        d: fullPath,
+        fill: "none",
+        stroke: "#8c959f",
+        "stroke-width": 9,
+        "stroke-linecap": "round"
+      }));
+      // Hollow inner channel
+      conduitGroup.appendChild(makeSvgEl("path", {
+        d: fullPath,
+        fill: "none",
+        stroke: "#ffffff",
+        "stroke-width": 6,
+        "stroke-linecap": "round"
+      }));
+
+      // Map ratio to visible span outside parent/child boxes [0.16 .. 0.84]
+      const visStart = 0.16;
+      const visEnd = 0.84;
+      const r = v.progress;
+      const fillColor = v.isBaselineDone ? "#4ac26b" : "#d4a72c";
+      const barColor = v.isBaselineDone ? "#116329" : "#7d4e00";
+
+      // If baselineDone and deeper subtopics were appended later, reserve gate at 0.30 of visible span
+      let activeRatio = r;
+      if (v.isPostBaselineDeepened) {
+        activeRatio = 0.30 + 0.70 * r;
+      }
+      const fillFrac = visStart + activeRatio * (visEnd - visStart);
+
+      if (activeRatio > 0.005) {
+        const fillPath = subPolylinePath(sampled, 0, fillFrac);
+        conduitGroup.appendChild(makeSvgEl("path", {
+          d: fillPath,
+          fill: "none",
+          stroke: fillColor,
+          "stroke-width": 4.6,
+          "stroke-linecap": "butt"
+        }));
+      }
+
+      // Post-Baseline Double-Bar Gate stamped at baseline threshold
+      if (v.isPostBaselineDeepened) {
+        const gateFrac = visStart + 0.30 * (visEnd - visStart);
+        for (const offset of [-0.015, 0.015]) {
+          const gp = pointAndTangentAtFraction(sampled, gateFrac + offset);
+          const nx = -gp.ty * 8;
+          const ny = gp.tx * 8;
+          conduitGroup.appendChild(makeSvgEl("line", {
+            x1: (gp.x - nx).toFixed(2),
+            y1: (gp.y - ny).toFixed(2),
+            x2: (gp.x + nx).toFixed(2),
+            y2: (gp.y + ny).toFixed(2),
+            stroke: "#116329",
+            "stroke-width": 2.2
+          }));
+        }
+      }
+
+      // Perpendicular achievement crossbar (14px wide, 2.5px stroke)
+      const pt = pointAndTangentAtFraction(sampled, fillFrac);
+      const nx = -pt.ty * 7;
+      const ny = pt.tx * 7;
+      conduitGroup.appendChild(makeSvgEl("line", {
+        x1: (pt.x - nx).toFixed(2),
+        y1: (pt.y - ny).toFixed(2),
+        x2: (pt.x + nx).toFixed(2),
+        y2: (pt.y + ny).toFixed(2),
+        stroke: barColor,
+        "stroke-width": 2.5,
+        "stroke-linecap": "square"
+      }));
+
+      gConduits.appendChild(conduitGroup);
+    }
+
+    /* 2) Cross-Branch Prerequisite Arrows (Contextual for HEAD, plus dimmed MAIN) */
+    const targetsToDraw = [];
+    if (liveGraph.navigation.MAIN !== liveGraph.navigation.HEAD) {
+      targetsToDraw.push({ id: liveGraph.navigation.MAIN, dimmed: true });
+    }
+    targetsToDraw.push({ id: liveGraph.navigation.HEAD, dimmed: false });
+
+    const seenPairs = new Set();
+    for (const { id: targetId, dimmed } of targetsToDraw) {
+      const targetNode = liveGraph.nodes.get(targetId);
+      if (!targetNode) continue;
+      const targetAnchor = findVisibleAnchor(targetId);
+      const tPos = targetAnchor.pos;
+      if (!tPos) continue;
+
+      targetNode.prereqIds.forEach((pId, idx) => {
+        const pairKey = `${pId}->${targetId}`;
+        if (seenPairs.has(pairKey)) return;
+        seenPairs.add(pairKey);
+
+        const pNode = liveGraph.nodes.get(pId);
+        if (!pNode) return;
+        const pAnchor = findVisibleAnchor(pId);
+        const sPos = pAnchor.pos;
+        if (!sPos) return;
+
+        const isDone = pNode.isBaselineDone;
+        const dx = tPos.x - sPos.x;
+        const dy = tPos.y - sPos.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const nx = -dy / dist;
+        const ny = dx / dist;
+        // Offset curve nicely so multiple arrows separate clearly
+        const curveSign = idx % 2 === 0 ? 1 : -1;
+        const curveMag = Math.max(48, Math.min(130, dist * 0.22)) + idx * 14;
+        const cx = (sPos.x + tPos.x) / 2 + nx * curveMag * curveSign;
+        const cy = (sPos.y + tPos.y) / 2 + ny * curveMag * curveSign;
+
+        // Shorten end slightly so arrowhead sits right outside node card
+        const endT = Math.max(0.75, 1 - 46 / dist);
+        const ex = (1 - endT) * (1 - endT) * sPos.x + 2 * (1 - endT) * endT * cx + endT * endT * tPos.x;
+        const ey = (1 - endT) * (1 - endT) * sPos.y + 2 * (1 - endT) * endT * cy + endT * endT * tPos.y;
+
+        const pathD = `M ${sPos.x.toFixed(1)} ${sPos.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+        const strokeColor = dimmed ? "#8c959f" : (isDone ? "#116329" : "#a40e26");
+        const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-dotted-c)" : "url(#arrow-solid-x)");
+
+        const hitGroup = makeSvgEl("g", {
+          class: `prereq-hit ${dimmed ? "dimmed" : ""}`,
+          style: dimmed ? "opacity: 0.45;" : ""
+        });
+        // Invisible wide hit area
+        hitGroup.appendChild(makeSvgEl("path", {
+          d: pathD,
+          fill: "none",
+          stroke: "transparent",
+          "stroke-width": 14
+        }));
+        const arrowAttrs = {
+          d: pathD,
+          fill: "none",
+          stroke: strokeColor,
+          "stroke-width": isDone ? 1.8 : 2.3,
+          "marker-end": markerId
+        };
+        if (isDone) arrowAttrs["stroke-dasharray"] = "5,5";
+        hitGroup.appendChild(makeSvgEl("path", arrowAttrs));
+
+        hitGroup.addEventListener("click", (e) => {
+          e.stopPropagation();
+          detourTo(pId);
+        });
+        gPrereqs.appendChild(hitGroup);
+
+        // Midpoint directory label pill
+        if (!dimmed) {
+          const mx = 0.25 * sPos.x + 0.5 * cx + 0.25 * tPos.x;
+          const my = 0.25 * sPos.y + 0.5 * cy + 0.25 * tPos.y;
+          let dirText = formatTruncatedDirectory(pId, liveGraph.nodes);
+          if (pAnchor.proxied) dirText = `↳ ${dirText}`;
+          if (dirText.length > 36) dirText = "…" + dirText.slice(-35);
+          const pillW = Math.max(96, dirText.length * 6.1 + 18);
+
+          const pillGroup = makeSvgEl("g", { class: "prereq-hit" });
+          pillGroup.appendChild(makeSvgEl("rect", {
+            class: "prereq-pill-rect",
+            x: (mx - pillW / 2).toFixed(1),
+            y: (my - 10).toFixed(1),
+            width: pillW.toFixed(1),
+            height: 20,
+            rx: 3,
+            fill: isDone ? "#dafbe1" : "#ffebe9",
+            stroke: isDone ? "#4ac26b" : "#ff8182",
+            "stroke-width": 1.2
+          }));
+          const pillTxt = makeSvgEl("text", {
+            x: mx.toFixed(1),
+            y: (my + 3.5).toFixed(1),
+            "text-anchor": "middle",
+            "font-family": "var(--font-mono)",
+            "font-size": 9.5,
+            "font-weight": 700,
+            fill: isDone ? "#116329" : "#a40e26"
+          });
+          pillTxt.textContent = dirText;
+          pillGroup.appendChild(pillTxt);
+          pillGroup.addEventListener("click", (e) => {
+            e.stopPropagation();
+            detourTo(pId);
+          });
+          gPills.appendChild(pillGroup);
+        }
+      });
+    }
+
+    /* 3) Leaf Source Clusters around Expanded Leaf / HEAD Nodes */
+    for (const vId of visibleNodeIds) {
+      if (vId === "knowledge") continue;
+      const v = liveGraph.nodes.get(vId);
+      if (!v || v.sources.length === 0) continue;
+      if (!v.state.expandedOnMap && vId !== liveGraph.navigation.HEAD) continue;
+      const pos = layoutPositions.get(vId);
+      if (!pos) continue;
+
+      const maxShow = Math.min(3, v.sources.length);
+      for (let i = 0; i < maxShow; i++) {
+        const src = v.sources[i];
+        const done = v.state.completedSourceIds.includes(src.id);
+        const angle = (pos.angle || 0) + (i - (maxShow - 1) / 2) * 0.42;
+        const sx = pos.x + Math.cos(angle) * 86;
+        const sy = pos.y + Math.sin(angle) * 52 + 24;
+        const sg = makeSvgEl("g", { class: isDimmed(vId) ? "dimmed" : "" });
+        sg.appendChild(makeSvgEl("line", {
+          x1: pos.x,
+          y1: pos.y + 18,
+          x2: sx,
+          y2: sy,
+          stroke: "#d0d7de",
+          "stroke-width": 1,
+          "stroke-dasharray": "2,2"
+        }));
+        const label = (done ? "✓ " : "○ ") + (src.title.length > 22 ? src.title.slice(0, 21) + "…" : src.title);
+        const cw = Math.max(70, label.length * 5.6 + 12);
+        sg.appendChild(makeSvgEl("rect", {
+          x: sx - cw / 2,
+          y: sy - 9,
+          width: cw,
+          height: 18,
+          rx: 2,
+          fill: done ? "#dafbe1" : "#f1f3f5",
+          stroke: done ? "#4ac26b" : "#d0d7de",
+          "stroke-width": 1
+        }));
+        const st = makeSvgEl("text", {
+          x: sx,
+          y: sy + 3,
+          "text-anchor": "middle",
+          "font-family": "var(--font-mono)",
+          "font-size": 8.5,
+          fill: done ? "#116329" : "#59636e"
+        });
+        st.textContent = label;
+        sg.appendChild(st);
+        gSources.appendChild(sg);
+      }
+    }
+
+    /* 4) Topic Vertices (Origin Dot + Branch Cards) */
+    for (const id of visibleNodeIds) {
+      const n = liveGraph.nodes.get(id);
+      const pos = layoutPositions.get(id);
+      if (!n || !pos) continue;
+
+      const isMain = id === liveGraph.navigation.MAIN;
+      const isHead = id === liveGraph.navigation.HEAD;
+      const nodeG = makeSvgEl("g", {
+        class: `svg-node ${isDimmed(id) ? "dimmed" : ""}`,
+        transform: `translate(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`
+      });
+
+      if (id === "knowledge") {
+        // Concentric Origin Dot (o)
+        nodeG.appendChild(makeSvgEl("circle", {
+          cx: 0, cy: 0, r: 30,
+          fill: "#ffffff",
+          stroke: isHead ? "#8250df" : "#1f2328",
+          "stroke-width": isHead ? 2.8 : 2
+        }));
+        nodeG.appendChild(makeSvgEl("circle", {
+          cx: 0, cy: 0, r: 21,
+          fill: "#f1f3f5",
+          stroke: "#8c959f",
+          "stroke-width": 1.2
+        }));
+        nodeG.appendChild(makeSvgEl("circle", {
+          cx: 0, cy: 0, r: 5,
+          fill: "#1f2328"
+        }));
+        const lbl = makeSvgEl("text", {
+          x: 0, y: 44,
+          "text-anchor": "middle",
+          "font-family": "var(--font-mono)",
+          "font-size": 11,
+          "font-weight": 800,
+          fill: "#1f2328"
+        });
+        lbl.textContent = "KNOWLEDGE (ORIGIN)";
+        nodeG.appendChild(lbl);
+      } else {
+        const w = 152;
+        const h = 42;
+        let fill = "#ffffff";
+        let stroke = "#8c959f";
+        let strokeW = 1.2;
+        let dash = null;
+
+        if (n.isStub) {
+          fill = "#eaeef2";
+          stroke = "#8c959f";
+          dash = "4,3";
+        } else if (n.isBaselineDone) {
+          fill = "#f6fff8";
+          stroke = "#4ac26b";
+        } else if (n.isBlocked) {
+          fill = "#fff8f7";
+          stroke = "#ff8182";
+        } else if (n.progress > 0) {
+          fill = "#fffdf0";
+          stroke = "#d4a72c";
+        }
+
+        // MAIN pulsing beacon ring
+        if (isMain) {
+          nodeG.appendChild(makeSvgEl("rect", {
+            x: -w / 2 - 5,
+            y: -h / 2 - 5,
+            width: w + 10,
+            height: h + 10,
+            rx: 6,
+            fill: "none",
+            stroke: "#0969da",
+            "stroke-width": 2,
+            "stroke-dasharray": "4,3"
+          }));
+          nodeG.appendChild(makeSvgEl("circle", {
+            class: "main-beacon-pulse",
+            cx: -w / 2 + 8,
+            cy: -h / 2 - 10,
+            r: 10,
+            fill: "none",
+            stroke: "#0969da",
+            "stroke-width": 1.8
+          }));
+        }
+
+        // HEAD active reticle
+        if (isHead) {
+          nodeG.appendChild(makeSvgEl("rect", {
+            x: -w / 2 - 3,
+            y: -h / 2 - 3,
+            width: w + 6,
+            height: h + 6,
+            rx: 5,
+            fill: "none",
+            stroke: "#8250df",
+            "stroke-width": 2.2
+          }));
+        }
+
+        const cardAttrs = {
+          class: "node-card",
+          x: -w / 2,
+          y: -h / 2,
+          width: w,
+          height: h,
+          rx: 4,
+          fill,
+          stroke,
+          "stroke-width": strokeW
+        };
+        if (dash) cardAttrs["stroke-dasharray"] = dash;
+        nodeG.appendChild(makeSvgEl("rect", cardAttrs));
+
+        // Left status indicator bar
+        const statusBarColor = n.isStub ? "#57606a"
+          : n.isBaselineDone ? "#4ac26b"
+          : n.isBlocked ? "#ff8182"
+          : n.progress > 0 ? "#d4a72c"
+          : "#d0d7de";
+        nodeG.appendChild(makeSvgEl("rect", {
+          x: -w / 2,
+          y: -h / 2,
+          width: 4.5,
+          height: h,
+          rx: 1,
+          fill: statusBarColor
+        }));
+
+        // Title (truncate cleanly)
+        const titleStr = n.title.length > 20 ? n.title.slice(0, 19) + "…" : n.title;
+        const txt = makeSvgEl("text", {
+          x: -w / 2 + 10,
+          y: -3,
+          "font-family": "var(--font-mono)",
+          "font-size": 10.5,
+          "font-weight": 700,
+          fill: n.isStub ? "#57606a" : "#1f2328"
+        });
+        txt.textContent = titleStr;
+        nodeG.appendChild(txt);
+
+        // Subline: progress % + status flag
+        const pct = Math.round(n.progress * 100);
+        const flagStr = n.isStub ? "[STUB]"
+          : n.isBaselineDone ? "[C] BASELINE"
+          : n.isBlocked ? "[X] BLOCKED"
+          : n.progress > 0 ? "[W] ACTIVE"
+          : "[ ] READY";
+        const subTxt = makeSvgEl("text", {
+          x: -w / 2 + 10,
+          y: 12,
+          "font-family": "var(--font-mono)",
+          "font-size": 9,
+          "font-weight": 600,
+          fill: n.isBaselineDone ? "#116329" : n.isBlocked ? "#a40e26" : "#59636e"
+        });
+        subTxt.textContent = `${flagStr} · ${pct}%`;
+        nodeG.appendChild(subTxt);
+
+        // Locator Badges above node card
+        if (isMain || isHead) {
+          let bx = -w / 2;
+          if (isMain) {
+            nodeG.appendChild(makeSvgEl("rect", { x: bx, y: -h / 2 - 17, width: 38, height: 14, rx: 2, fill: "#0969da" }));
+            const mt = makeSvgEl("text", { x: bx + 19, y: -h / 2 - 7, "text-anchor": "middle", "font-family": "var(--font-mono)", "font-size": 8.5, "font-weight": 800, fill: "#ffffff" });
+            mt.textContent = "MAIN";
+            nodeG.appendChild(mt);
+            bx += 42;
+          }
+          if (isHead) {
+            nodeG.appendChild(makeSvgEl("rect", { x: bx, y: -h / 2 - 17, width: 38, height: 14, rx: 2, fill: "#8250df" }));
+            const ht = makeSvgEl("text", { x: bx + 19, y: -h / 2 - 7, "text-anchor": "middle", "font-family": "var(--font-mono)", "font-size": 8.5, "font-weight": 800, fill: "#ffffff" });
+            ht.textContent = "HEAD";
+            nodeG.appendChild(ht);
+          }
+        }
+
+        // Expand / Collapse Badge (+N / -) — does NOT change HEAD
+        if (n.childrenIds.length > 0) {
+          const isExp = n.state.expandedOnMap;
+          const badgeText = isExp ? "−" : `+${n.childrenIds.length}`;
+          const bw = isExp ? 18 : Math.max(22, badgeText.length * 6.5 + 8);
+          const bg = makeSvgEl("g", { class: "svg-expand-badge" });
+          bg.appendChild(makeSvgEl("rect", {
+            x: w / 2 - bw - 4,
+            y: h / 2 - 9,
+            width: bw,
+            height: 16,
+            rx: 3,
+            fill: "#f1f3f5",
+            stroke: "#8c959f",
+            "stroke-width": 1
+          }));
+          const bt = makeSvgEl("text", {
+            x: w / 2 - bw / 2 - 4,
+            y: h / 2 + 2,
+            "text-anchor": "middle",
+            "font-family": "var(--font-mono)",
+            "font-size": 9,
+            "font-weight": 800,
+            fill: "#1f2328"
+          });
+          bt.textContent = badgeText;
+          bg.appendChild(bt);
+          bg.addEventListener("click", (e) => {
+            e.stopPropagation();
+            toggleNodeExpansion(id);
+          });
+          nodeG.appendChild(bg);
+        }
+      }
+
+      // Single Click on Node Body: sets HEAD = id, clears detourStack, toggles expandedOnMap if has children/sources
+      nodeG.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectNodeFromMap(id);
+      });
+
+      gNodes.appendChild(nodeG);
+    }
+  }
+
+  /* Minimap Rendering & Viewport Rectangle */
+  let minimapBounds = { minX: -400, maxX: 400, minY: -300, maxY: 300 };
+
+  function renderMinimap() {
+    const svg = document.getElementById("minimapSvg");
+    svg.innerHTML = "";
+    let minX = -220, maxX = 220, minY = -180, maxY = 180;
+    for (const p of layoutPositions.values()) {
+      minX = Math.min(minX, p.x - 100);
+      maxX = Math.max(maxX, p.x + 100);
+      minY = Math.min(minY, p.y - 80);
+      maxY = Math.max(maxY, p.y + 80);
+    }
+    minimapBounds = { minX, maxX, minY, maxY };
+    const vw = Math.max(100, maxX - minX);
+    const vh = Math.max(100, maxY - minY);
+    svg.setAttribute("viewBox", `${minX.toFixed(1)} ${minY.toFixed(1)} ${vw.toFixed(1)} ${vh.toFixed(1)}`);
+
+    // Skeleton edges
+    for (const id of visibleNodeIds) {
+      if (id === "knowledge") continue;
+      const n = liveGraph.nodes.get(id);
+      const u = layoutPositions.get(n.parentId);
+      const v = layoutPositions.get(id);
+      if (!u || !v) continue;
+      svg.appendChild(makeSvgEl("line", {
+        x1: u.x, y1: u.y, x2: v.x, y2: v.y,
+        stroke: n.isBaselineDone ? "#4ac26b" : "#8c959f",
+        "stroke-width": Math.max(2, vw * 0.004)
+      }));
+    }
+
+    // Node dots + beacons
+    const dotR = Math.max(5, vw * 0.011);
+    for (const id of visibleNodeIds) {
+      const p = layoutPositions.get(id);
+      if (!p) continue;
+      const isMain = id === liveGraph.navigation.MAIN;
+      const isHead = id === liveGraph.navigation.HEAD;
+      svg.appendChild(makeSvgEl("circle", {
+        cx: p.x, cy: p.y,
+        r: isMain || isHead ? dotR * 1.45 : dotR,
+        fill: isMain ? "#0969da" : isHead ? "#8250df" : (id === "knowledge" ? "#1f2328" : "#59636e")
+      }));
+      if (isHead) {
+        svg.appendChild(makeSvgEl("circle", {
+          cx: p.x, cy: p.y,
+          r: dotR * 2.4,
+          fill: "none",
+          stroke: "#8250df",
+          "stroke-width": Math.max(2, vw * 0.005)
+        }));
+      }
+    }
+
+    const vpRect = makeSvgEl("rect", {
+      id: "minimapViewportRect",
+      fill: "rgba(9, 105, 218, 0.10)",
+      stroke: "#0969da",
+      "stroke-width": Math.max(2.5, vw * 0.006)
+    });
+    svg.appendChild(vpRect);
+    updateMinimapViewport();
+  }
+
+  function updateMinimapViewport() {
+    const vp = document.getElementById("minimapViewportRect");
+    if (!vp) return;
+    const canvas = document.getElementById("canvasPane");
+    const cw = canvas.clientWidth || 800;
+    const ch = canvas.clientHeight || 600;
+    const worldLeft = (-cw / 2 - camera.x) / camera.k;
+    const worldTop = (-ch / 2 - camera.y) / camera.k;
+    const worldW = cw / camera.k;
+    const worldH = ch / camera.k;
+    vp.setAttribute("x", worldLeft.toFixed(1));
+    vp.setAttribute("y", worldTop.toFixed(1));
+    vp.setAttribute("width", worldW.toFixed(1));
+    vp.setAttribute("height", worldH.toFixed(1));
+  }
+
+  /* =========================================================================
+   * 9. NAVIGATION STATE MACHINE (MAIN vs HEAD & DETOUR STACK)
+   * ========================================================================= */
+  function selectNodeFromMap(id) {
+    const node = liveGraph.nodes.get(id);
+    if (!node) return;
+    layer2State.navigation.HEAD = id;
+    layer2State.navigation.detourStack = [];
+    if (id !== "knowledge" && (node.childrenIds.length > 0 || node.sources.length > 0)) {
+      ensureNodeState(id).expandedOnMap = !ensureNodeState(id).expandedOnMap;
+    }
+    persistAll();
+    renderAll();
+    gentleCenterIfNearEdge(id);
+  }
+
+  function toggleNodeExpansion(id) {
+    const st = ensureNodeState(id);
+    st.expandedOnMap = !st.expandedOnMap;
+    persistAll();
+    renderAll();
+  }
+
+  function detourTo(prereqId) {
+    if (!liveGraph.nodes.has(prereqId)) return;
+    const oldHead = liveGraph.navigation.HEAD;
+    if (oldHead && oldHead !== prereqId) {
+      layer2State.navigation.detourStack.push(oldHead);
+    }
+    layer2State.navigation.HEAD = prereqId;
+    persistAll();
+    ensureAncestorsExpanded(prereqId);
+    renderAll();
+    locateNode(prereqId, 0.96);
+  }
+
+  function popDetour() {
+    const stack = layer2State.navigation.detourStack;
+    if (!stack || stack.length === 0) return;
+    const restored = stack.pop();
+    layer2State.navigation.HEAD = restored;
+    persistAll();
+    ensureAncestorsExpanded(restored);
+    renderAll();
+    locateNode(restored, 0.96);
+  }
+
+  function jumpToDetourFrame(index) {
+    const stack = layer2State.navigation.detourStack;
+    if (index < 0 || index >= stack.length) return;
+    const target = stack[index];
+    layer2State.navigation.detourStack = stack.slice(0, index);
+    layer2State.navigation.HEAD = target;
+    persistAll();
+    ensureAncestorsExpanded(target);
+    renderAll();
+    locateNode(target, 0.96);
+  }
+
+  function setHeadAsMain() {
+    layer2State.navigation.MAIN = layer2State.navigation.HEAD;
+    layer2State.navigation.detourStack = [];
+    persistAll();
+    renderAll();
+    showToast("MAIN goal anchored to current HEAD.");
+  }
+
+  function ensureNodeState(id) {
+    if (!layer2State.nodes[id]) {
+      layer2State.nodes[id] = {
+        introDone: false,
+        baselineDone: false,
+        completedSourceIds: [],
+        expandedOnMap: false
+      };
+    }
+    return layer2State.nodes[id];
+  }
+
+  /* =========================================================================
+   * 10. SIDE PANEL (5-STAGE EXECUTION FLOW)
+   * ========================================================================= */
+  let isEditingHeader = false;
+  let prereqSearchQuery = "";
+  let lastPrereqCycleDiag = "";
+
+  function renderSidePanel() {
+    const side = document.getElementById("sidePane");
+    const headId = liveGraph.navigation.HEAD;
+    const node = liveGraph.nodes.get(headId);
+    if (!node) {
+      side.innerHTML = `<div class="box">Topic not found.</div>`;
+      return;
+    }
+
+    const isMain = headId === liveGraph.navigation.MAIN;
+    const stack = liveGraph.navigation.detourStack;
+    const pct = Math.round(node.progress * 100);
+
+    let html = "";
+
+    /* 6.1 Top Collapsible Detour Tracker */
+    if (stack.length > 0) {
+      const chainIds = [...stack, headId];
+      const chainHtml = chainIds.map((id, idx) => {
+        const n = liveGraph.nodes.get(id);
+        const title = escapeHtml(n ? n.title : id);
+        if (idx === chainIds.length - 1) {
+          return `<span class="detour-current">${title}</span>`;
+        }
+        return `<span class="detour-link" data-detour-idx="${idx}">${title}</span>`;
+      }).join(` <span>→</span> `);
+
+      html += `
+        <details open class="audit-drawer detour-drawer">
+          <summary>
+            <span>DETOUR CALL STACK (Depth: ${stack.length})</span>
+            <button type="button" class="btn-xs head-btn" id="btnSideGetBack">← Get Back</button>
+          </summary>
+          <div class="detour-chain">${chainHtml}</div>
+        </details>
+      `;
+    }
+
+    /* 6.2 Topic Header & Directory Truncation */
+    const statusTag = node.isStub
+      ? `<span class="tag stub">[STUB NODE]</span>`
+      : node.isBaselineDone
+        ? `<span class="tag flag-C">[BASELINE DONE]</span>`
+        : node.isBlocked
+          ? `<span class="tag flag-X">[PREREQ BLOCKED]</span>`
+          : `<span class="tag flag-W">[IN PROGRESS]</span>`;
+    const overrideTag = liveGraph.overriddenIds.has(headId) ? `<span class="tag edited">[OVERRIDDEN]</span>` : "";
+
+    html += `
+      <div class="box">
+        <div class="topic-breadcrumb">${escapeHtml(formatTruncatedDirectory(headId, liveGraph.nodes))}</div>
+        <div class="topic-title-row">
+          <div>
+            <div class="topic-title">${escapeHtml(node.title)}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;">id: ${escapeHtml(node.id)}</div>
+          </div>
+          <div class="list-row-actions">
+            ${headId !== "knowledge" ? `<button type="button" class="btn-xs" id="btnToggleEditHeader">${isEditingHeader ? "Cancel" : "Edit"}</button>` : ""}
+          </div>
+        </div>
+        <div class="topic-meta-bar">
+          ${statusTag}
+          ${overrideTag}
+          <span class="tag">${pct}% Conduit</span>
+          ${isMain
+            ? `<span class="tag" style="background:var(--accent-soft);color:var(--accent);border-color:var(--accent);">[MAIN GOAL ✓]</span>`
+            : `<button type="button" class="btn-xs accent-btn" id="btnSetAsMain">${stack.length > 0 ? "Checkout HEAD as MAIN" : "Set as MAIN Goal"}</button>`
+          }
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill ${node.isBaselineDone ? "done" : ""}" style="width:${pct}%"></div>
+        </div>
+        ${isEditingHeader ? renderInlineHeaderEditor(node) : ""}
+      </div>
+    `;
+
+    /* Module 1: Prerequisites Gate */
+    const allPrereqsDone = node.prereqIds.every(pId => {
+      const p = liveGraph.nodes.get(pId);
+      return p && p.isBaselineDone;
+    });
+    const gateBadge = node.prereqIds.length === 0
+      ? `<span class="tag flag-C">[NO PREREQS]</span>`
+      : allPrereqsDone
+        ? `<span class="tag flag-C">[GATE OPEN]</span>`
+        : `<span class="tag flag-X">[GATE LOCKED]</span>`;
+
+    const prereqRows = node.prereqIds.length === 0
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No cross-branch prerequisites attached.</div>`
+      : node.prereqIds.map(pId => {
+          const p = liveGraph.nodes.get(pId);
+          if (!p) return "";
+          const badge = p.isBaselineDone
+            ? `<span class="tag flag-C">[DOTTED]</span>`
+            : `<span class="tag flag-X">[SOLID]</span>`;
+          return `
+            <div class="list-row">
+              <div class="list-row-left">
+                ${badge}
+                <div class="list-row-main">
+                  <div class="list-row-title">${escapeHtml(p.title)} ${p.isStub ? '<span class="tag stub">[STUB]</span>' : ''}</div>
+                  <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(pId, liveGraph.nodes))}</div>
+                </div>
+              </div>
+              <div class="list-row-actions">
+                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(pId)}">Detour →</button>
+                <button type="button" class="btn-xs" data-remove-prereq="${escapeHtml(pId)}" title="Remove prerequisite">✕</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+    const candidatePrereqs = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== headId && n.id !== "knowledge" && !node.prereqIds.includes(n.id))
+      .filter(n => !prereqSearchQuery || n.title.toLowerCase().includes(prereqSearchQuery.toLowerCase()) || n.id.toLowerCase().includes(prereqSearchQuery.toLowerCase()))
+      .slice(0, 40);
+
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">1. PREREQUISITES GATE</span>
+          ${gateBadge}
+        </div>
+        <div class="item-list">${prereqRows}</div>
+        <div class="inline-add-row">
+          <input type="text" id="inputPrereqSearch" placeholder="Filter topic to link..." value="${escapeHtml(prereqSearchQuery)}" style="flex:1 1 110px;">
+          <select id="selectPrereqCandidate" style="flex:1.4 1 150px;">
+            <option value="">-- Select prerequisite --</option>
+            ${candidatePrereqs.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("")}
+          </select>
+          <button type="button" class="btn-xs" id="btnLinkPrereq">+ Link Prerequisite</button>
+        </div>
+        ${lastPrereqCycleDiag ? `<div class="diag-warn">${escapeHtml(lastPrereqCycleDiag)}</div>` : ""}
+      </div>
+    `;
+
+    /* Module 2: Concept Intro & Core Model */
+    const introTag = node.state.introDone
+      ? `<span class="tag flag-C">[COMPLETED]</span>`
+      : `<span class="tag flag-W">[PENDING]</span>`;
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">2. CONCEPT INTRO & CORE MODEL</span>
+          ${introTag}
+        </div>
+        <div class="intro-prose" id="sideIntroProse">
+          ${node.isStub && !node.intro
+            ? `<em style="color:var(--text-muted);">Ghost/Stub node synthesized from cross-branch link. Click <strong>Edit</strong> above or import an LLM patch to hydrate this concept.</em>`
+            : escapeHtml(node.intro || "No concept introduction written yet.").replace(/\n/g, "<br>")
+          }
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-family:var(--font-mono);font-size:11.5px;font-weight:600;">
+          <input type="checkbox" id="chkIntroDone" ${node.state.introDone ? "checked" : ""}>
+          <span>Complete Intro & Core Vocabulary</span>
+        </label>
+      </div>
+    `;
+
+    /* Module 3: Sources & External Deep-Dive */
+    const doneSrcCount = node.sources.filter(s => node.state.completedSourceIds.includes(s.id)).length;
+    const srcRows = node.sources.length === 0
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No sources attached yet.</div>`
+      : node.sources.map(src => {
+          const checked = node.state.completedSourceIds.includes(src.id);
+          return `
+            <div class="list-row">
+              <div class="list-row-left">
+                <input type="checkbox" data-source-chk="${escapeHtml(src.id)}" ${checked ? "checked" : ""}>
+                <div class="list-row-main">
+                  <div class="list-row-title ${checked ? "checked" : ""}">${escapeHtml(src.title)}</div>
+                  ${src.url ? `<div class="list-row-sub"><a href="${escapeHtml(src.url)}" target="_blank" rel="noopener">${escapeHtml(src.url)}</a></div>` : ""}
+                </div>
+              </div>
+              <div class="list-row-actions">
+                <button type="button" class="btn-xs" data-remove-source="${escapeHtml(src.id)}" title="Remove source">✕</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">3. SOURCES & EXTERNAL DEEP-DIVE</span>
+          <span class="tag">${doneSrcCount} / ${node.sources.length}</span>
+        </div>
+        <div class="item-list">${srcRows}</div>
+        <div class="inline-add-row">
+          <input type="text" id="inputSourceTitle" placeholder="Source title / book / paper...">
+          <input type="text" id="inputSourceUrl" placeholder="URL (optional)">
+          <button type="button" class="btn-xs" id="btnAddSource">+ Add Source</button>
+        </div>
+      </div>
+    `;
+
+    /* Module 4: Subtopic Task Checklist (Resolution) */
+    const isLearningContainer = !!uiSettings.learnChecklistActive[headId] || node.childrenIds.length > 0;
+    const subRows = node.childrenIds.length === 0
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Leaf topic — add deeper subtopics below anytime (even after baseline latch).</div>`
+      : node.childrenIds.map(cId => {
+          const c = liveGraph.nodes.get(cId);
+          if (!c) return "";
+          const cpct = Math.round(c.progress * 100);
+          return `
+            <div class="list-row">
+              <div class="list-row-left">
+                <input type="checkbox" data-subtopic-chk="${escapeHtml(cId)}" ${c.isBaselineDone ? "checked" : ""} title="Toggle baseline completion">
+                <div class="list-row-main">
+                  <div class="list-row-title ${c.isBaselineDone ? "checked" : ""}">${escapeHtml(c.title)}</div>
+                  <div class="list-row-sub">${cpct}% conduit · ${c.childrenIds.length} subtopics</div>
+                </div>
+              </div>
+              <div class="list-row-actions">
+                <button type="button" class="btn-xs head-btn" data-open-subtopic="${escapeHtml(cId)}">Open →</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">4. SUBTOPIC TASK CHECKLIST</span>
+          <span class="tag">${node.childrenIds.length} Subtopics</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
+          <button type="button" class="btn-xs ${uiSettings.learnChecklistActive[headId] ? "accent-btn" : ""}" id="btnLearnTopic">
+            ${uiSettings.learnChecklistActive[headId] ? "Learning Active ✓" : "Learn This Topic"}
+          </button>
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">Resolution depth: ${node.depth}</span>
+        </div>
+        ${isLearningContainer ? `<div class="item-list">${subRows}</div>` : ""}
+        <div class="inline-add-row">
+          <input type="text" id="inputSubtopicTitle" placeholder="New subtopic title...">
+          <button type="button" class="btn-xs" id="btnAddSubtopic">+ Add Subtopic</button>
+        </div>
+      </div>
+    `;
+
+    /* Module 5: Baseline Latch & LLM Expansion */
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">5. BASELINE LATCH & LLM EXPANSION</span>
+          ${node.isBaselineDone ? `<span class="tag flag-C">[LATCHED]</span>` : `<span class="tag flag-W">[UNLATCHED]</span>`}
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+          ${node.isBaselineDone
+            ? `<button type="button" class="success-btn" disabled>Baseline Latched ✓</button>`
+            : `<button type="button" class="primary" id="btnMarkBaseline">Mark Baseline Completed</button>`
+          }
+          <button type="button" id="btnCopyLlmSlice">Copy LLM Expansion Context</button>
+        </div>
+        <div style="font-size:11.5px;color:var(--text-muted);margin-top:8px;">
+          ${node.isBaselineDone
+            ? "Baseline is permanently latched: all outgoing prerequisite arrows are dotted across the map. You may continue adding deeper subtopics in Module 4 without re-locking downstream topics."
+            : "Latching baseline permanently marks this topic's core prerequisite requirement satisfied across all downstream topics."
+          }
+        </div>
+      </div>
+    `;
+
+    side.innerHTML = html;
+    renderMathInContainer(document.getElementById("sideIntroProse"));
+    bindSidePanelEvents(node);
+  }
+
+  function renderInlineHeaderEditor(node) {
+    return `
+      <div class="box inset" style="margin-top:10px;">
+        <div style="font-family:var(--font-mono);font-size:10.5px;font-weight:700;margin-bottom:6px;color:var(--text-muted);">EDIT NODE (LAYER 1 OVERRIDE)</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <input type="text" id="editNodeTitle" value="${escapeHtml(node.title)}" placeholder="Title">
+          <textarea id="editNodeIntro" rows="4" placeholder="Concept introduction (supports $LaTeX$)...">${escapeHtml(node.intro)}</textarea>
+          <div style="display:flex;justify-content:space-between;gap:6px;">
+            <button type="button" class="btn-xs danger-btn" id="btnDeleteNode">Delete Node</button>
+            <button type="button" class="btn-xs primary" id="btnSaveHeaderEdit">Save Override</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function bindSidePanelEvents(node) {
+    const headId = node.id;
+
+    // Detour breadcrumb & Get Back
+    document.querySelectorAll("[data-detour-idx]").forEach(el => {
+      el.addEventListener("click", () => jumpToDetourFrame(Number(el.dataset.detourIdx)));
+    });
+    const btnSideBack = document.getElementById("btnSideGetBack");
+    if (btnSideBack) btnSideBack.addEventListener("click", (e) => { e.preventDefault(); popDetour(); });
+
+    // Set as MAIN
+    const btnSetMain = document.getElementById("btnSetAsMain");
+    if (btnSetMain) btnSetMain.addEventListener("click", setHeadAsMain);
+
+    // Header Edit toggle & save
+    const btnEdit = document.getElementById("btnToggleEditHeader");
+    if (btnEdit) {
+      btnEdit.addEventListener("click", () => {
+        isEditingHeader = !isEditingHeader;
+        renderSidePanel();
+      });
+    }
+    const btnSaveEdit = document.getElementById("btnSaveHeaderEdit");
+    if (btnSaveEdit) {
+      btnSaveEdit.addEventListener("click", () => {
+        const newTitle = document.getElementById("editNodeTitle").value.trim();
+        const newIntro = document.getElementById("editNodeIntro").value;
+        if (!newTitle) return;
+        if (!layer1Overrides.field_overrides[headId]) layer1Overrides.field_overrides[headId] = {};
+        layer1Overrides.field_overrides[headId].title = newTitle;
+        layer1Overrides.field_overrides[headId].intro = newIntro;
+        isEditingHeader = false;
+        persistAll();
+        renderAll();
+        showToast("Saved Layer 1 node override.");
+      });
+    }
+    const btnDel = document.getElementById("btnDeleteNode");
+    if (btnDel) {
+      btnDel.addEventListener("click", () => {
+        if (headId === "knowledge") return;
+        if (!confirm(`Tombstone node "${node.title}" (${headId}) in Layer 1?`)) return;
+        if (!layer1Overrides.tombstones.includes(headId)) layer1Overrides.tombstones.push(headId);
+        layer2State.navigation.HEAD = node.parentId || "knowledge";
+        isEditingHeader = false;
+        persistAll();
+        renderAll();
+        showToast("Node tombstoned in Layer 1.");
+      });
+    }
+
+    // Module 1: Prerequisites Gate
+    document.querySelectorAll("[data-detour-id]").forEach(btn => {
+      btn.addEventListener("click", () => detourTo(btn.dataset.detourId));
+    });
+    document.querySelectorAll("[data-remove-prereq]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pId = btn.dataset.removePrereq;
+        const delta = ensureEdgeDelta(headId);
+        delta.addPrereqs = delta.addPrereqs.filter(x => x !== pId);
+        if (!delta.removePrereqs.includes(pId)) delta.removePrereqs.push(pId);
+        lastPrereqCycleDiag = "";
+        persistAll();
+        renderAll();
+      });
+    });
+
+    const searchInp = document.getElementById("inputPrereqSearch");
+    if (searchInp) {
+      searchInp.addEventListener("input", () => {
+        prereqSearchQuery = searchInp.value;
+        const sel = document.getElementById("selectPrereqCandidate");
+        const candidates = [...liveGraph.nodes.values()]
+          .filter(n => n.id !== headId && n.id !== "knowledge" && !node.prereqIds.includes(n.id))
+          .filter(n => !prereqSearchQuery || n.title.toLowerCase().includes(prereqSearchQuery.toLowerCase()) || n.id.toLowerCase().includes(prereqSearchQuery.toLowerCase()))
+          .slice(0, 40);
+        sel.innerHTML = `<option value="">-- Select prerequisite --</option>` +
+          candidates.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("");
+      });
+    }
+
+    const btnLinkPrereq = document.getElementById("btnLinkPrereq");
+    if (btnLinkPrereq) {
+      btnLinkPrereq.addEventListener("click", () => {
+        const candId = document.getElementById("selectPrereqCandidate").value;
+        if (!candId) return;
+        const cycle = findPrereqCycle(liveGraph.nodes, candId, headId);
+        if (cycle) {
+          const names = cycle.map(id => (liveGraph.nodes.get(id)?.title || id)).join(" → ");
+          lastPrereqCycleDiag = `CYCLE REJECTED: Linking "${candId}" → "${headId}" forms a directed cycle: ${names}`;
+          renderSidePanel();
+          return;
+        }
+        lastPrereqCycleDiag = "";
+        const delta = ensureEdgeDelta(headId);
+        delta.removePrereqs = delta.removePrereqs.filter(x => x !== candId);
+        if (!delta.addPrereqs.includes(candId)) delta.addPrereqs.push(candId);
+        persistAll();
+        renderAll();
+        showToast("Prerequisite linked.");
+      });
+    }
+
+    // Module 2: Intro Completed
+    const chkIntro = document.getElementById("chkIntroDone");
+    if (chkIntro) {
+      chkIntro.addEventListener("change", () => {
+        ensureNodeState(headId).introDone = chkIntro.checked;
+        persistAll();
+        renderAll();
+      });
+    }
+
+    // Module 3: Sources
+    document.querySelectorAll("[data-source-chk]").forEach(chk => {
+      chk.addEventListener("change", () => {
+        const sId = chk.dataset.sourceChk;
+        const st = ensureNodeState(headId);
+        if (chk.checked) {
+          if (!st.completedSourceIds.includes(sId)) st.completedSourceIds.push(sId);
+        } else {
+          st.completedSourceIds = st.completedSourceIds.filter(x => x !== sId);
+        }
+        persistAll();
+        renderAll();
+      });
+    });
+    document.querySelectorAll("[data-remove-source]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const sId = btn.dataset.removeSource;
+        const delta = ensureEdgeDelta(headId);
+        delta.addSources = delta.addSources.filter(s => s.id !== sId);
+        if (!delta.removeSourceIds.includes(sId)) delta.removeSourceIds.push(sId);
+        persistAll();
+        renderAll();
+      });
+    });
+    const btnAddSrc = document.getElementById("btnAddSource");
+    if (btnAddSrc) {
+      btnAddSrc.addEventListener("click", () => {
+        const title = document.getElementById("inputSourceTitle").value.trim();
+        const url = document.getElementById("inputSourceUrl").value.trim();
+        if (!title) return;
+        const delta = ensureEdgeDelta(headId);
+        const newSrc = { id: `src_u_${Date.now().toString(36)}`, title };
+        if (url) newSrc.url = url;
+        delta.addSources.push(newSrc);
+        persistAll();
+        renderAll();
+        showToast("Source attached to Layer 1.");
+      });
+    }
+
+    // Module 4: Subtopic Task Checklist
+    const btnLearn = document.getElementById("btnLearnTopic");
+    if (btnLearn) {
+      btnLearn.addEventListener("click", () => {
+        uiSettings.learnChecklistActive[headId] = !uiSettings.learnChecklistActive[headId];
+        if (uiSettings.learnChecklistActive[headId]) ensureNodeState(headId).expandedOnMap = true;
+        persistAll();
+        renderAll();
+      });
+    }
+    document.querySelectorAll("[data-subtopic-chk]").forEach(chk => {
+      chk.addEventListener("change", () => {
+        const cId = chk.dataset.subtopicChk;
+        ensureNodeState(cId).baselineDone = chk.checked;
+        persistAll();
+        renderAll();
+      });
+    });
+    document.querySelectorAll("[data-open-subtopic]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const cId = btn.dataset.openSubtopic;
+        layer2State.navigation.detourStack.push(headId);
+        layer2State.navigation.HEAD = cId;
+        ensureNodeState(headId).expandedOnMap = true;
+        persistAll();
+        ensureAncestorsExpanded(cId);
+        renderAll();
+        locateNode(cId, 0.96);
+      });
+    });
+    const btnAddSub = document.getElementById("btnAddSubtopic");
+    if (btnAddSub) {
+      const addSubFn = () => {
+        const title = document.getElementById("inputSubtopicTitle").value.trim();
+        if (!title) return;
+        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "subtopic";
+        let newId = `${headId === "knowledge" ? "" : headId + "."}${slug}`;
+        let counter = 2;
+        while (liveGraph.nodes.has(newId)) {
+          newId = `${headId === "knowledge" ? "" : headId + "."}${slug}_${counter++}`;
+        }
+        layer1Overrides.custom_nodes.push({
+          id: newId,
+          title,
+          parentId: headId,
+          prereqIds: [],
+          intro: "",
+          sources: []
+        });
+        ensureNodeState(headId).expandedOnMap = true;
+        uiSettings.learnChecklistActive[headId] = true;
+        persistAll();
+        renderAll();
+        showToast(`Added subtopic "${title}".`);
+      };
+      btnAddSub.addEventListener("click", addSubFn);
+      document.getElementById("inputSubtopicTitle").addEventListener("keydown", (e) => {
+        if (e.key === "Enter") addSubFn();
+      });
+    }
+
+    // Module 5: Baseline Latch & LLM Expansion Context
+    const btnBase = document.getElementById("btnMarkBaseline");
+    if (btnBase) {
+      btnBase.addEventListener("click", () => {
+        const st = ensureNodeState(headId);
+        st.baselineDone = true;
+        st.introDone = true;
+        persistAll();
+        renderAll();
+        showToast("Baseline latched ✓ Outgoing prerequisites are now dotted.");
+      });
+    }
+
+    const btnCopyLlm = document.getElementById("btnCopyLlmSlice");
+    if (btnCopyLlm) {
+      btnCopyLlm.addEventListener("click", () => copyLlmExpansionSlice(node));
+    }
+  }
+
+  function ensureEdgeDelta(id) {
+    if (!layer1Overrides.edge_deltas[id]) {
+      layer1Overrides.edge_deltas[id] = {
+        addPrereqs: [],
+        removePrereqs: [],
+        addSources: [],
+        removeSourceIds: []
+      };
+    }
+    return layer1Overrides.edge_deltas[id];
+  }
+
+  /* =========================================================================
+   * 11. LLM EXPANSION CONTEXT SLICER (Section 7.4)
+   * ========================================================================= */
+  function buildLlmExpansionPrompt(node) {
+    const existingChildren = node.childrenIds.map(cId => liveGraph.nodes.get(cId)?.title || cId);
+    const catalog = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== "knowledge" && n.parentId !== node.id)
+      .slice(0, 60)
+      .map(n => `${n.id}: ${n.title}`);
+
+    return [
+      `Extend this Polymathy Compound DAG topic with deeper subtopics and cross-branch prerequisites.`,
+      ``,
+      `TARGET NODE:`,
+      `- id: ${node.id}`,
+      `- title: ${node.title}`,
+      `- lineage: ${formatTruncatedDirectory(node.id, liveGraph.nodes)}`,
+      `- intro: ${node.intro || "(empty)"}`,
+      ``,
+      `EXISTING DIRECT SUBTOPICS (do not duplicate):`,
+      existingChildren.length ? existingChildren.map(t => `- ${t}`).join("\n") : "- (none)",
+      ``,
+      `CANONICAL NODE DIRECTORY (snap cross-branch prereqIds to these IDs when applicable):`,
+      catalog.join("\n"),
+      ``,
+      `OUTPUT STRICT JSON ONLY matching this Layer 0 Delta Patch schema:`,
+      `{`,
+      `  "patch_id": "YYYY-MM-DD_${node.id.replace(/\./g, "_")}_ext",`,
+      `  "extensions": [`,
+      `    { "targetId": "${node.id}", "addPrereqs": [], "addSources": [{ "id": "src_...", "title": "..." }] }`,
+      `  ],`,
+      `  "nodes": [`,
+      `    {`,
+      `      "id": "${node.id}.<slug>",`,
+      `      "title": "...",`,
+      `      "parentId": "${node.id}",`,
+      `      "prereqIds": ["..."],`,
+      `      "intro": "Concise technical summary with $LaTeX$ if needed.",`,
+      `      "sources": [{ "id": "src_...", "title": "..." }]`,
+      `    }`,
+      `  ]`,
+      `}`
+    ].join("\n");
+  }
+
+  async function copyLlmExpansionSlice(node) {
+    const promptText = buildLlmExpansionPrompt(node);
+    let copied = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(promptText);
+        copied = true;
+      }
+    } catch { /* Fallback to modal preview */ }
+
+    if (copied) {
+      showToast("LLM Expansion Context copied to clipboard!");
+    } else {
+      openModal("LLM EXPANSION CONTEXT SLICE", `
+        <div class="box">
+          <div class="box-header"><span class="box-title">COPY THIS ~300-TOKEN PROMPT</span><span class="tag">[SLICE]</span></div>
+          <textarea rows="18" style="width:100%;font-family:var(--font-mono);font-size:11px;" readonly>${escapeHtml(promptText)}</textarea>
+        </div>
+      `);
+    }
+  }
+
+  /* =========================================================================
+   * 12. MODALS: FRONTIER RADAR, PATCH IMPORTER, LAYER INSPECTOR, ? MANUAL
+   * ========================================================================= */
+  function openModal(title, htmlContent) {
+    document.getElementById("modalTitle").textContent = title;
+    const body = document.getElementById("modalBody");
+    body.innerHTML = htmlContent;
+    document.getElementById("modalBackdrop").classList.add("open");
+    renderMathInContainer(body);
+  }
+
+  function closeModal() {
+    document.getElementById("modalBackdrop").classList.remove("open");
+  }
+
+  /* 12.1 Frontier Radar (Section 8) */
+  function computeUndirectedDistancesToMain(graph) {
+    const mainId = graph.navigation.MAIN;
+    const dist = new Map([[mainId, 0]]);
+    const queue = [mainId];
+    while (queue.length > 0) {
+      const u = queue.shift();
+      const d = dist.get(u);
+      const n = graph.nodes.get(u);
+      if (!n) continue;
+      const neighbors = [];
+      if (n.parentId) neighbors.push(n.parentId);
+      neighbors.push(...n.childrenIds, ...n.prereqIds, ...n.dependentsIds);
+      for (const v of neighbors) {
+        if (!dist.has(v)) {
+          dist.set(v, d + 1);
+          queue.push(v);
+        }
+      }
+    }
+    return dist;
+  }
+
+  function computeTransitiveBlockedDownstream(graph, startId) {
+    // Count how many incomplete nodes have a directed prereq path from startId
+    const visited = new Set();
+    const queue = [startId];
+    let count = 0;
+    while (queue.length > 0) {
+      const u = queue.shift();
+      const n = graph.nodes.get(u);
+      if (!n) continue;
+      for (const depId of n.dependentsIds) {
+        if (!visited.has(depId)) {
+          visited.add(depId);
+          const dep = graph.nodes.get(depId);
+          if (dep && !dep.isBaselineDone) count++;
+          queue.push(depId);
+        }
+      }
+    }
+    return count;
+  }
+
+  function openFrontierRadarModal() {
+    const distToMain = computeUndirectedDistancesToMain(liveGraph);
+    const allTopics = [...liveGraph.nodes.values()].filter(n => n.id !== "knowledge");
+
+    // 1) Ready Frontier Queue: baselineDone === false AND all prereqs baselineDone === true
+    const readyQueue = allTopics
+      .filter(n => !n.isBaselineDone && !n.isBlocked)
+      .sort((a, b) => {
+        const da = distToMain.has(a.id) ? distToMain.get(a.id) : 999;
+        const db = distToMain.has(b.id) ? distToMain.get(b.id) : 999;
+        if (da !== db) return da - db;
+        return a.depth - b.depth;
+      });
+
+    // 2) High-Leverage Bottlenecks
+    const bottlenecks = allTopics
+      .filter(n => !n.isBaselineDone)
+      .map(n => ({ node: n, blockingCount: computeTransitiveBlockedDownstream(liveGraph, n.id) }))
+      .filter(x => x.blockingCount > 0)
+      .sort((a, b) => b.blockingCount - a.blockingCount);
+
+    const readyHtml = readyQueue.slice(0, 18).map(n => `
+      <div class="list-row">
+        <div class="list-row-left">
+          <span class="tag ${n.isStub ? "stub" : "flag-W"}">${n.isStub ? "[STUB]" : "[READY]"}</span>
+          <div class="list-row-main">
+            <div class="list-row-title">${escapeHtml(n.title)}</div>
+            <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))} · ${Math.round(n.progress * 100)}%</div>
+          </div>
+        </div>
+        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
+      </div>
+    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">All topics have reached baseline mastery!</div>`;
+
+    const bottleHtml = bottlenecks.slice(0, 12).map(({ node: n, blockingCount }) => `
+      <div class="list-row">
+        <div class="list-row-left">
+          <span class="tag flag-X">UNBLOCKS ${blockingCount}</span>
+          <div class="list-row-main">
+            <div class="list-row-title">${escapeHtml(n.title)}</div>
+            <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))}</div>
+          </div>
+        </div>
+        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
+      </div>
+    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No downstream bottlenecks remaining.</div>`;
+
+    openModal("FRONTIER RADAR // TOPOLOGICAL LEARNING ASSISTANT", `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">ACTIVE MAIN DEPENDENCY SUBGRAPH FILTER</span>
+          <span class="tag ${uiSettings.spotlightMain ? "edited" : ""}">${uiSettings.spotlightMain ? "[SPOTLIGHT ON]" : "[OFF]"}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-size:12px;color:var(--text-muted);">Dim unrelated branches on the map and spotlight only the ancestor chain and prerequisite tree feeding into <strong>${escapeHtml(liveGraph.nodes.get(liveGraph.navigation.MAIN)?.title || "")}</strong>.</span>
+          <button type="button" class="accent-btn" id="btnToggleSpotlightModal">${uiSettings.spotlightMain ? "Disable Spotlight" : "Spotlight MAIN Subgraph"}</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">1. READY FRONTIER QUEUE (UNLOCKED NEXT STEPS)</span>
+          <span class="tag flag-C">${readyQueue.length} Unlocked</span>
+        </div>
+        <div class="item-list">${readyHtml}</div>
+      </div>
+
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">2. HIGH-LEVERAGE BOTTLENECKS</span>
+          <span class="tag flag-X">${bottlenecks.length} Blocking</span>
+        </div>
+        <div class="item-list">${bottleHtml}</div>
+      </div>
+    `);
+
+    document.getElementById("btnToggleSpotlightModal").addEventListener("click", () => {
+      uiSettings.spotlightMain = !uiSettings.spotlightMain;
+      persistAll();
+      renderAll();
+      closeModal();
+    });
+    document.querySelectorAll("[data-radar-jump]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.radarJump;
+        layer2State.navigation.HEAD = id;
+        layer2State.navigation.detourStack = [];
+        persistAll();
+        closeModal();
+        ensureAncestorsExpanded(id);
+        renderAll();
+        locateNode(id, 0.96);
+      });
+    });
+  }
+
+  /* 12.2 + Import Patch Modal (Section 7.4) */
+  function openImportPatchModal() {
+    openModal("+ IMPORT LAYER 0 DELTA PATCH", `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">PASTE JSON OR UPLOAD .JSON PATCH FILE</span>
+          <span class="tag">[SCHEMA + DFS VALIDATED]</span>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
+          <input type="file" id="patchFileInput" accept=".json,application/json">
+          <button type="button" class="btn-xs" id="btnLoadSamplePatch">Load Sample Patch</button>
+        </div>
+        <textarea id="patchJsonInput" rows="12" style="width:100%;font-family:var(--font-mono);font-size:11px;" placeholder='{ "patch_id": "...", "extensions": [], "nodes": [] }'></textarea>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+          <button type="button" id="btnPreviewPatch">Validate & Preview</button>
+          <button type="button" class="primary" id="btnMergePatch">Merge into Layer 0</button>
+        </div>
+        <div id="patchDiagOutput"></div>
+      </div>
+    `);
+
+    document.getElementById("patchFileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => { document.getElementById("patchJsonInput").value = reader.result; };
+      reader.readAsText(file);
+    });
+
+    document.getElementById("btnLoadSamplePatch").addEventListener("click", () => {
+      document.getElementById("patchJsonInput").value = JSON.stringify({
+        patch_id: "002_topology_hydration",
+        extensions: [
+          {
+            targetId: "math.graph_theory.planar_graphs",
+            addSources: [{ id: "src_kuratowski_notes", title: "Kuratowski & Wagner Minor Notes" }]
+          }
+        ],
+        nodes: [
+          {
+            id: "math.topology",
+            title: "Topology",
+            parentId: "math",
+            prereqIds: [],
+            intro: "Continuous deformations, open sets, compactness, and connectedness.",
+            sources: [{ id: "src_munkres", title: "Munkres — Topology" }]
+          },
+          {
+            id: "math.topology.point_set_basics",
+            title: "Point-Set Topology Basics",
+            parentId: "math.topology",
+            prereqIds: [],
+            intro: "Metric & topological spaces, Hausdorff separation, and Jordan Curve Theorem.",
+            sources: [{ id: "src_munkres_ch2", title: "Munkres Ch. 2–3" }]
+          }
+        ]
+      }, null, 2);
+    });
+
+    function parseAndValidatePatch() {
+      const diag = document.getElementById("patchDiagOutput");
+      let parsed;
+      try {
+        parsed = JSON.parse(document.getElementById("patchJsonInput").value);
+      } catch (err) {
+        diag.innerHTML = `<div class="diag-warn">JSON Parse Error: ${escapeHtml(err.message)}</div>`;
+        return null;
+      }
+      if (!parsed || typeof parsed !== "object" || (!Array.isArray(parsed.nodes) && !Array.isArray(parsed.extensions))) {
+        diag.innerHTML = `<div class="diag-warn">Schema Error: Patch must contain a "nodes" array and/or "extensions" array.</div>`;
+        return null;
+      }
+
+      const testPatches = [...layer0Patches, parsed];
+      const { map: mergedMap } = foldLayer0And1(testPatches, layer1Overrides);
+      const cycle = validateFullDagAcyclicity(mergedMap);
+      if (cycle) {
+        diag.innerHTML = `<div class="diag-warn">Acyclicity Violation: Patch introduces a prerequisite cycle: ${escapeHtml(cycle.join(" → "))}</div>`;
+        return null;
+      }
+
+      const newNodes = (parsed.nodes || []).filter(n => !liveGraph.nodes.has(n.id));
+      const hydratedStubs = (parsed.nodes || []).filter(n => liveGraph.nodes.get(n.id)?.isStub);
+      const extCount = (parsed.extensions || []).length;
+
+      diag.innerHTML = `<div class="diag-info">VALID DAG PATCH: +${newNodes.length} new nodes, ${hydratedStubs.length} stub(s) hydrated, ${extCount} extension(s). Zero prerequisite cycles detected.</div>`;
+      return parsed;
+    }
+
+    document.getElementById("btnPreviewPatch").addEventListener("click", parseAndValidatePatch);
+    document.getElementById("btnMergePatch").addEventListener("click", () => {
+      const parsed = parseAndValidatePatch();
+      if (!parsed) return;
+      const existingIdx = parsed.patch_id ? layer0Patches.findIndex(p => p.patch_id === parsed.patch_id) : -1;
+      if (existingIdx >= 0) {
+        layer0Patches[existingIdx] = parsed;
+      } else {
+        layer0Patches.push(parsed);
+      }
+      persistAll();
+      renderAll();
+      closeModal();
+      showToast(`Merged patch "${parsed.patch_id || "custom"}" into Layer 0.`);
+    });
+  }
+
+  /* 12.3 Layer Inspector & Squash / Backup Modal */
+  function openLayerInspectorModal() {
+    const fieldCount = Object.keys(layer1Overrides.field_overrides || {}).length;
+    const edgeCount = Object.keys(layer1Overrides.edge_deltas || {}).length;
+    const customCount = (layer1Overrides.custom_nodes || []).length;
+    const tombCount = (layer1Overrides.tombstones || []).length;
+
+    const patchRows = layer0Patches.map((p, idx) => `
+      <div class="list-row">
+        <div class="list-row-left">
+          <span class="tag">[L0 #${idx + 1}]</span>
+          <div class="list-row-main">
+            <div class="list-row-title">${escapeHtml(p.patch_id || `patch_${idx + 1}`)}</div>
+            <div class="list-row-sub">${(p.nodes || []).length} nodes · ${(p.extensions || []).length} extensions</div>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    const overriddenRows = [...liveGraph.overriddenIds].map(id => {
+      const n = liveGraph.nodes.get(id);
+      return `
+        <div class="list-row">
+          <div class="list-row-left">
+            <span class="tag edited">[L1]</span>
+            <div class="list-row-main">
+              <div class="list-row-title">${escapeHtml(n ? n.title : id)}</div>
+              <div class="list-row-sub">${escapeHtml(id)}</div>
+            </div>
+          </div>
+          <button type="button" class="btn-xs" data-revert-override="${escapeHtml(id)}">Revert to Layer 0</button>
+        </div>
+      `;
+    }).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No active Layer 1 UI overrides.</div>`;
+
+    openModal("LAYER INSPECTOR // 3-LAYER OVERLAYFS", `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">LAYER 0 — APPEND-ONLY CURRICULUM PATCHES</span>
+          <span class="tag">${layer0Patches.length} Patches</span>
+        </div>
+        <div class="item-list">${patchRows}</div>
+      </div>
+
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">LAYER 1 — USER UI OVERRIDES (2P-SET DELTAS)</span>
+          <span class="tag edited">${customCount} custom · ${fieldCount} fields · ${edgeCount} edges · ${tombCount} tombstones</span>
+        </div>
+        <div class="item-list" style="margin-bottom:10px;">${overriddenRows}</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="accent-btn" id="btnSquashOverrides" ${liveGraph.overriddenIds.size === 0 && tombCount === 0 ? "disabled" : ""}>Squash Layer 1 → Layer 0 Patch</button>
+          <button type="button" class="danger-btn" id="btnClearLayer1">Clear All Layer 1 Overrides</button>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">BACKUP, PORTABILITY & RECOVERY</span>
+          <span class="tag">[JSON]</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+          <button type="button" id="btnExportBundle">Export Full Bundle (.json)</button>
+          <button type="button" id="btnExportState">Export Layer 2 state.json</button>
+          <button type="button" id="btnExportOverrides">Export Layer 1 user_overrides.json</button>
+          <button type="button" class="danger-btn" id="btnResetDemo">Reset to Seed Demo</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Restore Full Bundle:</span>
+          <input type="file" id="importBundleInput" accept=".json,application/json">
+        </div>
+      </div>
+    `);
+
+    document.querySelectorAll("[data-revert-override]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.revertOverride;
+        delete layer1Overrides.field_overrides[id];
+        delete layer1Overrides.edge_deltas[id];
+        delete layer1Overrides.reparents[id];
+        layer1Overrides.custom_nodes = layer1Overrides.custom_nodes.filter(n => n.id !== id);
+        persistAll();
+        renderAll();
+        openLayerInspectorModal();
+        showToast(`Reverted "${id}" to Layer 0 base.`);
+      });
+    });
+
+    document.getElementById("btnSquashOverrides").addEventListener("click", () => {
+      const squashedNum = String(layer0Patches.length + 1).padStart(3, "0");
+      const squashedPatch = {
+        patch_id: `${squashedNum}_user_squashed`,
+        extensions: [],
+        nodes: []
+      };
+      // Include custom nodes and overridden nodes cleanly
+      for (const cn of layer1Overrides.custom_nodes) {
+        const resolved = liveGraph.nodes.get(cn.id);
+        if (resolved) {
+          squashedPatch.nodes.push({
+            id: resolved.id,
+            title: resolved.title,
+            parentId: resolved.parentId,
+            prereqIds: resolved.prereqIds,
+            intro: resolved.intro,
+            sources: resolved.sources
+          });
+        }
+      }
+      for (const id of Object.keys(layer1Overrides.field_overrides)) {
+        const resolved = liveGraph.nodes.get(id);
+        if (resolved && !squashedPatch.nodes.some(n => n.id === id)) {
+          squashedPatch.nodes.push({
+            id: resolved.id,
+            title: resolved.title,
+            parentId: resolved.parentId,
+            prereqIds: resolved.prereqIds,
+            intro: resolved.intro,
+            sources: resolved.sources
+          });
+        }
+      }
+      for (const [id, delta] of Object.entries(layer1Overrides.edge_deltas)) {
+        if (!squashedPatch.nodes.some(n => n.id === id)) {
+          squashedPatch.extensions.push({
+            targetId: id,
+            addPrereqs: delta.addPrereqs || [],
+            addSources: delta.addSources || []
+          });
+        }
+      }
+      layer0Patches.push(squashedPatch);
+      layer1Overrides = EMPTY_OVERRIDES();
+      persistAll();
+      renderAll();
+      downloadJson(`${squashedPatch.patch_id}.json`, squashedPatch);
+      openLayerInspectorModal();
+      showToast(`Squashed Layer 1 into ${squashedPatch.patch_id}.json`);
+    });
+
+    document.getElementById("btnClearLayer1").addEventListener("click", () => {
+      if (!confirm("Discard all Layer 1 UI overrides?")) return;
+      layer1Overrides = EMPTY_OVERRIDES();
+      persistAll();
+      renderAll();
+      openLayerInspectorModal();
+    });
+
+    document.getElementById("btnExportBundle").addEventListener("click", () => {
+      downloadJson("polymathy_backup_bundle.json", {
+        patches: layer0Patches,
+        user_overrides: layer1Overrides,
+        state: layer2State
+      });
+    });
+    document.getElementById("btnExportState").addEventListener("click", () => downloadJson("state.json", layer2State));
+    document.getElementById("btnExportOverrides").addEventListener("click", () => downloadJson("user_overrides.json", layer1Overrides));
+    document.getElementById("btnResetDemo").addEventListener("click", () => {
+      if (!confirm("Reset patches, overrides, and progress back to the initial Seed Demo?")) return;
+      layer0Patches = [structuredClone(SEED_PATCH_001)];
+      layer1Overrides = EMPTY_OVERRIDES();
+      layer2State = structuredClone(SEED_STATE);
+      uiSettings.spotlightMain = false;
+      persistAll();
+      renderAll();
+      closeModal();
+      fitVisibleGraph();
+      showToast("Reset to Seed Demo.");
+    });
+
+    document.getElementById("importBundleInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (Array.isArray(data.patches)) layer0Patches = data.patches;
+          if (data.user_overrides) layer1Overrides = Object.assign(EMPTY_OVERRIDES(), data.user_overrides);
+          if (data.state) layer2State = data.state;
+          persistAll();
+          renderAll();
+          closeModal();
+          fitVisibleGraph();
+          showToast("Backup bundle restored.");
+        } catch (err) {
+          alert("Invalid backup JSON: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  function downloadJson(filename, obj) {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /* 12.4 In-App [? Manual] Tabbed Modal (Section 10.3) */
+  function openManualModal() {
+    openModal("POLYMATHY // FIELD MANUAL", `
+      <div class="manual-tabs">
+        <button type="button" class="manual-tab-btn active" data-mtab="tab1">1. Map Legend</button>
+        <button type="button" class="manual-tab-btn" data-mtab="tab2">2. Detours & Locators</button>
+        <button type="button" class="manual-tab-btn" data-mtab="tab3">3. LLM Patches</button>
+        <button type="button" class="manual-tab-btn" data-mtab="tab4">4. Shortcuts</button>
+      </div>
+
+      <div class="manual-tab-panel active" id="tab1">
+        <div class="box">
+          <div class="box-header"><span class="box-title">COMPOUND DAG VISUAL GRAMMAR</span><span class="tag">[G = (V, E_tree, E_prereq, S)]</span></div>
+          <table class="spec-table">
+            <thead><tr><th>Visual Element</th><th>Meaning & Behavior</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Origin Dot (o)</strong></td><td>Root <code class="inline">Knowledge</code> vertex at $(0,0)$. Click domains to progressively multifurcate.</td></tr>
+              <tr><td><strong>Hollow Conduit + Crossbar</strong></td><td>Hierarchy containment edge ($E_{\\text{tree}}$). Inner fill tracks completion ratio $r_v$; perpendicular crossbar marks achievement frontier.</td></tr>
+              <tr><td><strong>Double-Bar Gate</strong></td><td>Stamped on a conduit when <code class="inline">baselineDone = true</code> and deeper subtopics are added later, preserving downstream unlocks.</td></tr>
+              <tr><td><strong><span class="tag flag-X">SOLID RED ARROW</span></strong></td><td>Incomplete cross-branch prerequisite ($p.\\text{baselineDone} = \\text{false}$). Click arrow or directory pill to detour.</td></tr>
+              <tr><td><strong><span class="tag flag-C">DOTTED GREEN ARROW</span></strong></td><td>Completed prerequisite ($p.\\text{baselineDone} = \\text{true}$). Latched permanently once baseline is marked complete.</td></tr>
+              <tr><td><strong><span class="tag stub">[STUB NODE]</span></strong></td><td>Auto-hydrated placeholder created by a forward cross-branch reference; hydrates cleanly when a patch defines it.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="manual-tab-panel" id="tab2">
+        <div class="box">
+          <div class="box-header"><span class="box-title">GIT-STYLE LOCATORS & DETOUR CALL STACK</span><span class="tag head-tag">[MAIN vs HEAD]</span></div>
+          <p style="margin-bottom:8px;"><strong>MAIN</strong> (Blue Beacon) anchors your primary study objective. <strong>HEAD</strong> (Purple Reticle) tracks the topic currently inspected in the side panel.</p>
+          <ul style="padding-left:18px;margin-bottom:8px;">
+            <li>Click any solid/dotted prerequisite arrow or <strong>[Detour →]</strong> button to glide smoothly to that prerequisite and push your previous <strong>HEAD</strong> onto the <strong>Detour Call Stack</strong>.</li>
+            <li>Use <strong>[← Get Back]</strong> (or <code class="inline">Esc</code>) to pop the stack and glide back, or click any ancestor frame in the breadcrumb chain.</li>
+            <li>Click <strong>[Checkout HEAD as MAIN]</strong> to re-anchor your primary goal to your current inspection node.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="manual-tab-panel" id="tab3">
+        <div class="box">
+          <div class="box-header"><span class="box-title">3-LAYER OVERLAYFS & LLM EXPANSION WORKFLOW</span><span class="tag">[L0 ⊕ L1 ⋈ L2]</span></div>
+          <ol style="padding-left:18px;margin-bottom:10px;">
+            <li>Select any topic and click <strong>[Copy LLM Expansion Context]</strong> in Module 5 to copy a token-minimal slice with canonical IDs.</li>
+            <li>Paste into any LLM to generate a strict Layer 0 Delta Patch JSON.</li>
+            <li>Click <strong>[+ Import Patch]</strong> in the top bar to validate acyclicity (DFS) and merge without overwriting your progress (<code class="inline">state</code>) or UI edits (<code class="inline">user_overrides</code>).</li>
+          </ol>
+          <pre class="code-block">{
+  "patch_id": "2026-11-12_topic_ext",
+  "extensions": [{ "targetId": "math.graph_theory", "addPrereqs": [], "addSources": [] }],
+  "nodes": [{ "id": "math.graph_theory.colorings", "title": "Graph Colorings", "parentId": "math.graph_theory", "prereqIds": ["math.graph_theory.planar_graphs"], "intro": "...", "sources": [] }]
+}</pre>
+        </div>
+      </div>
+
+      <div class="manual-tab-panel" id="tab4">
+        <div class="box">
+          <div class="box-header"><span class="box-title">KEYBOARD & CANVAS SHORTCUTS</span><span class="tag">[HOTKEYS]</span></div>
+          <table class="spec-table">
+            <thead><tr><th>Input</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><code class="inline">Drag Canvas</code> or <code class="inline">Space + Drag</code></td><td>Pan infinite 2D SVG canvas</td></tr>
+              <tr><td><code class="inline">Mouse Wheel</code></td><td>Zoom anchored at cursor</td></tr>
+              <tr><td><code class="inline">M</code></td><td>Smoothly locate <strong>MAIN</strong> beacon</td></tr>
+              <tr><td><code class="inline">H</code></td><td>Smoothly locate <strong>HEAD</strong> reticle</td></tr>
+              <tr><td><code class="inline">Esc</code></td><td>Close active modal, or pop top frame from Detour Stack</td></tr>
+              <tr><td><code class="inline">Drag Minimap</code></td><td>Jump viewport camera directly from minimap</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `);
+
+    document.querySelectorAll(".manual-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".manual-tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".manual-tab-panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        const panel = document.getElementById(btn.dataset.mtab);
+        panel.classList.add("active");
+        renderMathInContainer(panel);
+      });
+    });
+  }
+
+  /* =========================================================================
+   * 13. CANVAS PAN / ZOOM, MINIMAP DRAG, SPLITTER & HOTKEYS
+   * ========================================================================= */
+  function setupInteractions() {
+    const svg = document.getElementById("dagSvg");
+    const canvasPane = document.getElementById("canvasPane");
+    let isPanning = false;
+    let panStart = { x: 0, y: 0, camX: 0, camY: 0 };
+    let spaceHeld = false;
+
+    svg.addEventListener("mousedown", (e) => {
+      if (e.button !== 0 && e.button !== 1) return;
+      if (e.target.closest(".svg-node") || e.target.closest(".prereq-hit") || e.target.closest(".svg-expand-badge")) {
+        if (!spaceHeld) return;
+      }
+      cancelCameraAnim();
+      isPanning = true;
+      svg.classList.add("panning");
+      panStart = { x: e.clientX, y: e.clientY, camX: camera.x, camY: camera.y };
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isPanning) return;
+      camera.x = panStart.camX + (e.clientX - panStart.x);
+      camera.y = panStart.camY + (e.clientY - panStart.y);
+      applyWorldTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (!isPanning) return;
+      isPanning = false;
+      svg.classList.remove("panning");
+    });
+
+    canvasPane.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      cancelCameraAnim();
+      const rect = canvasPane.getBoundingClientRect();
+      const mx = e.clientX - rect.left - rect.width / 2;
+      const my = e.clientY - rect.top - rect.height / 2;
+      const worldX = (mx - camera.x) / camera.k;
+      const worldY = (my - camera.y) / camera.k;
+      const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+      const nextK = Math.max(0.22, Math.min(2.6, camera.k * factor));
+      camera.k = nextK;
+      camera.x = mx - worldX * nextK;
+      camera.y = my - worldY * nextK;
+      applyWorldTransform();
+    }, { passive: false });
+
+    // Minimap Drag-to-Pan
+    const miniSvg = document.getElementById("minimapSvg");
+    let miniDragging = false;
+    function panFromMinimapEvent(e) {
+      const rect = miniSvg.getBoundingClientRect();
+      const rx = (e.clientX - rect.left) / Math.max(1, rect.width);
+      const ry = (e.clientY - rect.top) / Math.max(1, rect.height);
+      const wx = minimapBounds.minX + rx * (minimapBounds.maxX - minimapBounds.minX);
+      const wy = minimapBounds.minY + ry * (minimapBounds.maxY - minimapBounds.minY);
+      cancelCameraAnim();
+      camera.x = -wx * camera.k;
+      camera.y = -wy * camera.k;
+      applyWorldTransform();
+    }
+    miniSvg.addEventListener("mousedown", (e) => { miniDragging = true; panFromMinimapEvent(e); });
+    window.addEventListener("mousemove", (e) => { if (miniDragging) panFromMinimapEvent(e); });
+    window.addEventListener("mouseup", () => { miniDragging = false; });
+
+    // Resizable Splitter
+    const splitter = document.getElementById("splitter");
+    const sidePane = document.getElementById("sidePane");
+    if (uiSettings.sidePaneWidth) {
+      sidePane.style.width = uiSettings.sidePaneWidth + "px";
+    }
+    let splitDragging = false;
+    splitter.addEventListener("mousedown", () => {
+      splitDragging = true;
+      splitter.classList.add("dragging");
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!splitDragging) return;
+      const totalW = document.getElementById("workspace").clientWidth;
+      const newSideW = Math.max(320, Math.min(totalW - 340, totalW - e.clientX));
+      sidePane.style.width = newSideW + "px";
+      uiSettings.sidePaneWidth = newSideW;
+      applyWorldTransform();
+    });
+    window.addEventListener("mouseup", () => {
+      if (!splitDragging) return;
+      splitDragging = false;
+      splitter.classList.remove("dragging");
+      persistAll();
+    });
+
+    // Topbar & HUD Controls
+    document.getElementById("btnLocateMain").addEventListener("click", () => locateNode(liveGraph.navigation.MAIN, 0.98));
+    document.getElementById("btnLocateHead").addEventListener("click", () => locateNode(liveGraph.navigation.HEAD, 0.98));
+    document.getElementById("btnFloatingGetBack").addEventListener("click", popDetour);
+
+    document.getElementById("btnToggleLayout").addEventListener("click", () => {
+      uiSettings.layoutMode = uiSettings.layoutMode === "radial" ? "tree" : "radial";
+      persistAll();
+      renderAll();
+      fitVisibleGraph();
+    });
+    document.getElementById("btnFrontierRadar").addEventListener("click", openFrontierRadarModal);
+    document.getElementById("btnImportPatch").addEventListener("click", openImportPatchModal);
+    document.getElementById("btnLayerInspector").addEventListener("click", openLayerInspectorModal);
+    document.getElementById("btnManual").addEventListener("click", openManualModal);
+    document.getElementById("btnCloseModal").addEventListener("click", closeModal);
+    document.getElementById("modalBackdrop").addEventListener("click", (e) => {
+      if (e.target === document.getElementById("modalBackdrop")) closeModal();
+    });
+
+    document.getElementById("btnZoomIn").addEventListener("click", () => {
+      cancelCameraAnim();
+      camera.k = Math.min(2.6, camera.k * 1.18);
+      applyWorldTransform();
+    });
+    document.getElementById("btnZoomOut").addEventListener("click", () => {
+      cancelCameraAnim();
+      camera.k = Math.max(0.22, camera.k / 1.18);
+      applyWorldTransform();
+    });
+    document.getElementById("btnFitMap").addEventListener("click", fitVisibleGraph);
+    document.getElementById("btnExpandAll").addEventListener("click", () => {
+      for (const n of liveGraph.nodes.values()) {
+        if (n.childrenIds.length > 0) ensureNodeState(n.id).expandedOnMap = true;
+      }
+      persistAll();
+      renderAll();
+      fitVisibleGraph();
+    });
+    document.getElementById("btnCollapseDomains").addEventListener("click", () => {
+      for (const n of liveGraph.nodes.values()) {
+        ensureNodeState(n.id).expandedOnMap = (n.id === "knowledge");
+      }
+      persistAll();
+      renderAll();
+      fitVisibleGraph();
+    });
+    document.getElementById("btnClearSpotlight").addEventListener("click", () => {
+      uiSettings.spotlightMain = false;
+      persistAll();
+      renderAll();
+    });
+
+    // Global Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (e.code === "Space") spaceHeld = true;
+      const tag = (document.activeElement?.tagName || "").toLowerCase();
+      const inInput = tag === "input" || tag === "textarea" || tag === "select";
+      if (e.key === "Escape") {
+        if (document.getElementById("modalBackdrop").classList.contains("open")) {
+          closeModal();
+        } else if (!inInput && liveGraph.navigation.detourStack.length > 0) {
+          popDetour();
+        }
+        return;
+      }
+      if (inInput) return;
+      if (e.key === "m" || e.key === "M") {
+        locateNode(liveGraph.navigation.MAIN, 0.98);
+      } else if (e.key === "h" || e.key === "H") {
+        locateNode(liveGraph.navigation.HEAD, 0.98);
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.code === "Space") spaceHeld = false;
+    });
+    window.addEventListener("resize", applyWorldTransform);
+  }
+
+  /* =========================================================================
+   * 14. BOOTSTRAP
+   * ========================================================================= */
+  setupInteractions();
+  renderAll();
+  // Gently center HEAD on initial load after layout
+  requestAnimationFrame(() => {
+    const headPos = layoutPositions.get(liveGraph.navigation.HEAD);
+    if (headPos) {
+      camera.k = 0.82;
+      camera.x = -headPos.x * 0.45 * camera.k;
+      camera.y = -headPos.y * 0.45 * camera.k;
+    }
+    applyWorldTransform();
+  });
+  window.addEventListener("load", () => {
+    renderMathInContainer(document.getElementById("sidePane"));
+  });
+})();
+</script>
+</body>
+</html>
