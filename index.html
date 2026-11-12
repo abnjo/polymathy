@@ -9,7 +9,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <style>
 :root {
-  /* Surfaces & Ink (Clean STEM Manual Monograph Aesthetic) */
+  /* Surfaces & Ink (STEM Monograph Aesthetic, No Blur, Crisp 1px Borders) */
   --bg: #f8f9fa;
   --bg-alt: #f1f3f5;
   --surface: #ffffff;
@@ -24,7 +24,7 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  /* Semantic Colors (Human-friendly status names, NO cryptic letters) */
+  /* Semantic Status Colors (Human-readable, No Cryptic Letter Flags) */
   --accent: #0969da;
   --accent-soft: #ddf4ff;
   --head-color: #8250df;
@@ -294,7 +294,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 3px 8px;
@@ -381,7 +381,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   line-height: 1.4;
 }
 
-/* Clear Semantic Tags */
+/* Clear Semantic Tags (No Emojis) */
 .tag {
   display: inline-flex;
   align-items: center;
@@ -492,7 +492,7 @@ details.audit-drawer[open] summary {
   padding: 1px 5px;
 }
 
-/* Side Panel Content */
+/* Side Panel Layout */
 .topic-breadcrumb {
   font-family: var(--font-mono);
   font-size: 11px;
@@ -737,7 +737,7 @@ code.inline {
   padding: 1px 4px;
 }
 
-/* SVG Interactive Styles */
+/* SVG Interactive Elements */
 .svg-node { cursor: pointer; }
 .svg-node:hover .node-card { stroke: var(--text); stroke-width: 1.8px; }
 .svg-expand-badge { cursor: pointer; }
@@ -796,12 +796,12 @@ code.inline {
   <div class="topbar-center">
     <div class="locator-chip main" title="Your main study target. Always highlighted on the map.">
       <span class="locator-label">MAIN:</span>
-      <span class="locator-title" id="topMainTitle">—</span>
+      <span class="locator-title" id="topMainTitle">Loading...</span>
       <button class="btn-xs accent-btn" id="btnLocateMain" title="Center camera on your MAIN goal (HotKey: M)">Locate</button>
     </div>
     <div class="locator-chip head" title="The topic currently open in the side panel.">
       <span class="locator-label">HEAD:</span>
-      <span class="locator-title" id="topHeadTitle">—</span>
+      <span class="locator-title" id="topHeadTitle">Loading...</span>
       <button class="btn-xs head-btn" id="btnLocateHead" title="Center camera on inspected HEAD topic (HotKey: H)">Locate</button>
     </div>
   </div>
@@ -822,7 +822,7 @@ code.inline {
   <section class="canvas-pane" id="canvasPane">
     <!-- FLOATING DETOUR RETURN BANNER -->
     <div class="detour-banner" id="floatingDetourBanner">
-      <button class="btn-xs head-btn" id="btnFloatingGetBack" title="Return to previous topic in your detour history">← Back</button>
+      <button class="btn-xs head-btn" id="btnFloatingGetBack" title="Return to previous topic in your detour history">Back</button>
       <span id="floatingDetourLabel">Detour active</span>
     </div>
 
@@ -832,7 +832,7 @@ code.inline {
         <span>MINIMAP</span>
         <div>
           <span id="minimapZoomPct" style="margin-right:4px;">100%</span>
-          <button class="btn-xs" id="btnToggleMinimap" style="padding:0 3px;" title="Minimize/Expand minimap">−</button>
+          <button class="btn-xs" id="btnToggleMinimap" style="padding:0 3px;" title="Minimize/Expand minimap">-</button>
         </div>
       </div>
       <svg id="minimapSvg" viewBox="-100 -80 200 160"></svg>
@@ -841,12 +841,12 @@ code.inline {
     <!-- CANVAS BOTTOM HUD CONTROLS -->
     <div class="canvas-hud-bottom">
       <div class="hud-box">
-        <button class="btn-xs" id="btnPanLeft" title="Pan Left">◀</button>
-        <button class="btn-xs" id="btnPanUp" title="Pan Up">▲</button>
-        <button class="btn-xs" id="btnPanDown" title="Pan Down">▼</button>
-        <button class="btn-xs" id="btnPanRight" title="Pan Right">▶</button>
+        <button class="btn-xs" id="btnPanLeft" title="Pan Left">Left</button>
+        <button class="btn-xs" id="btnPanUp" title="Pan Up">Up</button>
+        <button class="btn-xs" id="btnPanDown" title="Pan Down">Down</button>
+        <button class="btn-xs" id="btnPanRight" title="Pan Right">Right</button>
         <span style="border-left:1px solid var(--border);height:14px;margin:0 2px;"></span>
-        <button class="btn-xs" id="btnZoomOut" title="Zoom Out">−</button>
+        <button class="btn-xs" id="btnZoomOut" title="Zoom Out">-</button>
         <span id="zoomPctLabel">100%</span>
         <button class="btn-xs" id="btnZoomIn" title="Zoom In">+</button>
         <button class="btn-xs" id="btnFitMap" title="Fit all visible topics into view">Fit</button>
@@ -856,7 +856,7 @@ code.inline {
       </div>
 
       <div class="hud-hint-pill">
-        💡 Drag or scroll to pan • Pinch or Ctrl+Scroll to zoom • Click topic to inspect
+        Tip: Drag or scroll to pan | Pinch or Ctrl+Scroll to zoom | Click topic to inspect
       </div>
 
       <div class="hud-box" id="spotlightHudBox" style="display:none; border-color: var(--accent); color: var(--accent);">
@@ -898,7 +898,7 @@ code.inline {
   <div class="modal" role="dialog" aria-modal="true">
     <div class="modal-head">
       <span id="modalTitle">MODAL</span>
-      <button class="btn-xs" id="btnCloseModal">✕ Close (Esc)</button>
+      <button class="btn-xs" id="btnCloseModal">Close (Esc)</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
   </div>
@@ -911,470 +911,623 @@ code.inline {
   'use strict';
 
   /* =========================================================================
-   * 1. SEED DATASET (Rich Cross-Disciplinary Knowledge Graph)
+   * 1. SEED DATASET (Authentic STEM Curriculum & Formulas)
    * ========================================================================= */
   const SEED_PATCH_001 = {
-    patch_id: "001_seed_polymath_dag",
+    patch_id: "001_stem_polymath_curriculum",
     nodes: [
       {
         id: "knowledge",
         title: "Knowledge",
         parentId: null,
         prereqIds: [],
-        intro: "Origin vertex of the knowledge graph. Expand into core domains to explore deeper concepts, track your study progress, and master prerequisites.",
+        intro: "Root origin of the STEM knowledge graph. Expand into Physics, Chemistry, Mathematics, and Computer Science to track exact formulas, textbook sources, and prerequisite dependency chains.",
         sources: []
       },
 
       /* --- CORE DOMAINS --- */
       {
-        id: "math",
-        title: "Mathematics",
-        parentId: "knowledge",
-        prereqIds: [],
-        intro: "Formal study of abstract structure, space, geometry, analysis, and discrete relations.",
-        sources: [{ id: "src_math_princeton", title: "Gowers — Princeton Companion to Mathematics" }]
-      },
-      {
         id: "physics",
         title: "Physics",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Quantitative and mathematical laws of matter, energy, fields, gravitation, and spacetime.",
-        sources: [{ id: "src_phys_feynman", title: "Feynman Lectures on Physics" }]
+        intro: "Quantitative laws of physical reality: mechanics, electrodynamics, thermodynamics, optics, and quantum physics.",
+        sources: [{ id: "src_phys_hcv", title: "HC Verma — Concepts of Physics (Vol 1 & 2)" }]
+      },
+      {
+        id: "chemistry",
+        title: "Chemistry",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Molecular architecture and atomic transformations: physical chemistry thermodynamics, inorganic bonding, and organic mechanisms.",
+        sources: [{ id: "src_chem_ncert", title: "NCERT Chemistry (Class 11 & 12 Complete)" }]
+      },
+      {
+        id: "math",
+        title: "Mathematics",
+        parentId: "knowledge",
+        prereqIds: [],
+        intro: "Analytical foundations: differential and integral calculus, linear algebra, coordinate geometry, and discrete combinatorics.",
+        sources: [{ id: "src_math_cengage", title: "Cengage Mathematics Series (Calculus, Algebra, Coordinate Geometry)" }]
       },
       {
         id: "cs",
         title: "Computer Science",
         parentId: "knowledge",
         prereqIds: [],
-        intro: "Algorithms, complexity, information theory, statistical learning, and digital systems.",
-        sources: [{ id: "src_cs_sicp", title: "Abelson & Sussman — Structure and Interpretation of Computer Programs" }]
-      },
-      {
-        id: "philosophy",
-        title: "Philosophy",
-        parentId: "knowledge",
-        prereqIds: [],
-        intro: "Foundations of reasoning, formal logic, epistemology, and scientific inquiry.",
-        sources: [{ id: "src_phil_sep", title: "Stanford Encyclopedia of Philosophy — Logic & Epistemology" }]
+        intro: "Computational theory: data structures, asymptotic algorithms, graph exploration, dynamic programming, and statistical machine learning.",
+        sources: [{ id: "src_cs_clrs", title: "Cormen, Leiserson, Rivest, Stein — Introduction to Algorithms (4th ed.)" }]
       },
 
-      /* --- MATHEMATICS --- */
+      /* ==================== PHYSICS ==================== */
       {
-        id: "math.linear_algebra",
-        title: "Linear Algebra",
-        parentId: "math",
-        prereqIds: [],
-        intro: "Vector spaces, linear maps $T: V \\to W$, matrices, inner product spaces, and spectral decomposition.",
-        sources: [{ id: "src_la_axler", title: "Axler — Linear Algebra Done Right" }]
-      },
-      {
-        id: "math.linear_algebra.vectors_matrices",
-        title: "Vectors & Linear Maps",
-        parentId: "math.linear_algebra",
-        prereqIds: [],
-        intro: "Basis, dimension, matrix transformations, and the rank-nullity theorem: $\\dim V = \\operatorname{rank}(T) + \\operatorname{nullity}(T)$.",
-        sources: [
-          { id: "src_vec_strang", title: "Strang — MIT Linear Algebra Lectures" },
-          { id: "src_vec_3b1b", title: "3Blue1Brown — Essence of Linear Algebra" }
-        ]
-      },
-      {
-        id: "math.linear_algebra.vectors_matrices.inner_products",
-        title: "Inner Products & Projections",
-        parentId: "math.linear_algebra.vectors_matrices",
-        prereqIds: [],
-        intro: "Orthogonal projections, Cauchy-Schwarz inequality $|\\langle u, v\\rangle| \\le \\|u\\|\\|v\\|$, and orthonormal bases.",
-        sources: []
-      },
-      {
-        id: "math.linear_algebra.vectors_matrices.svd_geometry",
-        title: "Singular Value Decomposition (SVD)",
-        parentId: "math.linear_algebra.vectors_matrices",
-        prereqIds: [],
-        intro: "Factorization $A = U\\Sigma V^T$ mapping orthogonal coordinate systems across domain and codomain.",
-        sources: []
-      },
-      {
-        id: "math.linear_algebra.determinants",
-        title: "Determinants & Volume",
-        parentId: "math.linear_algebra",
-        prereqIds: ["math.linear_algebra.vectors_matrices"],
-        intro: "Alternating multilinear forms measuring signed volume scaling factor: $\\det(AB) = \\det(A)\\det(B)$.",
-        sources: [{ id: "src_det_1", title: "Axler — Determinants and Trace" }]
-      },
-      {
-        id: "math.linear_algebra.eigenvalues",
-        title: "Eigenvalues & Spectral Theorem",
-        parentId: "math.linear_algebra",
-        prereqIds: ["math.linear_algebra.vectors_matrices", "math.linear_algebra.determinants"],
-        intro: "Invariant 1D subspaces $Av = \\lambda v$, characteristic polynomials, and orthogonal diagonalization of symmetric operators.",
-        sources: [{ id: "src_eig_axler", title: "Axler — Eigenvalues and Eigenspaces" }]
-      },
-
-      {
-        id: "math.multivariable_calculus",
-        title: "Multivariable Calculus",
-        parentId: "math",
-        prereqIds: [],
-        intro: "Differential and integral calculus of functions of several variables $\\mathbb{R}^n \\to \\mathbb{R}^m$, gradients, and vector fields.",
-        sources: [{ id: "src_mvc_hubbard", title: "Hubbard & Hubbard — Vector Calculus and Differential Forms" }]
-      },
-      {
-        id: "math.multivariable_calculus.partial_derivatives",
-        title: "Gradients & Jacobians",
-        parentId: "math.multivariable_calculus",
-        prereqIds: [],
-        intro: "Directional derivatives, gradient vector $\\nabla f$, Jacobian matrix $Df$, and local linear approximation.",
-        sources: [{ id: "src_pd_1", title: "MIT 18.02 Multivariable Calculus" }]
-      },
-      {
-        id: "math.multivariable_calculus.vector_fields_stokes",
-        title: "Vector Fields & Stokes' Theorem",
-        parentId: "math.multivariable_calculus",
-        prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
-        intro: "Line and surface integrals, divergence theorem, and generalized Stokes' theorem: $$\\int_{\\partial \\Omega} \\omega = \\int_{\\Omega} d\\omega$$",
-        sources: [{ id: "src_stokes_1", title: "Schey — Div, Grad, Curl, and All That" }]
-      },
-
-      {
-        id: "math.differential_geometry",
-        title: "Differential Geometry",
-        parentId: "math",
-        prereqIds: [],
-        intro: "Smooth manifolds, tangent bundles, Riemannian metrics, connections, and intrinsic curvature.",
-        sources: [{ id: "src_dg_lee", title: "John M. Lee — Introduction to Smooth Manifolds" }]
-      },
-      {
-        id: "math.differential_geometry.manifolds",
-        title: "Smooth Manifolds & Tangent Spaces",
-        parentId: "math.differential_geometry",
-        prereqIds: ["math.multivariable_calculus.vector_fields_stokes", "math.linear_algebra.eigenvalues"],
-        intro: "Topological manifolds with smooth transition functions, tangent vectors as derivations, and differential forms.",
-        sources: [{ id: "src_man_schuller", title: "Frederic Schuller — Geometric Anatomy of Theoretical Physics" }]
-      },
-      {
-        id: "math.differential_geometry.riemannian_metrics",
-        title: "Riemannian Metrics & Curvature",
-        parentId: "math.differential_geometry",
-        prereqIds: ["math.differential_geometry.manifolds"],
-        intro: "Metric tensor $g_{\\mu\\nu}$, Levi-Civita affine connection $\\Gamma^\\lambda_{\\mu\\nu}$, geodesics, and Riemann curvature tensor $R^\\rho_{\\sigma\\mu\\nu}$.",
-        sources: [{ id: "src_riem_docarmo", title: "do Carmo — Riemannian Geometry" }]
-      },
-
-      {
-        id: "math.graph_theory",
-        title: "Graph Theory",
-        parentId: "math",
-        prereqIds: [],
-        intro: "Combinatorics and structural properties of graphs $G=(V,E)$, connectivity, paths, and graph embeddings.",
-        sources: [{ id: "src_gt_diestel", title: "Diestel — Graph Theory" }]
-      },
-      {
-        id: "math.graph_theory.connectivity",
-        title: "Paths & Connectivity",
-        parentId: "math.graph_theory",
-        prereqIds: [],
-        intro: "Connected components, cut vertices, bridges, and Menger's theorem.",
-        sources: [{ id: "src_gt_conn", title: "Diestel Ch. 1 — Basics" }]
-      },
-      {
-        id: "math.graph_theory.trees",
-        title: "Trees & Spanning Forests",
-        parentId: "math.graph_theory",
-        prereqIds: ["math.graph_theory.connectivity"],
-        intro: "Connected acyclic graphs, Cayley's tree formula $n^{n-2}$, and minimum spanning tree algorithms.",
-        sources: [{ id: "src_gt_trees", title: "Bondy & Murty — Trees" }]
-      },
-      {
-        id: "math.graph_theory.planar_graphs",
-        title: "Planar Graphs & Embeddings",
-        parentId: "math.graph_theory",
-        prereqIds: ["math.graph_theory.connectivity", "math.topology.point_set_basics"],
-        intro: "Graphs embeddable in $\\mathbb{R}^2$ without edge crossings, Euler's formula $V - E + F = 2$, and Kuratowski's theorem ($K_5, K_{3,3}$).",
-        sources: [{ id: "src_gt_planar", title: "Diestel Ch. 4 — Planar Graphs" }]
-      },
-
-      {
-        id: "math.probability",
-        title: "Probability Theory",
-        parentId: "math",
-        prereqIds: [],
-        intro: "Probability spaces $(\\Omega, \\mathcal{F}, P)$, random variables, expectations, and stochastic processes.",
-        sources: [{ id: "src_prob_blitz", title: "Blitzstein & Hwang — Introduction to Probability" }]
-      },
-      {
-        id: "math.probability.axioms_distributions",
-        title: "Random Variables & Distributions",
-        parentId: "math.probability",
-        prereqIds: [],
-        intro: "Kolmogorov probability axioms, expectation, variance, and the Central Limit Theorem.",
-        sources: [{ id: "src_prob_1", title: "Harvard Stat 110 Lectures" }]
-      },
-      {
-        id: "math.probability.bayes_markov",
-        title: "Bayesian Updating & Markov Chains",
-        parentId: "math.probability",
-        prereqIds: ["math.probability.axioms_distributions", "math.linear_algebra.eigenvalues"],
-        intro: "Bayes' theorem $P(\\theta|D) \\propto P(D|\\theta)P(\\theta)$ and stationary transition distributions $\\pi P = \\pi$.",
-        sources: [{ id: "src_prob_mackay", title: "MacKay — Information Theory, Inference, and Learning Algorithms" }]
-      },
-
-      /* --- PHYSICS --- */
-      {
-        id: "physics.classical_mechanics",
-        title: "Classical Mechanics",
+        id: "physics.mechanics",
+        title: "Classical & Continuum Mechanics",
         parentId: "physics",
         prereqIds: [],
-        intro: "Newtonian dynamics, Lagrangian variational mechanics, and Hamiltonian phase-space geometry.",
+        intro: "Kinematics, dynamics, conservation laws, rotational systems, gravitation, and fluid mechanics.",
         sources: [{ id: "src_cm_taylor", title: "Taylor — Classical Mechanics" }]
       },
       {
-        id: "physics.classical_mechanics.newtonian",
-        title: "Newtonian Mechanics",
-        parentId: "physics.classical_mechanics",
+        id: "physics.mechanics.kinematics",
+        title: "1D & 2D Kinematics",
+        parentId: "physics.mechanics",
         prereqIds: [],
-        intro: "Inertial frames of reference, momentum conservation $\\mathbf{F} = \\dot{\\mathbf{p}}$, and energy conservation.",
-        sources: [{ id: "src_newt_1", title: "Kleppner & Kolenkow — An Introduction to Mechanics" }]
+        intro: "Uniform acceleration equations $v = u + at$, $s = ut + \\frac{1}{2}at^2$, $v^2 - u^2 = 2as$. Trajectory equation $y = x\\tan\\theta - \\frac{gx^2}{2u^2\\cos^2\\theta}$, horizontal range $R = \\frac{u^2\\sin 2\\theta}{g}$, flight time $T = \\frac{2u\\sin\\theta}{g}$, and relative velocity $\\mathbf{v}_{A/B} = \\mathbf{v}_A - \\mathbf{v}_B$.",
+        sources: [
+          { id: "src_kin_hcv", title: "HC Verma Vol. 1 — Ch. 3 Rest and Motion: Kinematics" },
+          { id: "src_kin_irodov", title: "Irodov — Problems in General Physics (Sec 1.1 Kinematics)" }
+        ]
       },
       {
-        id: "physics.classical_mechanics.lagrangian_hamiltonian",
-        title: "Lagrangian & Principle of Least Action",
-        parentId: "physics.classical_mechanics",
-        prereqIds: ["physics.classical_mechanics.newtonian", "math.multivariable_calculus.partial_derivatives"],
-        intro: "Stationary action $\\delta \\int L(q, \\dot{q}, t)\\,dt = 0$, Euler-Lagrange equations, and Noether's conservation theorem.",
-        sources: [{ id: "src_lag_landau", title: "Landau & Lifshitz — Mechanics" }]
+        id: "physics.mechanics.newton_laws",
+        title: "Newton's Laws & Friction",
+        parentId: "physics.mechanics",
+        prereqIds: ["physics.mechanics.kinematics"],
+        intro: "Linear momentum conservation $\\mathbf{F}_{\\text{net}} = \\frac{d\\mathbf{p}}{dt} = m\\mathbf{a}$. Free-body diagrams, tension, and normal contact forces. Static friction $f_s \\le \\mu_s N$, kinetic friction $f_k = \\mu_k N$, angle of repose $\\tan\\theta = \\mu_s$. Inertial pseudo forces $\\mathbf{F}_{\\text{pseudo}} = -m\\mathbf{a}_0$ in non-inertial reference frames.",
+        sources: [
+          { id: "src_nl_hcv", title: "HC Verma Vol. 1 — Ch. 5 Newton's Laws of Motion & Ch. 6 Friction" },
+          { id: "src_nl_kk", title: "Kleppner & Kolenkow — An Introduction to Mechanics (Ch. 2)" }
+        ]
+      },
+      {
+        id: "physics.mechanics.work_energy",
+        title: "Work, Energy & Power",
+        parentId: "physics.mechanics",
+        prereqIds: ["physics.mechanics.newton_laws"],
+        intro: "Work integral $W = \\int \\mathbf{F} \\cdot d\\mathbf{r}$. Work-Energy Theorem $\\Delta K = W_{\\text{all}} = W_c + W_{nc} + W_{\\text{ext}}$. Conservative force criterion $\\mathbf{F} = -\\nabla U$ (curl free $\\nabla \\times \\mathbf{F} = 0$). Potential energy curves, stable/unstable equilibrium points ($\\frac{dU}{dx} = 0, \\frac{d^2 U}{dx^2} > 0$), and instantaneous power $P = \\mathbf{F} \\cdot \\mathbf{v}$.",
+        sources: [
+          { id: "src_we_hcv", title: "HC Verma Vol. 1 — Ch. 8 Work and Energy" }
+        ]
+      },
+      {
+        id: "physics.mechanics.rotation",
+        title: "Rotational Dynamics & Angular Momentum",
+        parentId: "physics.mechanics",
+        prereqIds: ["physics.mechanics.work_energy"],
+        intro: "Torque $\\boldsymbol{\\tau} = \\mathbf{r} \\times \\mathbf{F} = I\\boldsymbol{\\alpha}$. Moment of inertia $I = \\int r^2 dm$, parallel-axis theorem $I = I_{\\text{cm}} + Md^2$, and perpendicular-axis theorem $I_z = I_x + I_y$. Angular momentum $\\mathbf{L} = \\mathbf{r} \\times \\mathbf{p} = I\\boldsymbol{\\omega}$. Total kinetic energy in rolling $K = \\frac{1}{2}M v_{\\text{cm}}^2 + \\frac{1}{2}I_{\\text{cm}}\\omega^2$; rolling without slipping condition $v_{\\text{cm}} = R\\omega$.",
+        sources: [
+          { id: "src_rot_hcv", title: "HC Verma Vol. 1 — Ch. 10 Rotational Mechanics" },
+          { id: "src_rot_irodov", title: "Irodov — Sec 1.5 Dynamics of a Solid Body" }
+        ]
+      },
+      {
+        id: "physics.mechanics.gravitation",
+        title: "Gravitation & Kepler Orbits",
+        parentId: "physics.mechanics",
+        prereqIds: ["physics.mechanics.work_energy"],
+        intro: "Newton's universal law $\\mathbf{F} = -\\frac{GMm}{r^2}\\hat{\\mathbf{r}}$. Gravitational potential $V(r) = -\\frac{GM}{r}$, potential energy $U = -\\frac{GMm}{r}$. Escape velocity $v_e = \\sqrt{\\frac{2GM}{R}}$, circular orbital speed $v_o = \\sqrt{\\frac{GM}{r}}$, and Kepler's third law $T^2 = \\frac{4\\pi^2}{GM}a^3$.",
+        sources: [
+          { id: "src_grav_hcv", title: "HC Verma Vol. 1 — Ch. 11 Gravitation" }
+        ]
+      },
+      {
+        id: "physics.mechanics.fluids",
+        title: "Fluid Statics & Dynamics",
+        parentId: "physics.mechanics",
+        prereqIds: ["physics.mechanics.work_energy"],
+        intro: "Hydrostatic variation $dP = -\\rho g dz$, Pascal's law, Archimedes' buoyant force $F_B = \\rho_{\\text{fluid}} V_{\\text{disp}} g$. Continuity equation $A_1 v_1 = A_2 v_2$. Bernoulli equation along streamlines: $P + \\frac{1}{2}\\rho v^2 + \\rho gh = \\text{const}$. Torricelli's efflux law $v = \\sqrt{2gh}$, Viscosity $\\tau = \\eta \\frac{dv}{dy}$, and Stokes' viscous drag $F_v = 6\\pi\\eta r v$.",
+        sources: [
+          { id: "src_fluids_hcv", title: "HC Verma Vol. 1 — Ch. 13 Fluids" }
+        ]
       },
 
       {
         id: "physics.electromagnetism",
-        title: "Electromagnetism",
+        title: "Electromagnetism & Electrodynamics",
         parentId: "physics",
         prereqIds: [],
-        intro: "Classical field theory of electric and magnetic fields, charge conservation, and electromagnetic radiation.",
-        sources: [{ id: "src_em_griffiths", title: "Griffiths — Introduction to Electrodynamics" }]
+        intro: "Maxwell's electromagnetic field theory: electrostatics, capacitance, magnetostatics, and Faraday induction.",
+        sources: [{ id: "src_em_griffiths", title: "Griffiths — Introduction to Electrodynamics (4th ed.)" }]
       },
       {
-        id: "physics.electromagnetism.maxwell_equations",
-        title: "Maxwell's Field Equations",
+        id: "physics.electromagnetism.electrostatics",
+        title: "Electrostatics & Gauss's Law",
         parentId: "physics.electromagnetism",
-        prereqIds: ["math.multivariable_calculus.vector_fields_stokes"],
-        intro: "The fundamental equations of electrodynamics: $\\nabla \\cdot \\mathbf{E} = \\rho/\\varepsilon_0$, $\\nabla \\cdot \\mathbf{B} = 0$, $\\nabla \\times \\mathbf{E} = -\\partial_t\\mathbf{B}$, and $\\nabla \\times \\mathbf{B} = \\mu_0\\mathbf{J} + \\mu_0\\varepsilon_0\\partial_t\\mathbf{E}$.",
-        sources: [{ id: "src_max_purcell", title: "Purcell & Morin — Electricity and Magnetism" }]
+        prereqIds: ["math.calculus.multivariable"],
+        intro: "Coulomb's law $\\mathbf{F} = \\frac{q_1 q_2}{4\\pi\\varepsilon_0 r^2}\\hat{\\mathbf{r}}$. Electric field $\\mathbf{E} = -\\nabla V$, potential $V = \\frac{q}{4\\pi\\varepsilon_0 r}$. Gauss's divergence theorem $\\oint \\mathbf{E} \\cdot d\\mathbf{A} = \\frac{Q_{\\text{enc}}}{\\varepsilon_0}$. Electric dipole moment $\\mathbf{p} = q\\mathbf{d}$, potential $V = \\frac{p\\cos\\theta}{4\\pi\\varepsilon_0 r^2}$, torque $\\boldsymbol{\\tau} = \\mathbf{p} \\times \\mathbf{E}$, electrostatic energy density $u_E = \\frac{1}{2}\\varepsilon_0 E^2$.",
+        sources: [
+          { id: "src_es_griffiths", title: "Griffiths — Ch. 2 Electrostatics" },
+          { id: "src_es_hcv", title: "HC Verma Vol. 2 — Ch. 29 Electric Field and Potential" }
+        ]
+      },
+      {
+        id: "physics.electromagnetism.capacitance",
+        title: "Capacitance & Dielectrics",
+        parentId: "physics.electromagnetism",
+        prereqIds: ["physics.electromagnetism.electrostatics"],
+        intro: "Charge-potential ratio $Q = CV$. Parallel-plate capacitance $C = \\frac{\\varepsilon_0 A}{d}$. Dielectric insertion $C = \\kappa C_0$, bound polarization charge density $\\sigma_b = \\mathbf{P} \\cdot \\hat{\\mathbf{n}}$. Stored electrostatic energy $U = \\frac{1}{2}CV^2 = \\frac{Q^2}{2C}$.",
+        sources: [
+          { id: "src_cap_hcv", title: "HC Verma Vol. 2 — Ch. 31 Capacitors" },
+          { id: "src_cap_purcell", title: "Purcell & Morin — Electricity and Magnetism (Ch. 3)" }
+        ]
+      },
+      {
+        id: "physics.electromagnetism.magnetism",
+        title: "Magnetostatics & Biot-Savart Law",
+        parentId: "physics.electromagnetism",
+        prereqIds: ["physics.electromagnetism.electrostatics"],
+        intro: "Lorentz force $\\mathbf{F} = q(\\mathbf{E} + \\mathbf{v} \\times \\mathbf{B})$. Biot-Savart law $d\\mathbf{B} = \\frac{\\mu_0 I}{4\\pi} \\frac{d\\boldsymbol{\\ell} \\times \\hat{\\mathbf{r}}}{r^2}$. Ampère's circuital law $\\oint \\mathbf{B} \\cdot d\\boldsymbol{\\ell} = \\mu_0 I_{\\text{enc}}$. Magnetic dipole moment $\\mathbf{m} = I\\mathbf{A}$, torque $\\boldsymbol{\\tau} = \\mathbf{m} \\times \\mathbf{B}$, force on current wire $\\mathbf{F} = I\\mathbf{L} \\times \\mathbf{B}$.",
+        sources: [
+          { id: "src_mag_griffiths", title: "Griffiths — Ch. 5 Magnetostatics" },
+          { id: "src_mag_hcv", title: "HC Verma Vol. 2 — Ch. 34–35 Magnetic Field" }
+        ]
+      },
+      {
+        id: "physics.electromagnetism.induction",
+        title: "Electromagnetic Induction & Maxwell Equations",
+        parentId: "physics.electromagnetism",
+        prereqIds: ["physics.electromagnetism.magnetism"],
+        intro: "Faraday's law of induction $\\mathcal{E} = -\\frac{d\\Phi_B}{dt}$ where $\\Phi_B = \\int \\mathbf{B} \\cdot d\\mathbf{A}$. Lenz's law. Motional electromotive force $\\mathcal{E} = (\\mathbf{v} \\times \\mathbf{B}) \\cdot \\boldsymbol{\\ell}$. Self-inductance $\\mathcal{E} = -L \\frac{dI}{dt}$, stored magnetic energy $U_B = \\frac{1}{2}LI^2$. Maxwell-Ampère correction with displacement current density $J_d = \\varepsilon_0 \\frac{\\partial E}{\\partial t}$.",
+        sources: [
+          { id: "src_ind_griffiths", title: "Griffiths — Ch. 7 Electrodynamics" },
+          { id: "src_ind_hcv", title: "HC Verma Vol. 2 — Ch. 38 Electromagnetic Induction" }
+        ]
       },
 
       {
-        id: "physics.relativity",
-        title: "Relativity",
+        id: "physics.thermal_optics",
+        title: "Thermal Physics & Wave Optics",
         parentId: "physics",
         prereqIds: [],
-        intro: "Special relativity in Minkowski spacetime and Einstein's geometric general theory of gravitation.",
-        sources: [{ id: "src_rel_carroll", title: "Sean Carroll — Spacetime and Geometry" }]
+        intro: "Thermodynamic cycles, kinetic theory, interference, diffraction, and wave phenomena.",
+        sources: [{ id: "src_therm_hcv", title: "HC Verma Vol. 2 — Heat, Thermodynamics and Light Waves" }]
       },
       {
-        id: "physics.relativity.special_relativity",
-        title: "Special Relativity & Minkowski Spacetime",
-        parentId: "physics.relativity",
-        prereqIds: ["physics.classical_mechanics.newtonian", "math.linear_algebra.vectors_matrices"],
-        intro: "Constancy of light speed $c$, invariant interval $ds^2 = -c^2 dt^2 + dx^2 + dy^2 + dz^2$, and Lorentz boosts.",
-        sources: [{ id: "src_sr_taylor", title: "Taylor & Wheeler — Spacetime Physics" }]
+        id: "physics.thermal_optics.thermodynamics",
+        title: "Thermodynamics & Kinetic Theory",
+        parentId: "physics.thermal_optics",
+        prereqIds: ["physics.mechanics.work_energy"],
+        intro: "Ideal gas equation $PV = nRT$, kinetic pressure $P = \\frac{1}{3}\\rho v_{\\text{rms}}^2$, internal energy $U = \\frac{f}{2}nRT$. First Law $dQ = dU + dW$. Mayer's relation $C_p - C_v = R$, specific heat ratio $\\gamma = 1 + 2/f$. Adiabatic process $PV^\\gamma = \\text{const}$, work done $W = \\frac{P_1 V_1 - P_2 V_2}{\\gamma - 1}$. Carnot engine efficiency $\\eta = 1 - \\frac{T_C}{T_H}$.",
+        sources: [
+          { id: "src_th_fermi", title: "Enrico Fermi — Thermodynamics" },
+          { id: "src_th_hcv", title: "HC Verma Vol. 2 — Ch. 24–27 Kinetic Theory & Thermodynamics" }
+        ]
       },
       {
-        id: "physics.relativity.general_relativity",
-        title: "General Relativity & Einstein's Equations",
-        parentId: "physics.relativity",
+        id: "physics.thermal_optics.wave_optics",
+        title: "Wave Optics & Interference",
+        parentId: "physics.thermal_optics",
+        prereqIds: ["physics.electromagnetism.induction"],
+        intro: "Huygens' principle, coherent wave superposition, phase-path difference relation $\\Delta\\phi = \\frac{2\\pi}{\\lambda}\\Delta x$. Young's double-slit interference intensity $I = 4I_0 \\cos^2(\\Delta\\phi/2)$, fringe spacing $\\beta = \\frac{\\lambda D}{d}$. Single-slit diffraction minima $a\\sin\\theta = m\\lambda$. Polarization, Brewster's law $\\tan\\theta_p = \\mu$, and Malus' law $I = I_0 \\cos^2\\theta$.",
+        sources: [
+          { id: "src_wo_hcv", title: "HC Verma Vol. 2 — Ch. 17 Light Waves" }
+        ]
+      },
+
+      {
+        id: "physics.modern",
+        title: "Modern Physics & Quantum Foundations",
+        parentId: "physics",
+        prereqIds: [],
+        intro: "Wave-particle duality, atomic Bohr transitions, nuclear binding energy, and radioactive decay.",
+        sources: [{ id: "src_mod_eisberg", title: "Eisberg & Resnick — Quantum Physics of Atoms and Molecules" }]
+      },
+      {
+        id: "physics.modern.quantum_basics",
+        title: "Photoelectric Effect & Bohr Atom",
+        parentId: "physics.modern",
+        prereqIds: ["physics.thermal_optics.wave_optics"],
+        intro: "Einstein photoelectric equation $h\\nu = \\phi + K_{\\max} = \\phi + eV_0$. de Broglie matter wavelength $\\lambda = \\frac{h}{p} = \\frac{h}{\\sqrt{2mE}}$. Bohr angular momentum quantization $mvr = \\frac{nh}{2\\pi}$, energy levels $E_n = -\\frac{13.6 Z^2}{n^2}\\text{ eV}$, and Rydberg spectral line formula $\\frac{1}{\\lambda} = R Z^2 \\left(\\frac{1}{n_1^2} - \\frac{1}{n_2^2}\\right)$.",
+        sources: [
+          { id: "src_qb_hcv", title: "HC Verma Vol. 2 — Ch. 42–43 Photoelectric Effect & Bohr Model" }
+        ]
+      },
+      {
+        id: "physics.modern.nuclear",
+        title: "Nuclear Physics & Radioactivity",
+        parentId: "physics.modern",
+        prereqIds: ["physics.modern.quantum_basics"],
+        intro: "Mass defect $\\Delta m = [Z m_p + (A - Z)m_n] - M_{\\text{nucleus}}$, binding energy per nucleon $\\text{BE}/A$. Radioactive decay law $N(t) = N_0 e^{-\\lambda t}$, half-life $t_{1/2} = \\frac{\\ln 2}{\\lambda}$, mean lifetime $\\tau = 1/\\lambda$, activity $A = \\lambda N$. Alpha, beta, and gamma radiation energetics and $Q$-value.",
+        sources: [
+          { id: "src_nuc_hcv", title: "HC Verma Vol. 2 — Ch. 44–46 Nuclear Physics" }
+        ]
+      },
+
+      /* ==================== CHEMISTRY ==================== */
+      {
+        id: "chemistry.physical",
+        title: "Physical Chemistry",
+        parentId: "chemistry",
+        prereqIds: [],
+        intro: "Thermodynamics, chemical equilibrium, atomic orbitals, reaction rates, and electrochemistry.",
+        sources: [{ id: "src_pc_atkins", title: "Peter Atkins — Physical Chemistry" }]
+      },
+      {
+        id: "chemistry.physical.mole_concept",
+        title: "Stoichiometry & Mole Concept",
+        parentId: "chemistry.physical",
+        prereqIds: [],
+        intro: "Avogadro's constant $N_A = 6.022 \\times 10^{23}\\text{ mol}^{-1}$. Moles $n = \\frac{m}{M} = \\frac{V_{\\text{gas}}(\\text{STP})}{22.4\\text{ L}}$. Stoichiometric ratios, limiting reagent calculations, percentage yield. Concentration formulas: Molarity $M = \\frac{n_{\\text{solute}}}{V_{\\text{soln}}(\\text{L})}$, Molality $m = \\frac{n_{\\text{solute}}}{m_{\\text{solvent}}(\\text{kg})}$, Mole fraction $\\chi_A = \\frac{n_A}{\\sum n}$.",
+        sources: [
+          { id: "src_mole_ncert", title: "NCERT Class 11 — Ch. 1 Basic Concepts of Chemistry" },
+          { id: "src_mole_rcm", title: "RC Mukherjee — Modern Approach to Chemical Calculations" }
+        ]
+      },
+      {
+        id: "chemistry.physical.atomic_structure",
+        title: "Atomic Structure & Orbitals",
+        parentId: "chemistry.physical",
+        prereqIds: ["chemistry.physical.mole_concept"],
+        intro: "Bohr hydrogen model, de Broglie relation $\\lambda = \\frac{h}{mv}$, Heisenberg uncertainty principle $\\Delta x \\Delta p \\ge \\frac{\\hbar}{2}$. Four quantum numbers $(n, l, m_l, m_s)$, shapes of $s, p, d$ orbitals. Aufbau principle, Pauli exclusion principle, Hund's rule of maximum multiplicity. Radial wave-function nodes $n - l - 1$ and angular nodes $l$.",
+        sources: [
+          { id: "src_atom_ncert", title: "NCERT Class 11 — Ch. 2 Structure of Atom" }
+        ]
+      },
+      {
+        id: "chemistry.physical.thermodynamics",
+        title: "Chemical Thermodynamics & Energetics",
+        parentId: "chemistry.physical",
+        prereqIds: ["chemistry.physical.mole_concept"],
+        intro: "State vs path functions. First law $\\Delta U = q + w$ ($w = -P_{\\text{ext}}\\Delta V$). Enthalpy $H = U + PV$, $\\Delta H = \\Delta U + \\Delta n_g RT$. Hess's law of constant heat summation. Entropy $S$, second law $\\Delta S_{\\text{univ}} \\ge 0$. Gibbs free energy $G = H - TS$, spontaneity condition $\\Delta G < 0$. Standard free energy relation $\\Delta G^\\circ = -RT\\ln K$.",
+        sources: [
+          { id: "src_cth_ncert", title: "NCERT Class 11 — Ch. 6 Thermodynamics" }
+        ]
+      },
+      {
+        id: "chemistry.physical.equilibrium",
+        title: "Chemical & Ionic Equilibrium",
+        parentId: "chemistry.physical",
+        prereqIds: ["chemistry.physical.thermodynamics"],
+        intro: "Law of mass action, equilibrium constants $K_c = \\frac{[C]^c[D]^d}{[A]^a[B]^b}$, $K_p = K_c(RT)^{\\Delta n_g}$. Reaction quotient $Q$. Le Chatelier's principle (pressure, temperature, volume shifts). Ionic autoionization of water $K_w = [\\text{H}^+][\\text{OH}^-] = 10^{-14}$. Ostwald dilution law, buffer solutions via Henderson-Hasselbalch equation $\\text{pH} = \\text{p}K_a + \\log\\frac{[\\text{A}^-]}{[\\text{HA}]}$, solubility product $K_{sp}$ and common-ion precipitation.",
+        sources: [
+          { id: "src_eq_ncert", title: "NCERT Class 11 — Ch. 7 Equilibrium" }
+        ]
+      },
+      {
+        id: "chemistry.physical.kinetics",
+        title: "Chemical Kinetics & Rates",
+        parentId: "chemistry.physical",
+        prereqIds: ["chemistry.physical.equilibrium"],
+        intro: "Differential and integrated rate laws for zero, first, and second-order reactions. First-order half-life $t_{1/2} = \\frac{\\ln 2}{k}$ independent of initial concentration. Arrhenius temperature equation: $k = A e^{-E_a/RT}$, activation energy $E_a$, rate-determining step in multi-step reaction profiles.",
+        sources: [
+          { id: "src_kin_ncert", title: "NCERT Class 12 — Ch. 4 Chemical Kinetics" }
+        ]
+      },
+      {
+        id: "chemistry.physical.electrochemistry",
+        title: "Electrochemistry & Nernst Equation",
+        parentId: "chemistry.physical",
+        prereqIds: ["chemistry.physical.thermodynamics", "chemistry.physical.equilibrium"],
+        intro: "Galvanic cell potential $E^\\circ_{\\text{cell}} = E^\\circ_{\\text{cathode}} - E^\\circ_{\\text{anode}}$. Nernst equation: $E_{\\text{cell}} = E^\\circ_{\\text{cell}} - \\frac{RT}{nF}\\ln Q$. Free energy link $\\Delta G^\\circ = -nFE^\\circ_{\\text{cell}}$. Faraday's laws of electrolysis $m = \\frac{M}{nF}It$. Molar conductivity $\\Lambda_m = \\frac{\\kappa \\times 1000}{M}$, Kohlrausch's law of independent ion migration $\\Lambda^\\circ_m = \\nu_+ \\lambda^\\circ_+ + \\nu_- \\lambda^\\circ_-$.",
+        sources: [
+          { id: "src_el_ncert", title: "NCERT Class 12 — Ch. 3 Electrochemistry" }
+        ]
+      },
+
+      {
+        id: "chemistry.inorganic",
+        title: "Inorganic Chemistry",
+        parentId: "chemistry",
+        prereqIds: [],
+        intro: "Periodic trends, chemical bonding, molecular orbitals, and coordination compounds.",
+        sources: [{ id: "src_ic_jdlee", title: "JD Lee — Concise Inorganic Chemistry" }]
+      },
+      {
+        id: "chemistry.inorganic.periodic_properties",
+        title: "Periodic Trends & Table Architecture",
+        parentId: "chemistry.inorganic",
+        prereqIds: ["chemistry.physical.atomic_structure"],
+        intro: "Electronic structure of the periodic table ($s, p, d, f$ blocks). Effective nuclear charge $Z_{\\text{eff}} = Z - \\sigma$ (Slater's rules). Systematic trends: atomic and ionic radii, Ionization Energy (with filled/half-filled anomalies Be vs B, N vs O), Electron Gain Enthalpy (Cl vs F anomaly), Pauling electronegativity, Lanthanoid contraction and inert pair effect.",
+        sources: [
+          { id: "src_pt_ncert", title: "NCERT Class 11 — Ch. 3 Classification of Elements" }
+        ]
+      },
+      {
+        id: "chemistry.inorganic.chemical_bonding",
+        title: "Chemical Bonding & Molecular Orbitals",
+        parentId: "chemistry.inorganic",
+        prereqIds: ["chemistry.inorganic.periodic_properties"],
+        intro: "Lattice energy, Born-Haber cycles, Fajan's rules for covalent character. Lewis structures and formal charge. VSEPR molecular geometry prediction. Valence Bond orbital hybridization ($sp, sp^2, sp^3, sp^3d, sp^3d^2$). Molecular Orbital Theory (MOT) for homonuclear/heteronuclear diatomics, bond order $\\frac{1}{2}(N_b - N_a)$, and paramagnetic unpaired electrons (e.g. $\\text{O}_2$). Hydrogen bonding.",
+        sources: [
+          { id: "src_cb_ncert", title: "NCERT Class 11 — Ch. 4 Chemical Bonding and Molecular Structure" }
+        ]
+      },
+      {
+        id: "chemistry.inorganic.coordination",
+        title: "Coordination Compounds",
+        parentId: "chemistry.inorganic",
+        prereqIds: ["chemistry.inorganic.chemical_bonding"],
+        intro: "Werner's coordination theory. Monodentate, bidentate, ambidentate, and chelating ligands. IUPAC nomenclature of complexes. Geometrical and optical stereoisomerism. Crystal Field Theory (CFT): $d$-orbital splitting in octahedral ($\\Delta_o$) and tetrahedral ($\\Delta_t = \\frac{4}{9}\\Delta_o$) fields, spectrochemical series, high-spin vs low-spin configurations, and spin-only magnetic moment $\\mu_s = \\sqrt{n(n+2)}\\text{ BM}$.",
+        sources: [
+          { id: "src_coord_ncert", title: "NCERT Class 12 — Ch. 9 Coordination Compounds" }
+        ]
+      },
+
+      {
+        id: "chemistry.organic",
+        title: "Organic Chemistry",
+        parentId: "chemistry",
+        prereqIds: [],
+        intro: "Reaction mechanisms, stereochemistry, electron delocalization, functional group synthesis, and spectroscopy.",
+        sources: [{ id: "src_oc_sykes", title: "Peter Sykes — A Guidebook to Mechanism in Organic Chemistry" }]
+      },
+      {
+        id: "chemistry.organic.reaction_mechanisms",
+        title: "Reaction Mechanisms & Intermediates",
+        parentId: "chemistry.organic",
+        prereqIds: ["chemistry.inorganic.chemical_bonding"],
+        intro: "Inductive, electromeric, resonance/mesomeric, and hyperconjugation electronic effects. Reactive intermediates: carbocations (stability order $3^\\circ > 2^\\circ > 1^\\circ$, 1,2-hydride and methyl shifts), carbanions, free radicals. Electrophiles and nucleophiles. Acid-base strength in organic compounds ($pK_a$ trends, aromaticity via Hückel's $4n+2$ rule).",
+        sources: [
+          { id: "src_goc_ncert", title: "NCERT Class 11 — Ch. 12 Organic Chemistry: Basic Principles" }
+        ]
+      },
+      {
+        id: "chemistry.organic.hydrocarbons_halides",
+        title: "Alkyl Halides & Substitution / Elimination",
+        parentId: "chemistry.organic",
+        prereqIds: ["chemistry.organic.reaction_mechanisms"],
+        intro: "Free radical halogenation. Electrophilic addition to alkenes: Markovnikov rule, peroxide anti-Markovnikov effect, ozonolysis. Nucleophilic substitution: $S_N1$ (two-step, carbocation intermediate, racemization, tertiary favored) vs $S_N2$ (one-step concerted, backside attack, Walden inversion, primary favored). Elimination: $E1$ vs $E2$, Zaitsev's rule (more substituted alkene) vs Hofmann rule.",
+        sources: [
+          { id: "src_hh_ncert", title: "NCERT Class 12 — Ch. 10 Haloalkanes and Haloarenes" }
+        ]
+      },
+      {
+        id: "chemistry.organic.carbonyls",
+        title: "Aldehydes, Ketones & Carboxylic Acids",
+        parentId: "chemistry.organic",
+        prereqIds: ["chemistry.organic.hydrocarbons_halides"],
+        intro: "Polar carbonyl group ($C=O$), nucleophilic addition mechanisms (cyanohydrin, hemiacetal, Grignard additions). Alpha-hydrogen acidity. Aldol condensation (cross and intramolecular), Cannizzaro reaction of non-enolizable aldehydes. Haloform reaction with methyl ketones ($\\text{CH}_3\\text{CO}-$). Nucleophilic acyl substitution on carboxylic acid derivatives.",
+        sources: [
+          { id: "src_carb_ncert", title: "NCERT Class 12 — Ch. 12 Aldehydes, Ketones and Carboxylic Acids" }
+        ]
+      },
+
+      /* ==================== MATHEMATICS ==================== */
+      {
+        id: "math.calculus",
+        title: "Calculus & Analysis",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Limits, derivatives, integration techniques, ordinary differential equations, and vector fields.",
+        sources: [{ id: "src_calc_spivak", title: "Michael Spivak — Calculus (4th ed.)" }]
+      },
+      {
+        id: "math.calculus.limits_continuity",
+        title: "Limits, Continuity & Derivatives",
+        parentId: "math.calculus",
+        prereqIds: [],
+        intro: "Formal limit definition $\\lim_{x\\to a} f(x) = L$. L'Hôpital's rule for indeterminate forms $0/0$ and $\\infty/\\infty$. Squeeze theorem. Continuity condition $\\lim_{x\\to c} f(x) = f(c)$. Differentiability as linear approximation: $f'(x) = \\lim_{h\\to 0}\\frac{f(x+h)-f(x)}{h}$. Product, quotient, and chain rules. Mean Value Theorems (Rolle's and Lagrange's: $f'(c) = \\frac{f(b)-f(a)}{b-a}$).",
+        sources: [
+          { id: "src_lim_cengage", title: "Cengage Mathematics — Calculus (Part 1)" }
+        ]
+      },
+      {
+        id: "math.calculus.integration",
+        title: "Integral Calculus & Differential Equations",
+        parentId: "math.calculus",
+        prereqIds: ["math.calculus.limits_continuity"],
+        intro: "Indefinite integrals, substitution, integration by parts $\\int u\\,dv = uv - \\int v\\,du$, partial fractions. Fundamental Theorem of Calculus: $\\frac{d}{dx}\\int_a^x f(t)\\,dt = f(x)$. Definite integral symmetry properties, King's rule $\\int_a^b f(x)\\,dx = \\int_a^b f(a+b-x)\\,dx$. First-order linear differential equations with integrating factor $I = e^{\\int P(x)dx}$.",
+        sources: [
+          { id: "src_int_cengage", title: "Cengage Mathematics — Calculus (Part 2)" }
+        ]
+      },
+      {
+        id: "math.calculus.multivariable",
+        title: "Multivariable & Vector Calculus",
+        parentId: "math.calculus",
+        prereqIds: ["math.calculus.integration"],
+        intro: "Scalar and vector fields on $\\mathbb{R}^3$. Partial derivatives, total differential $df = \\frac{\\partial f}{\\partial x}dx + \\frac{\\partial f}{\\partial y}dy + \\frac{\\partial f}{\\partial z}dz$. Gradient vector $\\nabla f$, directional derivative $D_{\\mathbf{u}}f = \\nabla f \\cdot \\mathbf{u}$. Divergence $\\nabla \\cdot \\mathbf{F}$, Curl $\\nabla \\times \\mathbf{F}$. Green's theorem, divergence theorem, and Stokes' theorem $\\oint_{\\partial S} \\mathbf{F} \\cdot d\\mathbf{r} = \\iint_S (\\nabla \\times \\mathbf{F}) \\cdot d\\mathbf{S}$.",
+        sources: [
+          { id: "src_mvc_hubbard", title: "Hubbard & Hubbard — Vector Calculus and Differential Forms" }
+        ]
+      },
+
+      {
+        id: "math.algebra",
+        title: "Algebra & Coordinate Geometry",
+        parentId: "math",
+        prereqIds: [],
+        intro: "Matrix transformations, conic sections, permutations, combinatorics, and probability theory.",
+        sources: [{ id: "src_alg_strang", title: "Gilbert Strang — Introduction to Linear Algebra" }]
+      },
+      {
+        id: "math.algebra.matrices",
+        title: "Matrices & Linear Systems",
+        parentId: "math.algebra",
+        prereqIds: [],
+        intro: "Matrix multiplication, transpose, symmetric and skew-symmetric matrices. Determinant expansion and invariance properties. Adjoint and matrix inverse $A^{-1} = \\frac{1}{\\det A}\\operatorname{adj}(A)$. Solving linear systems via Cramer's rule and Gaussian elimination. Characteristic equation $\\det(A - \\lambda I) = 0$, eigenvalues and eigenvectors, Cayley-Hamilton theorem.",
+        sources: [
+          { id: "src_mat_cengage", title: "Cengage Mathematics — Algebra (Matrices & Determinants)" }
+        ]
+      },
+      {
+        id: "math.algebra.coordinate_geom",
+        title: "Coordinate Geometry & Conic Sections",
+        parentId: "math.algebra",
+        prereqIds: ["math.calculus.limits_continuity"],
+        intro: "Straight line equations, perpendicular distance $d = \\frac{|ax_0 + by_0 + c|}{\\sqrt{a^2+b^2}}$. Circles $x^2 + y^2 + 2gx + 2fy + c = 0$. Conic sections by eccentricity $e$: Parabola ($e=1$, $y^2 = 4ax$), Ellipse ($e<1$, $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$), Hyperbola ($e>1$, $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$). Tangents, normals, and focal chord properties.",
+        sources: [
+          { id: "src_cg_loney", title: "SL Loney — Elements of Coordinate Geometry" }
+        ]
+      },
+      {
+        id: "math.algebra.probability_discrete",
+        title: "Probability & Combinatorics",
+        parentId: "math.algebra",
+        prereqIds: [],
+        intro: "Fundamental counting principle, Permutations $P(n,r) = \\frac{n!}{(n-r)!}$, Combinations $\\binom{n}{r} = \\frac{n!}{r!(n-r)!}$. Binomial theorem $(a+b)^n = \\sum_{k=0}^n \\binom{n}{k} a^{n-k}b^k$. Conditional probability $P(A|B) = \\frac{P(A \\cap B)}{P(B)}$. Total probability and Bayes' theorem: $P(B_i|A) = \\frac{P(A|B_i)P(B_i)}{\\sum P(A|B_j)P(B_j)}$. Random variables, binomial and normal distributions.",
+        sources: [
+          { id: "src_prob_blitz", title: "Blitzstein & Hwang — Introduction to Probability" }
+        ]
+      },
+
+      /* ==================== COMPUTER SCIENCE ==================== */
+      {
+        id: "cs.algorithms",
+        title: "Algorithms & Machine Learning",
+        parentId: "cs",
+        prereqIds: [],
+        intro: "Data structures, graph search, dynamic programming, and statistical learning optimization.",
+        sources: [{ id: "src_cs_bishop", title: "Christopher Bishop — Pattern Recognition and Machine Learning" }]
+      },
+      {
+        id: "cs.algorithms.data_structures",
+        title: "Linear & Tree Data Structures",
+        parentId: "cs.algorithms",
+        prereqIds: [],
+        intro: "Asymptotic complexity (Big-$O, \\Omega, \\Theta$). Dynamic arrays, amortized doubling. Stacks and queues with $O(1)$ operations. Binary Search Trees (BST), AVL self-balancing rotations. Binary heaps, priority queues with $O(\\log n)$ operations. Hash tables: collision resolution via chaining and open addressing, load factor.",
+        sources: [
+          { id: "src_ds_clrs", title: "CLRS — Ch. 10 Elementary Data Structures & Ch. 11 Hash Tables" }
+        ]
+      },
+      {
+        id: "cs.algorithms.graph_algorithms",
+        title: "Graph Search & Dynamic Programming",
+        parentId: "cs.algorithms",
+        prereqIds: ["cs.algorithms.data_structures"],
+        intro: "Graph representations: adjacency matrix vs adjacency list. Breadth-First Search (BFS) for shortest paths in unweighted graphs in $O(V+E)$. Depth-First Search (DFS) for topological sorting and cycle detection. Dijkstra's shortest path algorithm using min-heaps in $O((V+E)\\log V)$. Minimum spanning trees via Kruskal and Prim. Dynamic programming: memoization, tabulation, and optimal substructure.",
+        sources: [
+          { id: "src_ga_clrs", title: "CLRS — Ch. 22 Graph Algorithms & Ch. 24 Shortest Paths" },
+          { id: "src_ga_kt", title: "Kleinberg & Tardos — Algorithm Design" }
+        ]
+      },
+      {
+        id: "cs.algorithms.machine_learning",
+        title: "Machine Learning Foundations",
+        parentId: "cs.algorithms",
         prereqIds: [
-          "physics.relativity.special_relativity",
-          "math.differential_geometry.riemannian_metrics",
-          "physics.classical_mechanics.lagrangian_hamiltonian"
+          "cs.algorithms.graph_algorithms",
+          "math.calculus.multivariable",
+          "math.algebra.matrices",
+          "math.algebra.probability_discrete"
         ],
-        intro: "Spacetime curvature produced by energy and momentum: $$G_{\\mu\\nu} + \\Lambda g_{\\mu\\nu} = \\frac{8\\pi G}{c^4} T_{\\mu\\nu}$$ where $\\nabla_\\mu G^{\\mu\\nu} = 0$.",
-        sources: [{ id: "src_gr_carroll", title: "Carroll — Spacetime and Geometry Ch. 4" }]
-      },
-
-      /* --- COMPUTER SCIENCE --- */
-      {
-        id: "cs.algorithms_graphs",
-        title: "Algorithms & Search",
-        parentId: "cs",
-        prereqIds: [],
-        intro: "Algorithmic complexity, graph exploration, shortest paths, and dynamic programming.",
-        sources: [{ id: "src_algo_clrs", title: "CLRS — Introduction to Algorithms" }]
-      },
-      {
-        id: "cs.algorithms_graphs.traversal_shortest_paths",
-        title: "BFS, DFS & Dijkstra",
-        parentId: "cs.algorithms_graphs",
-        prereqIds: ["math.graph_theory.connectivity", "math.graph_theory.trees"],
-        intro: "Breadth-first and depth-first search in $O(V + E)$, topological DAG sorting, and priority-queue shortest path algorithms.",
-        sources: [{ id: "src_algo_erickson", title: "Jeff Erickson — Algorithms" }]
-      },
-
-      {
-        id: "cs.information_theory",
-        title: "Information Theory",
-        parentId: "cs",
-        prereqIds: [],
-        intro: "Quantifying uncertainty, data compression limits, Shannon entropy, and channel capacity.",
-        sources: [{ id: "src_it_cover", title: "Cover & Thomas — Elements of Information Theory" }]
-      },
-      {
-        id: "cs.information_theory.shannon_entropy",
-        title: "Shannon Entropy & Coding",
-        parentId: "cs.information_theory",
-        prereqIds: ["math.probability.axioms_distributions"],
-        intro: "Average information content $H(X) = -\\sum p(x) \\log_2 p(x)$ and optimal prefix-free source coding.",
-        sources: [{ id: "src_shan_1", title: "Claude Shannon (1948) — A Mathematical Theory of Communication" }]
-      },
-
-      {
-        id: "cs.machine_learning",
-        title: "Machine Learning",
-        parentId: "cs",
-        prereqIds: [],
-        intro: "Statistical learning, empirical risk minimization, gradient optimization, and probabilistic models.",
-        sources: [{ id: "src_ml_bishop", title: "Bishop — Pattern Recognition and Machine Learning" }]
-      },
-      {
-        id: "cs.machine_learning.optimization_sgd",
-        title: "Gradient Descent & Convex Optimization",
-        parentId: "cs.machine_learning",
-        prereqIds: ["math.multivariable_calculus.partial_derivatives", "math.linear_algebra.vectors_matrices"],
-        intro: "First-order parameter updates $\\theta_{t+1} = \\theta_t - \\eta \\nabla \\mathcal{L}(\\theta_t)$ and stochastic batch approximations.",
-        sources: [{ id: "src_opt_boyd", title: "Boyd & Vandenberghe — Convex Optimization" }]
-      },
-
-      /* --- PHILOSOPHY --- */
-      {
-        id: "philosophy.formal_logic",
-        title: "Formal Logic",
-        parentId: "philosophy",
-        prereqIds: [],
-        intro: "Syntax, formal deduction, semantics, completeness, and model theory.",
-        sources: [{ id: "src_log_enderton", title: "Enderton — A Mathematical Introduction to Logic" }]
-      },
-      {
-        id: "philosophy.formal_logic.propositional_predicate",
-        title: "First-Order Logic & Completeness",
-        parentId: "philosophy.formal_logic",
-        prereqIds: [],
-        intro: "Quantified predicate calculus, model satisfaction $\\mathcal{M} \\models \\varphi$, and Gödel's completeness theorem.",
-        sources: [{ id: "src_fol_1", title: "Peter Smith — An Introduction to Formal Logic" }]
-      },
-      {
-        id: "philosophy.formal_logic.godel_incompleteness",
-        title: "Gödel's Incompleteness",
-        parentId: "philosophy.formal_logic",
-        prereqIds: ["philosophy.formal_logic.propositional_predicate"],
-        intro: "Formalized arithmetics, self-reference via Gödel numbering, and the limits of consistent proof systems.",
-        sources: [{ id: "src_godel_smith", title: "Peter Smith — Gödel's Incompleteness Theorems" }]
+        intro: "Supervised vs unsupervised learning. Linear regression, Mean Squared Error (MSE) loss function $J(\\theta) = \\frac{1}{2m}\\sum (h_\\theta(x^{(i)}) - y^{(i)})^2$. Gradient descent parameter updates $\\theta_j := \\theta_j - \\alpha \\frac{\\partial J}{\\partial \\theta_j}$. Logistic regression and cross-entropy loss. Regularization (L1 Lasso, L2 Ridge) and bias-variance tradeoff. Neural network backpropagation via matrix chain rule.",
+        sources: [
+          { id: "src_ml_bishop", title: "Bishop — Pattern Recognition and Machine Learning (Ch. 1–3)" },
+          { id: "src_ml_cs229", title: "Andrew Ng — Stanford CS229 Machine Learning Notes" }
+        ]
       }
     ]
   };
 
   const SEED_STATE = {
     navigation: {
-      MAIN: "physics.relativity.general_relativity",
-      HEAD: "math.differential_geometry.manifolds",
-      detourStack: [
-        "physics.relativity.general_relativity",
-        "math.differential_geometry.riemannian_metrics"
-      ]
+      MAIN: "physics.mechanics.rotation",
+      HEAD: "physics.mechanics.rotation",
+      detourStack: []
     },
     nodes: {
       "knowledge": { introDone: true, baselineDone: true, completedSourceIds: [], expandedOnMap: true },
-      "math": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
       "physics": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "chemistry": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
+      "math": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
       "cs": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
-      "philosophy": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
 
-      "math.linear_algebra": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
-      "math.linear_algebra.vectors_matrices": {
+      // Physics branches
+      "physics.mechanics": { introDone: true, baselineDone: false, completedSourceIds: ["src_cm_taylor"], expandedOnMap: true },
+      "physics.mechanics.kinematics": {
         introDone: true,
         baselineDone: true,
-        completedSourceIds: ["src_vec_strang", "src_vec_3b1b"],
+        completedSourceIds: ["src_kin_hcv", "src_kin_irodov"],
         expandedOnMap: false
       },
-      "math.linear_algebra.vectors_matrices.inner_products": {
+      "physics.mechanics.newton_laws": {
         introDone: true,
         baselineDone: true,
-        completedSourceIds: [],
+        completedSourceIds: ["src_nl_hcv"],
         expandedOnMap: false
       },
-      "math.linear_algebra.vectors_matrices.svd_geometry": {
+      "physics.mechanics.work_energy": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_we_hcv"],
+        expandedOnMap: false
+      },
+      "physics.mechanics.rotation": {
+        introDone: true,
+        baselineDone: false,
+        completedSourceIds: ["src_rot_hcv"],
+        expandedOnMap: false
+      },
+      "physics.mechanics.gravitation": {
         introDone: false,
         baselineDone: false,
         completedSourceIds: [],
         expandedOnMap: false
       },
-      "math.linear_algebra.determinants": {
-        introDone: true,
-        baselineDone: true,
-        completedSourceIds: ["src_det_1"],
-        expandedOnMap: false
-      },
-      "math.linear_algebra.eigenvalues": {
-        introDone: true,
-        baselineDone: false,
-        completedSourceIds: ["src_eig_axler"],
-        expandedOnMap: false
-      },
-
-      "math.multivariable_calculus": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
-      "math.multivariable_calculus.partial_derivatives": {
-        introDone: true,
-        baselineDone: true,
-        completedSourceIds: ["src_pd_1"],
-        expandedOnMap: false
-      },
-      "math.multivariable_calculus.vector_fields_stokes": {
-        introDone: true,
-        baselineDone: true,
-        completedSourceIds: ["src_stokes_1"],
-        expandedOnMap: false
-      },
-
-      "math.differential_geometry": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
-      "math.differential_geometry.manifolds": {
-        introDone: true,
-        baselineDone: false,
-        completedSourceIds: ["src_man_schuller"],
-        expandedOnMap: false
-      },
-      "math.differential_geometry.riemannian_metrics": {
+      "physics.mechanics.fluids": {
         introDone: false,
         baselineDone: false,
         completedSourceIds: [],
         expandedOnMap: false
       },
 
-      "math.graph_theory": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
-      "math.graph_theory.connectivity": { introDone: true, baselineDone: true, completedSourceIds: ["src_gt_conn"], expandedOnMap: false },
-
-      "math.probability": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
-      "math.probability.axioms_distributions": { introDone: true, baselineDone: true, completedSourceIds: ["src_prob_1"], expandedOnMap: false },
-
-      "physics.classical_mechanics": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
-      "physics.classical_mechanics.newtonian": { introDone: true, baselineDone: true, completedSourceIds: ["src_newt_1"], expandedOnMap: false },
-
-      "physics.relativity": { introDone: true, baselineDone: false, completedSourceIds: [], expandedOnMap: true },
-      "physics.relativity.special_relativity": {
+      // Chemistry branches
+      "chemistry.physical": { introDone: true, baselineDone: false, completedSourceIds: ["src_pc_atkins"], expandedOnMap: true },
+      "chemistry.physical.mole_concept": {
         introDone: true,
         baselineDone: true,
-        completedSourceIds: ["src_sr_taylor"],
+        completedSourceIds: ["src_mole_ncert", "src_mole_rcm"],
         expandedOnMap: false
       },
-      "physics.relativity.general_relativity": {
+      "chemistry.physical.atomic_structure": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_atom_ncert"],
+        expandedOnMap: false
+      },
+      "chemistry.physical.thermodynamics": {
+        introDone: true,
+        baselineDone: false,
+        completedSourceIds: ["src_cth_ncert"],
+        expandedOnMap: false
+      },
+
+      // Mathematics branches
+      "math.calculus": { introDone: true, baselineDone: false, completedSourceIds: ["src_calc_spivak"], expandedOnMap: true },
+      "math.calculus.limits_continuity": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_lim_cengage"],
+        expandedOnMap: false
+      },
+      "math.calculus.integration": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_int_cengage"],
+        expandedOnMap: false
+      },
+      "math.calculus.multivariable": {
         introDone: true,
         baselineDone: false,
         completedSourceIds: [],
         expandedOnMap: false
       },
-
-      "philosophy.formal_logic.propositional_predicate": {
+      "math.algebra": { introDone: true, baselineDone: false, completedSourceIds: ["src_alg_strang"], expandedOnMap: true },
+      "math.algebra.matrices": {
         introDone: true,
         baselineDone: true,
-        completedSourceIds: ["src_fol_1"],
+        completedSourceIds: ["src_mat_cengage"],
+        expandedOnMap: false
+      },
+
+      // Computer science branches
+      "cs.algorithms": { introDone: false, baselineDone: false, completedSourceIds: [], expandedOnMap: false },
+      "cs.algorithms.data_structures": {
+        introDone: true,
+        baselineDone: true,
+        completedSourceIds: ["src_ds_clrs"],
         expandedOnMap: false
       }
     }
@@ -1392,10 +1545,10 @@ code.inline {
    * 2. STORAGE & 3-LAYER OVERLAYFS ENGINE
    * ========================================================================= */
   const STORAGE_KEYS = {
-    patches: "polymathy_v2_patches",
-    overrides: "polymathy_v2_overrides",
-    state: "polymathy_v2_state",
-    ui: "polymathy_v2_ui"
+    patches: "polymathy_v3_patches",
+    overrides: "polymathy_v3_overrides",
+    state: "polymathy_v3_state",
+    ui: "polymathy_v3_ui"
   };
 
   function safeReadJSON(key, fallback) {
@@ -1424,10 +1577,10 @@ code.inline {
   if (!layer2State.nodes) layer2State.nodes = {};
 
   let uiSettings = safeReadJSON(STORAGE_KEYS.ui, {
-    layoutMode: "tree", // Default to tree for maximum clarity and zero overlaps
+    layoutMode: "tree",
     learnChecklistActive: {},
     spotlightMain: false,
-    wheelMode: "scroll", // "scroll" | "zoom"
+    wheelMode: "scroll",
     minimapMinimized: false,
     sidePaneWidth: null
   });
@@ -1470,7 +1623,6 @@ code.inline {
     return "knowledge";
   }
 
-  /* Fold Layer 0 Patches */
   function foldLayer0(patches) {
     const map = new Map();
     for (const patch of patches) {
@@ -1517,7 +1669,6 @@ code.inline {
     return map;
   }
 
-  /* Fold Layer 0 (+) Layer 1 Overrides */
   function foldLayer0And1(patches, overrides) {
     const baseMap = foldLayer0(patches);
     const map = new Map();
@@ -1526,7 +1677,6 @@ code.inline {
     const tombstones = new Set(overrides.tombstones || []);
     const overriddenIds = new Set();
 
-    // Custom user nodes
     for (const raw of (overrides.custom_nodes || [])) {
       if (!raw || !raw.id || tombstones.has(raw.id)) continue;
       const node = cloneNode(raw);
@@ -1535,12 +1685,10 @@ code.inline {
       overriddenIds.add(node.id);
     }
 
-    // Tombstones
     for (const deadId of tombstones) {
       if (deadId !== "knowledge") map.delete(deadId);
     }
 
-    // Field overrides (title, intro)
     for (const [id, patchFields] of Object.entries(overrides.field_overrides || {})) {
       const node = map.get(id);
       if (!node) continue;
@@ -1550,7 +1698,6 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // Reparents (moving topic to another parent)
     for (const [id, newParent] of Object.entries(overrides.reparents || {})) {
       const node = map.get(id);
       if (!node || id === "knowledge") continue;
@@ -1559,7 +1706,6 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // 2P-Set Edge Deltas (prerequisites & sources)
     for (const [id, delta] of Object.entries(overrides.edge_deltas || {})) {
       const node = map.get(id);
       if (!node) continue;
@@ -1579,7 +1725,6 @@ code.inline {
       overriddenIds.add(id);
     }
 
-    // Stub Auto-Hydration for unresolved referenced IDs
     let addedStub = true;
     while (addedStub) {
       addedStub = false;
@@ -1611,7 +1756,6 @@ code.inline {
       }
     }
 
-    // Clean broken parent or self loops
     for (const node of map.values()) {
       if (node.id !== "knowledge" && (!node.parentId || !map.has(node.parentId))) {
         node.parentId = "knowledge";
@@ -1622,7 +1766,6 @@ code.inline {
     return { map, baseMap, overriddenIds };
   }
 
-  /* Compute live graph and progress ratios */
   function buildLiveGraph() {
     const { map, baseMap, overriddenIds } = foldLayer0And1(layer0Patches, layer1Overrides);
 
@@ -1698,7 +1841,7 @@ code.inline {
       node.depth = computeDepth(id, map);
     }
 
-    if (!map.has(layer2State.navigation.MAIN)) layer2State.navigation.MAIN = "knowledge";
+    if (!map.has(layer2State.navigation.MAIN)) layer2State.navigation.MAIN = "physics.mechanics.rotation";
     if (!map.has(layer2State.navigation.HEAD)) layer2State.navigation.HEAD = layer2State.navigation.MAIN;
     layer2State.navigation.detourStack = (layer2State.navigation.detourStack || []).filter(id => map.has(id));
 
@@ -1722,7 +1865,6 @@ code.inline {
     return d;
   }
 
-  /* Cycle detection on prerequisites */
   function findPrereqCycle(graphNodes, prereqId, targetId) {
     if (prereqId === targetId) return [targetId, prereqId];
     const adj = new Map();
@@ -1789,7 +1931,6 @@ code.inline {
     return null;
   }
 
-  /* Directory Breadcrumb Helper */
   function getAncestorChain(id, nodesMap) {
     const chain = [];
     let cur = nodesMap.get(id);
@@ -1844,7 +1985,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 3. ZERO-OVERLAP GRAPH LAYOUT ENGINE (Tidy Tree & Generous Radial)
+   * 3. LAYOUT ENGINE (Tidy Tree & Generous Radial)
    * ========================================================================= */
   let liveGraph = buildLiveGraph();
   let layoutPositions = new Map();
@@ -1871,13 +2012,11 @@ code.inline {
     const pos = new Map();
 
     if (uiSettings.layoutMode === "tree") {
-      /* TIDY HIERARCHICAL TREE (Mathematical guarantee: ZERO OVERLAPS) */
-      const NODE_WIDTH = 170;
+      const NODE_WIDTH = 175;
       const HORIZ_GAP = 55;
       const UNIT_WIDTH = NODE_WIDTH + HORIZ_GAP;
       const LEVEL_HEIGHT = 180;
 
-      // Post-order traversal to calculate clean subtree bounding widths
       const subtreeWidths = new Map();
       function calcSubtreeWidth(id) {
         const n = graph.nodes.get(id);
@@ -1894,7 +2033,6 @@ code.inline {
       }
       calcSubtreeWidth("knowledge");
 
-      // Pre-order traversal to assign non-overlapping coordinates
       function assignTreePos(id, leftX) {
         const n = graph.nodes.get(id);
         const totalW = subtreeWidths.get(id) || UNIT_WIDTH;
@@ -1914,7 +2052,6 @@ code.inline {
       assignTreePos("knowledge", -rootW / 2);
 
     } else {
-      /* GENEROUS RADIAL WEDGE WITH COLLISION CLEARANCE */
       const leafCountMap = new Map();
       function countLeaves(id) {
         const n = graph.nodes.get(id);
@@ -1930,7 +2067,6 @@ code.inline {
       }
       countLeaves("knowledge");
 
-      // Ring radii with generous circumference: 2*pi*R >= Count * 220px
       const totalLeaves = leafCountMap.get("knowledge") || 1;
       const minRadius = Math.max(300, (totalLeaves * 210) / (2 * Math.PI));
       const ringRadii = [0, minRadius * 0.45, minRadius * 0.85, minRadius * 1.3, minRadius * 1.75, minRadius * 2.2];
@@ -1963,10 +2099,11 @@ code.inline {
     }
 
     layoutPositions = pos;
+    return pos;
   }
 
   /* =========================================================================
-   * 4. CAMERA ENGINE (Smooth Pan, Scroll, Touch Drag/Pinch & Minimap)
+   * 4. CAMERA ENGINE
    * ========================================================================= */
   const camera = { x: 0, y: 0, k: 0.95 };
   let animFrameId = null;
@@ -2078,7 +2215,6 @@ code.inline {
     }
   }
 
-  /* Conduit Geometry Math */
   function sampleCubicBezier(p0, p1, p2, p3, steps = 36) {
     const pts = [];
     let totalLen = 0;
@@ -2143,7 +2279,6 @@ code.inline {
     return el;
   }
 
-  /* Compute Main Goal Subgraph for Spotlight */
   function computeMainDependencySubgraph(graph) {
     const mainId = graph.navigation.MAIN;
     const activeSet = new Set();
@@ -2165,7 +2300,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 5. SCENE RENDERING (Conduits, Arrows & Zero-Clutter Cards)
+   * 5. SCENE RENDERING
    * ========================================================================= */
   function renderAll() {
     liveGraph = buildLiveGraph();
@@ -2203,7 +2338,7 @@ code.inline {
     const prevId = stack[stack.length - 1];
     const prevNode = liveGraph.nodes.get(prevId);
     const btn = document.getElementById("btnFloatingGetBack");
-    btn.textContent = `← Back to ${prevNode ? prevNode.title : prevId}`;
+    btn.textContent = `<- Back to ${prevNode ? prevNode.title : prevId}`;
     document.getElementById("floatingDetourLabel").textContent = `Detour depth: ${stack.length}`;
     banner.classList.add("visible");
   }
@@ -2301,7 +2436,7 @@ code.inline {
         }));
       }
 
-      // Achievement Crossbar
+      // Crossbar
       const pt = pointAndTangentAtFraction(sampled, fillFrac);
       const nx = -pt.ty * 7;
       const ny = pt.tx * 7;
@@ -2318,7 +2453,7 @@ code.inline {
       gConduits.appendChild(conduitGroup);
     }
 
-    /* 2) Prerequisite Arrows (Clean curves, NO blocking labels covering cards) */
+    /* 2) Prerequisite Arrows (Clean curves, no blocking directory pills) */
     const targetsToDraw = [];
     if (liveGraph.navigation.MAIN !== liveGraph.navigation.HEAD) {
       targetsToDraw.push({ id: liveGraph.navigation.MAIN, dimmed: true });
@@ -2368,19 +2503,16 @@ code.inline {
           class: `prereq-arrow-hit ${dimmed ? "dimmed" : ""}`,
           style: dimmed ? "opacity: 0.45;" : ""
         });
-        // Tooltip hint on hover
         const titleEl = makeSvgEl("title");
-        titleEl.textContent = `Prerequisite: ${pNode.title} (${isDone ? "Completed" : "Needs Completion"}) — Click to jump`;
+        titleEl.textContent = `Prerequisite: ${pNode.title} (${isDone ? "Completed" : "Needs Completion"}) - Click to inspect`;
         hitGroup.appendChild(titleEl);
 
-        // Invisible wide hit area
         hitGroup.appendChild(makeSvgEl("path", {
           d: pathD,
           fill: "none",
           stroke: "transparent",
           "stroke-width": 16
         }));
-        // Visible line
         const arrowAttrs = {
           class: "visible-arrow",
           d: pathD,
@@ -2413,13 +2545,11 @@ code.inline {
         transform: `translate(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`
       });
 
-      // Tooltip hint
       const titleHint = makeSvgEl("title");
-      titleHint.textContent = `${n.title} — Click to inspect in side panel`;
+      titleHint.textContent = `${n.title} - Click to open in side panel`;
       nodeG.appendChild(titleHint);
 
       if (id === "knowledge") {
-        // Origin Dot
         nodeG.appendChild(makeSvgEl("circle", {
           cx: 0, cy: 0, r: 28,
           fill: "#ffffff",
@@ -2447,7 +2577,7 @@ code.inline {
         lbl.textContent = "KNOWLEDGE";
         nodeG.appendChild(lbl);
       } else {
-        const w = 158;
+        const w = 160;
         const h = 44;
         let fill = "#ffffff";
         let stroke = "#8c959f";
@@ -2468,7 +2598,6 @@ code.inline {
           stroke = "#d4a72c";
         }
 
-        // MAIN pulse beacon
         if (isMain) {
           nodeG.appendChild(makeSvgEl("rect", {
             x: -w / 2 - 5,
@@ -2492,7 +2621,6 @@ code.inline {
           }));
         }
 
-        // HEAD reticle
         if (isHead) {
           nodeG.appendChild(makeSvgEl("rect", {
             x: -w / 2 - 3,
@@ -2520,7 +2648,6 @@ code.inline {
         if (dash) cardAttrs["stroke-dasharray"] = dash;
         nodeG.appendChild(makeSvgEl("rect", cardAttrs));
 
-        // Status accent line
         const statusBarColor = n.isStub ? "#57606a"
           : n.isBaselineDone ? "#4ac26b"
           : n.isBlocked ? "#ff8182"
@@ -2535,8 +2662,7 @@ code.inline {
           fill: statusBarColor
         }));
 
-        // Title text
-        const titleStr = n.title.length > 21 ? n.title.slice(0, 20) + "…" : n.title;
+        const titleStr = n.title.length > 21 ? n.title.slice(0, 20) + "..." : n.title;
         const txt = makeSvgEl("text", {
           x: -w / 2 + 10,
           y: -3,
@@ -2548,7 +2674,6 @@ code.inline {
         txt.textContent = titleStr;
         nodeG.appendChild(txt);
 
-        // Subtitle (Clear, readable status without cryptic flags)
         const pct = Math.round(n.progress * 100);
         const statusLabel = n.isStub ? "Draft"
           : n.isBaselineDone ? "Completed"
@@ -2563,10 +2688,9 @@ code.inline {
           "font-weight": 600,
           fill: n.isBaselineDone ? "#116329" : n.isBlocked ? "#a40e26" : "#59636e"
         });
-        subTxt.textContent = `${statusLabel} · ${pct}%`;
+        subTxt.textContent = `${statusLabel} - ${pct}%`;
         nodeG.appendChild(subTxt);
 
-        // Top badges: MAIN / HEAD
         if (isMain || isHead) {
           let bx = -w / 2;
           if (isMain) {
@@ -2584,10 +2708,9 @@ code.inline {
           }
         }
 
-        // Expand / Collapse Badge (+N / -)
         if (n.childrenIds.length > 0) {
           const isExp = n.state.expandedOnMap;
-          const badgeText = isExp ? "−" : `+${n.childrenIds.length}`;
+          const badgeText = isExp ? "-" : `+${n.childrenIds.length}`;
           const bw = isExp ? 18 : Math.max(22, badgeText.length * 6.5 + 8);
           const bg = makeSvgEl("g", { class: "svg-expand-badge" });
           bg.appendChild(makeSvgEl("rect", {
@@ -2628,7 +2751,7 @@ code.inline {
     }
   }
 
-  /* Minimap Rendering */
+  /* Minimap */
   let minimapBounds = { minX: -400, maxX: 400, minY: -300, maxY: 300 };
 
   function renderMinimap() {
@@ -2699,7 +2822,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 6. NAVIGATION ACTIONS (MAIN, HEAD, DETOUR STACK)
+   * 6. NAVIGATION ACTIONS
    * ========================================================================= */
   function selectNodeFromMap(id) {
     const node = liveGraph.nodes.get(id);
@@ -2777,7 +2900,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 7. FULLY EDITABLE SIDE PANEL WITH HINTS & SIMPLIFIED LABELS
+   * 7. SIDE PANEL
    * ========================================================================= */
   let isEditingTopicDetails = false;
   let editingSourceId = null;
@@ -2800,7 +2923,6 @@ code.inline {
 
     let html = "";
 
-    /* Top Detour Call-Stack */
     if (stack.length > 0) {
       const chainIds = [...stack, headId];
       const chainHtml = chainIds.map((id, idx) => {
@@ -2810,20 +2932,19 @@ code.inline {
           return `<span class="detour-current">${title}</span>`;
         }
         return `<span class="detour-link" data-detour-idx="${idx}" title="Jump back to this topic">${title}</span>`;
-      }).join(` <span>→</span> `);
+      }).join(` <span>-></span> `);
 
       html += `
         <details open class="audit-drawer detour-drawer">
           <summary>
             <span>DETOUR HISTORY (${stack.length} steps deep)</span>
-            <button type="button" class="btn-xs head-btn" id="btnSideGetBack" title="Return to previous topic">← Back</button>
+            <button type="button" class="btn-xs head-btn" id="btnSideGetBack" title="Return to previous topic">Back</button>
           </summary>
           <div class="detour-chain">${chainHtml}</div>
         </details>
       `;
     }
 
-    /* Topic Header */
     const statusTag = node.isStub
       ? `<span class="tag draft" title="Draft topic placeholder">Draft</span>`
       : node.isBaselineDone
@@ -2842,7 +2963,7 @@ code.inline {
             <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;">id: ${escapeHtml(node.id)}</div>
           </div>
           <div class="list-row-actions">
-            <button type="button" class="btn-xs" id="btnToggleEditTopic" title="Edit title, category, or overview notes">${isEditingTopicDetails ? "Cancel" : "✏️ Edit Topic"}</button>
+            <button type="button" class="btn-xs" id="btnToggleEditTopic" title="Edit title, category, or overview notes">${isEditingTopicDetails ? "Cancel" : "Edit Topic"}</button>
           </div>
         </div>
 
@@ -2851,7 +2972,7 @@ code.inline {
           ${overrideTag}
           <span class="tag" title="Overall progress">${pct}% Complete</span>
           ${isMain
-            ? `<span class="tag" style="background:var(--accent-soft);color:var(--accent);border-color:var(--accent);" title="Currently your main objective on the map">Main Target ✓</span>`
+            ? `<span class="tag" style="background:var(--accent-soft);color:var(--accent);border-color:var(--accent);" title="Currently your main objective on the map">Main Target</span>`
             : `<button type="button" class="btn-xs accent-btn" id="btnSetAsMain" title="Set this topic as your primary target beacon on the map">Set as Main Target</button>`
           }
         </div>
@@ -2872,17 +2993,17 @@ code.inline {
     const prereqStatusBadge = node.prereqIds.length === 0
       ? `<span class="tag done">None Required</span>`
       : allPrereqsDone
-        ? `<span class="tag done">All Completed ✓</span>`
+        ? `<span class="tag done">All Completed</span>`
         : `<span class="tag needed">Required First</span>`;
 
     const prereqRows = node.prereqIds.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No prerequisites required. You can start studying this immediately!</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No prerequisites required. You can start studying this immediately.</div>`
       : node.prereqIds.map(pId => {
           const p = liveGraph.nodes.get(pId);
           if (!p) return "";
           const badge = p.isBaselineDone
-            ? `<span class="tag done">✓ Completed</span>`
-            : `<span class="tag needed">✕ Needed</span>`;
+            ? `<span class="tag done">Completed</span>`
+            : `<span class="tag needed">Needed</span>`;
           return `
             <div class="list-row">
               <div class="list-row-left">
@@ -2893,8 +3014,8 @@ code.inline {
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(pId)}" title="Jump to this prerequisite">Detour →</button>
-                <button type="button" class="btn-xs danger-btn" data-remove-prereq="${escapeHtml(pId)}" title="Remove this prerequisite">✕</button>
+                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(pId)}" title="Jump to this prerequisite">Detour -></button>
+                <button type="button" class="btn-xs danger-btn" data-remove-prereq="${escapeHtml(pId)}" title="Remove this prerequisite">Remove</button>
               </div>
             </div>
           `;
@@ -2911,7 +3032,7 @@ code.inline {
           <span class="box-title">Prerequisites</span>
           ${prereqStatusBadge}
         </div>
-        <div class="section-hint">Concepts you should understand before this topic. Click <strong>Detour →</strong> to inspect or study any prerequisite.</div>
+        <div class="section-hint">Concepts you should understand before this topic. Click <strong>Detour -></strong> to inspect or study any prerequisite.</div>
         <div class="item-list">${prereqRows}</div>
         <div class="inline-add-row">
           <input type="text" id="inputPrereqSearch" placeholder="Filter topics to link..." value="${escapeHtml(prereqSearchQuery)}" style="flex:1 1 110px;" title="Filter topics">
@@ -2935,10 +3056,10 @@ code.inline {
           <span class="box-title">Overview & Notes</span>
           ${introTag}
         </div>
-        <div class="section-hint">Technical definition and summary of this concept. Click <strong>✏️ Edit Topic</strong> above to edit or add formulas ($LaTeX$ supported).</div>
+        <div class="section-hint">Technical definition and summary of this concept. Click <strong>Edit Topic</strong> above to edit or add formulas ($LaTeX$ supported).</div>
         <div class="intro-prose" id="sideIntroProse">
           ${node.isStub && !node.intro
-            ? `<em style="color:var(--text-muted);">Draft topic. Click <strong>✏️ Edit Topic</strong> above to write an overview or add formulas.</em>`
+            ? `<em style="color:var(--text-muted);">Draft topic. Click <strong>Edit Topic</strong> above to write an overview or add formulas.</em>`
             : escapeHtml(node.intro || "No overview notes written yet.").replace(/\n/g, "<br>")
           }
         </div>
@@ -2949,10 +3070,10 @@ code.inline {
       </div>
     `;
 
-    /* Section 3: Resources & Links (Fully Editable Inline) */
+    /* Section 3: Resources & Links */
     const doneSrcCount = node.sources.filter(s => node.state.completedSourceIds.includes(s.id)).length;
     const srcRows = node.sources.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No resources attached. Add books, lecture playlists, or links below!</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No resources attached. Add books, lecture playlists, or links below.</div>`
       : node.sources.map(src => {
           const checked = node.state.completedSourceIds.includes(src.id);
           const isEditingThis = editingSourceId === src.id;
@@ -2983,8 +3104,8 @@ code.inline {
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs" data-edit-source="${escapeHtml(src.id)}" title="Edit resource title or link">✏️</button>
-                <button type="button" class="btn-xs danger-btn" data-remove-source="${escapeHtml(src.id)}" title="Delete resource">✕</button>
+                <button type="button" class="btn-xs" data-edit-source="${escapeHtml(src.id)}" title="Edit resource title or link">Edit</button>
+                <button type="button" class="btn-xs danger-btn" data-remove-source="${escapeHtml(src.id)}" title="Delete resource">Remove</button>
               </div>
             </div>
           `;
@@ -2996,7 +3117,7 @@ code.inline {
           <span class="box-title">Resources & Study Materials</span>
           <span class="tag" title="Studied / Total">${doneSrcCount} / ${node.sources.length} Studied</span>
         </div>
-        <div class="section-hint">Textbooks, video lectures, papers, or cheat sheets. Click <strong>✏️</strong> to edit or check them off as you study.</div>
+        <div class="section-hint">Textbooks, video lectures, papers, or cheat sheets. Click <strong>Edit</strong> to change or check them off as you study.</div>
         <div class="item-list">${srcRows}</div>
         <div class="inline-add-row">
           <input type="text" id="inputSourceTitle" placeholder="Book / Lecture / Article title..." title="Resource name">
@@ -3006,10 +3127,10 @@ code.inline {
       </div>
     `;
 
-    /* Section 4: Subtopics & Tasks (Fully Editable Inline) */
+    /* Section 4: Subtopics & Tasks */
     const isLearningContainer = !!uiSettings.learnChecklistActive[headId] || node.childrenIds.length > 0;
     const subRows = node.childrenIds.length === 0
-      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No subtopics yet. Add smaller component topics below to break down this concept!</div>`
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No subtopics yet. Add component topics below to break down this concept.</div>`
       : node.childrenIds.map(cId => {
           const c = liveGraph.nodes.get(cId);
           if (!c) return "";
@@ -3039,9 +3160,9 @@ code.inline {
                 </div>
               </div>
               <div class="list-row-actions">
-                <button type="button" class="btn-xs" data-edit-subtopic="${escapeHtml(cId)}" title="Rename subtopic">✏️</button>
-                <button type="button" class="btn-xs head-btn" data-open-subtopic="${escapeHtml(cId)}" title="Open and inspect this subtopic">Open →</button>
-                <button type="button" class="btn-xs danger-btn" data-delete-subtopic="${escapeHtml(cId)}" title="Delete this subtopic">✕</button>
+                <button type="button" class="btn-xs" data-edit-subtopic="${escapeHtml(cId)}" title="Rename subtopic">Rename</button>
+                <button type="button" class="btn-xs head-btn" data-open-subtopic="${escapeHtml(cId)}" title="Open and inspect this subtopic">Open -></button>
+                <button type="button" class="btn-xs danger-btn" data-delete-subtopic="${escapeHtml(cId)}" title="Delete this subtopic">Remove</button>
               </div>
             </div>
           `;
@@ -3053,10 +3174,10 @@ code.inline {
           <span class="box-title">Subtopics & Tasks</span>
           <span class="tag" title="Direct child subtopics">${node.childrenIds.length} Subtopics</span>
         </div>
-        <div class="section-hint">Divide this topic into component subtopics. Checking a subtopic advances the map conduit.</div>
+        <div class="section-hint">Component subtopics. Checking off a subtopic advances the conduit on the map.</div>
         <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;">
           <button type="button" class="btn-xs ${uiSettings.learnChecklistActive[headId] ? "accent-btn" : ""}" id="btnLearnTopic" title="Toggle active checklist view">
-            ${uiSettings.learnChecklistActive[headId] ? "Checklist Open ✓" : "Open Checklist"}
+            ${uiSettings.learnChecklistActive[headId] ? "Checklist Open" : "Open Checklist"}
           </button>
           <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">Hierarchy depth: ${node.depth}</span>
         </div>
@@ -3073,19 +3194,19 @@ code.inline {
       <div class="box">
         <div class="box-header">
           <span class="box-title">Completion & AI Tools</span>
-          ${node.isBaselineDone ? `<span class="tag done">Completed ✓</span>` : `<span class="tag active">In Progress</span>`}
+          ${node.isBaselineDone ? `<span class="tag done">Completed</span>` : `<span class="tag active">In Progress</span>`}
         </div>
         <div class="section-hint">Marking this topic complete permanently unlocks all downstream topics that depend on it.</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
           ${node.isBaselineDone
-            ? `<button type="button" class="success-btn" disabled>Topic Completed ✓</button>`
+            ? `<button type="button" class="success-btn" disabled>Topic Completed</button>`
             : `<button type="button" class="primary" id="btnMarkBaseline" title="Mark this topic complete to unblock downstream topics">Mark Topic Completed</button>`
           }
           <button type="button" id="btnCopyLlmSlice" title="Copy an AI prompt formatted for ChatGPT/Claude to expand this topic">Copy AI Prompt for Expanding</button>
         </div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
           ${node.isBaselineDone
-            ? "✓ Outgoing prerequisite arrows from this topic are dotted green across the graph. You can still add deeper subtopics anytime without re-locking downstream topics."
+            ? "Outgoing prerequisite arrows from this topic are dotted green across the graph. You can still add deeper subtopics anytime without re-locking downstream topics."
             : "Tip: You can return and deepen this topic with more subtopics later even after marking it complete."
           }
         </div>
@@ -3097,7 +3218,6 @@ code.inline {
     bindSidePanelEvents(node);
   }
 
-  /* Inline Topic Editor (Edit Title, Move Parent Category, Edit Notes, Delete) */
   function renderTopicEditor(node) {
     const parentOptions = [...liveGraph.nodes.values()]
       .filter(n => n.id !== node.id && !isDescendantOf(n.id, node.id, liveGraph.nodes))
@@ -3147,22 +3267,18 @@ code.inline {
     return false;
   }
 
-  /* Bind Side Panel Interactive Events */
   function bindSidePanelEvents(node) {
     const headId = node.id;
 
-    // Detour links & Back
     document.querySelectorAll("[data-detour-idx]").forEach(el => {
       el.addEventListener("click", () => jumpToDetourFrame(Number(el.dataset.detourIdx)));
     });
     const btnSideBack = document.getElementById("btnSideGetBack");
     if (btnSideBack) btnSideBack.addEventListener("click", (e) => { e.preventDefault(); popDetour(); });
 
-    // Set as MAIN Target
     const btnSetMain = document.getElementById("btnSetAsMain");
     if (btnSetMain) btnSetMain.addEventListener("click", setHeadAsMain);
 
-    // Edit Topic Toggle
     const btnEdit = document.getElementById("btnToggleEditTopic");
     if (btnEdit) {
       btnEdit.addEventListener("click", () => {
@@ -3178,7 +3294,6 @@ code.inline {
       });
     }
 
-    // Save Topic Details
     const btnSaveEdit = document.getElementById("btnSaveHeaderEdit");
     if (btnSaveEdit) {
       btnSaveEdit.addEventListener("click", () => {
@@ -3189,12 +3304,10 @@ code.inline {
 
         if (!newTitle) return;
 
-        // Save title and intro override
         if (!layer1Overrides.field_overrides[headId]) layer1Overrides.field_overrides[headId] = {};
         layer1Overrides.field_overrides[headId].title = newTitle;
         layer1Overrides.field_overrides[headId].intro = newIntro;
 
-        // Save reparenting if changed
         if (newParent && newParent !== node.parentId) {
           layer1Overrides.reparents[headId] = newParent;
         }
@@ -3206,7 +3319,6 @@ code.inline {
       });
     }
 
-    // Delete Topic
     const btnDel = document.getElementById("btnDeleteNode");
     if (btnDel) {
       btnDel.addEventListener("click", () => {
@@ -3221,7 +3333,6 @@ code.inline {
       });
     }
 
-    // Prerequisites Gate: Detour & Remove
     document.querySelectorAll("[data-detour-id]").forEach(btn => {
       btn.addEventListener("click", () => detourTo(btn.dataset.detourId));
     });
@@ -3259,8 +3370,8 @@ code.inline {
         if (!candId) return;
         const cycle = findPrereqCycle(liveGraph.nodes, candId, headId);
         if (cycle) {
-          const names = cycle.map(id => (liveGraph.nodes.get(id)?.title || id)).join(" → ");
-          lastPrereqCycleDiag = `CYCLE DETECTED: Linking "${candId}" → "${headId}" creates an impossible dependency loop: ${names}`;
+          const names = cycle.map(id => (liveGraph.nodes.get(id)?.title || id)).join(" -> ");
+          lastPrereqCycleDiag = `CYCLE DETECTED: Linking "${candId}" -> "${headId}" creates an impossible dependency loop: ${names}`;
           renderSidePanel();
           return;
         }
@@ -3274,7 +3385,6 @@ code.inline {
       });
     }
 
-    // Concept Intro Checkbox
     const chkIntro = document.getElementById("chkIntroDone");
     if (chkIntro) {
       chkIntro.addEventListener("change", () => {
@@ -3284,7 +3394,6 @@ code.inline {
       });
     }
 
-    // Resources / Sources: Checkbox, Edit, Remove, Add
     document.querySelectorAll("[data-source-chk]").forEach(chk => {
       chk.addEventListener("change", () => {
         const sId = chk.dataset.sourceChk;
@@ -3321,13 +3430,11 @@ code.inline {
         if (!newTitle) return;
 
         const delta = ensureEdgeDelta(headId);
-        // If in delta addSources, update directly
         const inAdd = delta.addSources.find(s => s.id === sId);
         if (inAdd) {
           inAdd.title = newTitle;
           inAdd.url = newUrl || undefined;
         } else {
-          // Remove old base source and add updated version
           if (!delta.removeSourceIds.includes(sId)) delta.removeSourceIds.push(sId);
           delta.addSources.push({ id: sId, title: newTitle, url: newUrl || undefined });
         }
@@ -3367,7 +3474,6 @@ code.inline {
       });
     }
 
-    // Subtopics: Checklist open, Completion, Rename, Delete, Add
     const btnLearn = document.getElementById("btnLearnTopic");
     if (btnLearn) {
       btnLearn.addEventListener("click", () => {
@@ -3470,7 +3576,6 @@ code.inline {
       });
     }
 
-    // Mark Baseline Completed
     const btnBase = document.getElementById("btnMarkBaseline");
     if (btnBase) {
       btnBase.addEventListener("click", () => {
@@ -3479,7 +3584,7 @@ code.inline {
         st.introDone = true;
         persistAll();
         renderAll();
-        showToast("Topic marked completed! Dependent topics unlocked.");
+        showToast("Topic marked completed. Dependent topics unlocked.");
       });
     }
 
@@ -3502,7 +3607,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 8. NEW TOPIC MODAL (+ New Topic Anywhere)
+   * 8. NEW TOPIC MODAL
    * ========================================================================= */
   function openNewTopicModal(defaultParentId = null) {
     const parentId = defaultParentId || liveGraph.navigation.HEAD || "knowledge";
@@ -3654,7 +3759,7 @@ code.inline {
     } catch { /* Fallback */ }
 
     if (copied) {
-      showToast("AI expansion prompt copied to clipboard!");
+      showToast("AI expansion prompt copied to clipboard.");
     } else {
       openModal("AI EXPANSION PROMPT", `
         <div class="box">
@@ -3681,7 +3786,6 @@ code.inline {
     document.getElementById("modalBackdrop").classList.remove("open");
   }
 
-  /* Frontier Radar */
   function openFrontierRadarModal() {
     const allTopics = [...liveGraph.nodes.values()].filter(n => n.id !== "knowledge");
     const readyQueue = allTopics.filter(n => !n.isBaselineDone && !n.isBlocked);
@@ -3718,9 +3822,9 @@ code.inline {
             <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))}</div>
           </div>
         </div>
-        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
+        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect -></button>
       </div>
-    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">All prerequisites cleared!</div>`;
+    `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">All prerequisites cleared.</div>`;
 
     const bottleHtml = bottlenecks.slice(0, 12).map(({ node: n, blockingCount }) => `
       <div class="list-row">
@@ -3731,7 +3835,7 @@ code.inline {
             <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(n.id, liveGraph.nodes))}</div>
           </div>
         </div>
-        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect →</button>
+        <button type="button" class="btn-xs head-btn" data-radar-jump="${escapeHtml(n.id)}">Inspect -></button>
       </div>
     `).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">No blocking bottlenecks remaining.</div>`;
 
@@ -3750,7 +3854,7 @@ code.inline {
           <span class="box-title">1. Ready to Study (Prerequisites Met)</span>
           <span class="tag done">${readyQueue.length} Ready</span>
         </div>
-        <div class="section-hint">Topics that are unlocked right now. You have all prerequisite foundations ready!</div>
+        <div class="section-hint">Topics that are unlocked right now. You have all prerequisite foundations ready.</div>
         <div class="item-list">${readyHtml}</div>
       </div>
 
@@ -3784,7 +3888,6 @@ code.inline {
     });
   }
 
-  /* Import Patch Modal */
   function openImportPatchModal() {
     openModal("+ IMPORT CURRICULUM PATCH", `
       <div class="box">
@@ -3831,12 +3934,12 @@ code.inline {
       const { map: mergedMap } = foldLayer0And1(testPatches, layer1Overrides);
       const cycle = validateFullDagAcyclicity(mergedMap);
       if (cycle) {
-        diag.innerHTML = `<div class="diag-warn">Acyclicity Error: Introduces dependency loop: ${escapeHtml(cycle.join(" → "))}</div>`;
+        diag.innerHTML = `<div class="diag-warn">Acyclicity Error: Introduces dependency loop: ${escapeHtml(cycle.join(" -> "))}</div>`;
         return null;
       }
 
       const newNodes = (parsed.nodes || []).filter(n => !liveGraph.nodes.has(n.id));
-      diag.innerHTML = `<div class="diag-info">✓ Valid curriculum patch! +${newNodes.length} new topics detected with zero cycles.</div>`;
+      diag.innerHTML = `<div class="diag-info">Valid curriculum patch. +${newNodes.length} new topics detected with zero cycles.</div>`;
       return parsed;
     }
 
@@ -3852,7 +3955,6 @@ code.inline {
     });
   }
 
-  /* Storage & Backups Modal */
   function openLayerInspectorModal() {
     const fieldCount = Object.keys(layer1Overrides.field_overrides || {}).length;
     const edgeCount = Object.keys(layer1Overrides.edge_deltas || {}).length;
@@ -3980,7 +4082,6 @@ code.inline {
     URL.revokeObjectURL(url);
   }
 
-  /* Help & Guide Modal */
   function openManualModal() {
     openModal("POLYMATHY // FIELD GUIDE & LEGEND", `
       <div class="manual-tabs">
@@ -3997,7 +4098,7 @@ code.inline {
             <tbody>
               <tr><td><strong>Knowledge (o)</strong></td><td>Origin root of the graph. All disciplines branch outward from here.</td></tr>
               <tr><td><strong>Hollow Conduit + Crossbar</strong></td><td>Connects parent topics to subtopics. Fills as you complete material; crossbar marks achievement frontier.</td></tr>
-              <tr><td><strong>Red Arrow (Solid)</strong></td><td>Unmet prerequisite needed before this topic can be fully understood. Click arrow to jump directly to it!</td></tr>
+              <tr><td><strong>Red Arrow (Solid)</strong></td><td>Unmet prerequisite needed before this topic can be fully understood. Click arrow to jump directly to it.</td></tr>
               <tr><td><strong>Green Arrow (Dotted)</strong></td><td>Completed prerequisite foundation.</td></tr>
               <tr><td><strong>Blue MAIN Beacon</strong></td><td>Your primary, long-term study objective.</td></tr>
               <tr><td><strong>Purple HEAD Reticle</strong></td><td>The topic currently open in the side panel for study or editing.</td></tr>
@@ -4011,9 +4112,9 @@ code.inline {
           <div class="box-header"><span class="box-title">4-STEP STUDY WORKFLOW</span><span class="tag ready">Workflow</span></div>
           <ol style="padding-left:18px;line-height:1.7;">
             <li><strong>Pick a Goal:</strong> Click any topic on the map and click <strong>[Set as Main Target]</strong> to anchor your beacon.</li>
-            <li><strong>Check Prerequisites:</strong> Check the Prerequisites card. If red, click <strong>Detour →</strong> to jump to prerequisites and push your origin to the Detour History stack. Use <strong>[← Back]</strong> anytime to return.</li>
+            <li><strong>Check Prerequisites:</strong> Check the Prerequisites card. If red, click <strong>Detour -></strong> to jump to prerequisites and push your origin to the Detour History stack. Use <strong>[Back]</strong> anytime to return.</li>
             <li><strong>Learn & Check Off:</strong> Read the overview, study attached textbooks or video links, and check off component subtopics.</li>
-            <li><strong>Mark Complete:</strong> Click <strong>[Mark Topic Completed]</strong> to permanently unlock all future topics that depend on it!</li>
+            <li><strong>Mark Complete:</strong> Click <strong>[Mark Topic Completed]</strong> to permanently unlock all future topics that depend on it.</li>
           </ol>
         </div>
       </div>
@@ -4024,11 +4125,11 @@ code.inline {
           <table class="spec-table">
             <thead><tr><th>Action</th><th>How To</th></tr></thead>
             <tbody>
-              <tr><td><strong>Pan / Scroll Canvas</strong></td><td>Mouse drag on background • 2-finger swipe on trackpad • 1-finger swipe on touch screens • On-screen arrow buttons ◀ ▲ ▼ ▶</td></tr>
-              <tr><td><strong>Zoom In / Out</strong></td><td>Mouse wheel (or Ctrl+Scroll) • Pinch gesture with 2 fingers on touch screens / trackpads • HUD [+][-] buttons</td></tr>
+              <tr><td><strong>Pan / Scroll Canvas</strong></td><td>Mouse drag on background | 2-finger swipe on trackpad | 1-finger swipe on touch screens | On-screen navigation buttons</td></tr>
+              <tr><td><strong>Zoom In / Out</strong></td><td>Mouse wheel (or Ctrl+Scroll) | Pinch gesture with 2 fingers on touch screens / trackpads | HUD [-][+] buttons</td></tr>
               <tr><td><strong>Jump to Main Goal</strong></td><td>Press key <code class="inline">M</code> or click <strong>[Locate]</strong> in topbar</td></tr>
               <tr><td><strong>Jump to Inspected Topic</strong></td><td>Press key <code class="inline">H</code> or click <strong>[Locate]</strong> in topbar</td></tr>
-              <tr><td><strong>Return from Detour / Close Modal</strong></td><td>Press key <code class="inline">Esc</code> or click <strong>[← Back]</strong></td></tr>
+              <tr><td><strong>Return from Detour / Close Modal</strong></td><td>Press key <code class="inline">Esc</code> or click <strong>[Back]</strong></td></tr>
             </tbody>
           </table>
         </div>
@@ -4048,7 +4149,7 @@ code.inline {
   }
 
   /* =========================================================================
-   * 11. CANVAS INTERACTION ENGINE (Mouse Pan, Wheel Scroll/Zoom, Touch Gestures)
+   * 11. CANVAS INTERACTION ENGINE
    * ========================================================================= */
   function setupInteractions() {
     const svg = document.getElementById("dagSvg");
@@ -4056,15 +4157,12 @@ code.inline {
 
     let isMousePanning = false;
     let panStart = { x: 0, y: 0, camX: 0, camY: 0 };
-    let dragDistance = 0;
 
-    /* Mouse Panning */
     svg.addEventListener("mousedown", (e) => {
       if (e.button !== 0 && e.button !== 1) return;
       cancelCameraAnim();
       isMousePanning = true;
       svg.classList.add("panning");
-      dragDistance = 0;
       panStart = { x: e.clientX, y: e.clientY, camX: camera.x, camY: camera.y };
     });
 
@@ -4072,7 +4170,6 @@ code.inline {
       if (!isMousePanning) return;
       const dx = e.clientX - panStart.x;
       const dy = e.clientY - panStart.y;
-      dragDistance = Math.hypot(dx, dy);
       camera.x = panStart.camX + dx;
       camera.y = panStart.camY + dy;
       applyWorldTransform();
@@ -4084,13 +4181,11 @@ code.inline {
       svg.classList.remove("panning");
     });
 
-    /* Wheel Handling: Natural Canvas Scrolling vs Zooming */
     canvasPane.addEventListener("wheel", (e) => {
       e.preventDefault();
       cancelCameraAnim();
 
       if (e.ctrlKey || e.metaKey || uiSettings.wheelMode === "zoom") {
-        // Zoom anchored at cursor
         const rect = canvasPane.getBoundingClientRect();
         const mx = e.clientX - rect.left - rect.width / 2;
         const my = e.clientY - rect.top - rect.height / 2;
@@ -4102,14 +4197,12 @@ code.inline {
         camera.x = mx - worldX * nextK;
         camera.y = my - worldY * nextK;
       } else {
-        // Natural Pan / Scroll by wheel / 2-finger trackpad delta
         camera.x -= e.deltaX;
         camera.y -= e.deltaY;
       }
       applyWorldTransform();
     }, { passive: false });
 
-    /* Native Multi-Touch Handling (1-finger Pan, 2-finger Pinch Zoom) */
     let touchState = {
       active: false,
       mode: null,
@@ -4163,7 +4256,6 @@ code.inline {
       touchState.mode = null;
     });
 
-    /* Minimap Drag & Toggle */
     const miniSvg = document.getElementById("minimapSvg");
     let miniDragging = false;
     function panFromMinimapEvent(e) {
@@ -4184,7 +4276,7 @@ code.inline {
     document.getElementById("btnToggleMinimap").addEventListener("click", () => {
       uiSettings.minimapMinimized = !uiSettings.minimapMinimized;
       document.getElementById("minimapWrap").classList.toggle("minimized", uiSettings.minimapMinimized);
-      document.getElementById("btnToggleMinimap").textContent = uiSettings.minimapMinimized ? "+" : "−";
+      document.getElementById("btnToggleMinimap").textContent = uiSettings.minimapMinimized ? "+" : "-";
       persistAll();
     });
     if (uiSettings.minimapMinimized) {
@@ -4192,7 +4284,6 @@ code.inline {
       document.getElementById("btnToggleMinimap").textContent = "+";
     }
 
-    /* Resizable Splitter */
     const splitter = document.getElementById("splitter");
     const sidePane = document.getElementById("sidePane");
     if (uiSettings.sidePaneWidth) sidePane.style.width = uiSettings.sidePaneWidth + "px";
@@ -4217,7 +4308,6 @@ code.inline {
       persistAll();
     });
 
-    /* Topbar Controls */
     document.getElementById("btnLocateMain").addEventListener("click", () => locateNode(liveGraph.navigation.MAIN, 0.98));
     document.getElementById("btnLocateHead").addEventListener("click", () => locateNode(liveGraph.navigation.HEAD, 0.98));
     document.getElementById("btnNewTopicTop").addEventListener("click", () => openNewTopicModal());
@@ -4239,7 +4329,6 @@ code.inline {
       if (e.target === document.getElementById("modalBackdrop")) closeModal();
     });
 
-    /* HUD Directional Pan Controls */
     document.getElementById("btnPanLeft").addEventListener("click", () => panCameraBy(130, 0));
     document.getElementById("btnPanRight").addEventListener("click", () => panCameraBy(-130, 0));
     document.getElementById("btnPanUp").addEventListener("click", () => panCameraBy(0, 130));
@@ -4286,7 +4375,6 @@ code.inline {
       renderAll();
     });
 
-    /* Global Keyboard Hotkeys */
     window.addEventListener("keydown", (e) => {
       const tag = (document.activeElement?.tagName || "").toLowerCase();
       const inInput = tag === "input" || tag === "textarea" || tag === "select";
@@ -4312,7 +4400,6 @@ code.inline {
   setupInteractions();
   renderAll();
 
-  // Focus and fit visible graph nicely on first load
   requestAnimationFrame(() => {
     fitVisibleGraph();
   });
@@ -4320,6 +4407,12 @@ code.inline {
   window.addEventListener("load", () => {
     renderMathInContainer(document.getElementById("sidePane"));
   });
+
+  window.polymathy = {
+    state: liveGraph,
+    computeLayout,
+    SEED_PATCH_001
+  };
 })();
 </script>
 </body>

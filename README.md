@@ -37,7 +37,7 @@ No build tools, Node.js, or `npm install` are required.
 
 | Input Method | How to Navigate |
 | :--- | :--- |
-| **Pan / Scroll Canvas** | • **Mouse wheel / Trackpad 2-finger scroll:** Natural canvas scrolling (scrolls vertically/horizontally)<br>• **Mouse drag:** Click and drag background anywhere<br>• **Touch screens:** 1-finger swipe to pan<br>• **On-screen buttons:** Click `◀` `▲` `▼` `▶` in the bottom HUD |
+| **Pan / Scroll Canvas** | • **Mouse wheel / Trackpad 2-finger scroll:** Natural canvas scrolling (scrolls vertically/horizontally)<br>• **Mouse drag:** Click and drag background anywhere<br>• **Touch screens:** 1-finger swipe to pan<br>• **On-screen buttons:** Click `[<]` `[^]` `[v]` `[>]` in the bottom HUD |
 | **Zoom In / Out** | • **Pinch gesture:** 2 fingers on touch screens or trackpads<br>• **Ctrl + Scroll / Cmd + Scroll:** Mouse wheel zoom centered on cursor<br>• **HUD Buttons:** Click `[+]` or `[-]`, or toggle `[Wheel: Scroll / Zoom]` |
 | **Fit / Center** | Click **`[Fit]`** to zoom-to-fit all visible topics |
 | **Keyboard Shortcuts** | • `M`: Smoothly glide camera to `MAIN`<br>• `H`: Smoothly glide camera to `HEAD`<br>• `Esc`: Return from detour or close active dialog |
@@ -63,9 +63,9 @@ No build tools, Node.js, or `npm install` are required.
 
 Everything in Polymathy is directly editable from the user interface:
 
-- **Edit Topics:** Click **`[✏️ Edit Topic]`** on any topic to change its title, move it to a different parent category in the hierarchy (reparenting), edit overview notes (with KaTeX math support), or delete it.
+- **Edit Topics:** Click **`[Edit Topic]`** on any topic to change its title, move it to a different parent category in the hierarchy (reparenting), edit overview notes (with KaTeX math support), or delete it.
 - **Add Topics Anywhere:** Click **`[+ New Topic]`** in the topbar or HUD to create a brand new topic anywhere in the tree.
-- **Edit Resources:** Click the **`✏️`** icon on any textbook or link to edit its title and URL inline, or click **`✕`** to delete. Add new resources with one click.
-- **Edit Subtopics:** Click the **`✏️`** icon on any subtopic in the task checklist to rename it inline, or click **`✕`** to delete.
+- **Edit Resources:** Click the **`[Edit]`** button on any textbook or link to edit its title and URL inline, or click **`[Remove]`** to delete. Add new resources with one click.
+- **Edit Subtopics:** Click the **`[Edit]`** button on any subtopic in the task checklist to rename it inline, or click **`[Remove]`** to delete.
 - **Link Prerequisites:** Use the instant topic selector to add or remove prerequisites with automatic cycle detection.
 - **Manage Backups:** Open **`[Storage & Backups]`** in the topbar to download a complete backup `.json` bundle or restore previous data.
