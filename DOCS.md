@@ -101,7 +101,7 @@ The Computer Science domain (`cs.languages_compilers`) is structured as a two-ti
    - Object-Oriented: C++ (`oop_languages.cpp`), Java (`oop_languages.java`).
    - Functional: Haskell (`functional_languages.haskell`), Lisp & Scheme (`functional_languages.lisp`).
    - Logic: Prolog (`logic_languages.prolog`).
-   - Dynamic: Python (`dynamic_languages.python`), JavaScript & TypeScript (`dynamic_languages.typescript`).
+   - Dynamic: HTML5 & Web Standards (`dynamic_languages.html_css`), Python (`dynamic_languages.python`), JavaScript & TypeScript (`dynamic_languages.typescript`).
    - Concurrent: Go (`concurrent_languages.go`).
 
 ### 3.5 Pure Sciences Reductionist Domain Hierarchy
@@ -214,7 +214,8 @@ To decouple curriculum structure from custom study paths without hardcoding larg
      "preset_jee_adv_stem.json",
      "preset_theoretical_physics_gr.json",
      "preset_modern_ai_foundations.json",
-     "preset_programming_languages.json"
+     "preset_programming_languages.json",
+     "preset_fullstack_systems_developer.json"
    ]
    ```
 2. **Individual JSON Preset Definitions (`playlists/*.json`):**

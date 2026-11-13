@@ -78,6 +78,7 @@ Polymathy provides **Playlists** as an independent overlay layer without distort
   2. **Path to General Relativity & QFT (`Degree Track`):** 10-step trajectory from multivariable calculus and analytical mechanics to curved spacetime and quantum field theory.
   3. **Mathematical & Algorithmic Foundations of AI (`Specialization`):** 8-step rigorous pathway across linear algebra, multivariate optimization, probability theory, statistics, algorithms, information theory, and deep learning.
   4. **Programming Languages & Paradigms Track (`Specialization`):** 13-step progression from low-level systems execution (Assembly, C, Rust) through OOP (C++, Java), pure functional programming (Haskell, Lisp), logic programming (Prolog), dynamic scripting (Python, TypeScript), to concurrent systems (Go).
+  5. **Software Developer Roadmap: Web to Systems (`Career Track`):** 11-step progressive pathway from client-side web markup (HTML/CSS/DOM) and interactive scripting (JavaScript & TypeScript) through core algorithms, general-purpose software (Python), computer architecture, procedural systems (C), high-performance OOP (C++), and operating systems to networked applications, Rust, and Go.
 - **Custom Builder & AI Prompt Generator:** Interactively build custom playlists in the modal, import external `.json` syllabi (with automatic stub topic synthesis for novel IDs), or click `[Copy LLM Playlist Prompt]` to generate complete playlists with any LLM.
 
 ---
@@ -86,7 +87,7 @@ Polymathy provides **Playlists** as an independent overlay layer without distort
 
 ### Decoupled Graph File (`curriculum.json` & `curriculum.js`)
 The entire STEM curriculum knowledge graph is completely separated from `index.html` into standalone external files:
-- **`curriculum.json`**: Standalone pure JSON file containing 120 topics, mathematical definitions ($LaTeX$), prerequisite links, and textbook references across Mathematics, Pure Sciences (Physics, Chemistry, Biology), Computer Science, Engineering, and Philosophy/Economics. You can inspect or edit this file directly in any text editor.
+- **`curriculum.json`**: Standalone pure JSON file containing 121 topics, mathematical definitions ($LaTeX$), prerequisite links, and textbook references across Mathematics, Pure Sciences (Physics, Chemistry, Biology), Computer Science, Engineering, and Philosophy/Economics. You can inspect or edit this file directly in any text editor.
 - **`curriculum.js`**: Synchronously auto-loadable companion script enabling instant out-of-the-box operation via direct browser double-click (`file://`), bypassing browser local fetch CORS restrictions. When served via HTTP (`python3 -m http.server`), `index.html` dynamically fetches and live-reloads `curriculum.json`.
 - **`[Load File]` button in Topbar**: Select and load any custom `.json` graph file on demand directly through your browser.
 - **`[Export curriculum.json]` in Storage & Backups**: Export the current graph back into clean standalone JSON format anytime.

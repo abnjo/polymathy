@@ -1,0 +1,63 @@
+{
+  "playlist_id": "preset_fullstack_systems_developer",
+  "title": "Software Developer Roadmap: Web to Systems",
+  "category": "Career Track",
+  "description": "Progressive developer journey from client-side web markup (HTML/CSS/DOM) and interactive scripting (JavaScript & TypeScript) to computational problem solving, general-purpose software (Python), computer architecture, procedural systems (C), high-performance OOP (C++), and scalable backend infrastructure.",
+  "steps": [
+    {
+      "nodeId": "cs.languages_compilers.dynamic_languages.html_css",
+      "targetLevel": "baseline",
+      "note": "Web platform foundation: semantic HTML5 markup, CSS layout engines (Box Model, Flexbox, Grid), and the browser DOM document tree."
+    },
+    {
+      "nodeId": "cs.languages_compilers.dynamic_languages.typescript",
+      "targetLevel": "baseline",
+      "note": "Interactive client-side web scripting: DOM event handling, async promises/fetch, V8 event loop, and TypeScript static structural typing."
+    },
+    {
+      "nodeId": "cs.theory.algorithms",
+      "targetLevel": "baseline",
+      "note": "Computational problem solving: asymptotic complexity O(n), dynamic arrays, linked lists, hash tables, trees, and sorting."
+    },
+    {
+      "nodeId": "cs.languages_compilers.dynamic_languages.python",
+      "targetLevel": "baseline",
+      "note": "General-purpose programming & automation: Python data model, list/dict comprehensions, OOP, modules, file I/O, and packages."
+    },
+    {
+      "nodeId": "cs.systems.digital_architecture",
+      "targetLevel": "baseline",
+      "note": "Hardware execution interface: CPU registers, ALU operations, memory hierarchy, cache lines, and instruction cycles."
+    },
+    {
+      "nodeId": "cs.languages_compilers.systems_languages.c",
+      "targetLevel": "baseline",
+      "note": "Imperative systems programming: pointer arithmetic, manual heap memory management (malloc/free), structs, and ABI."
+    },
+    {
+      "nodeId": "cs.languages_compilers.oop_languages.cpp",
+      "targetLevel": "baseline",
+      "note": "High-performance multi-paradigm systems: RAII memory safety, smart pointers, class hierarchies, templates, and STL algorithms."
+    },
+    {
+      "nodeId": "cs.systems.operating_systems",
+      "targetLevel": "baseline",
+      "note": "Operating system foundations: processes, POSIX threads, virtual memory paging, mutex synchronization, and system calls."
+    },
+    {
+      "nodeId": "cs.systems.networking_distributed",
+      "targetLevel": "baseline",
+      "note": "Networked applications & client-server communication: TCP/IP stack, sockets, HTTP protocols, REST APIs, and distributed data systems."
+    },
+    {
+      "nodeId": "cs.languages_compilers.systems_languages.rust",
+      "targetLevel": "baseline",
+      "note": "Modern systems engineering: ownership, borrow checking, memory safety without garbage collection, and fearless concurrency."
+    },
+    {
+      "nodeId": "cs.languages_compilers.concurrent_languages.go",
+      "targetLevel": "full",
+      "note": "Scalable concurrent backends: goroutines, typed channels, CSP concurrency, HTTP microservices, and network daemons."
+    }
+  ]
+}

@@ -1330,11 +1330,31 @@ window.POLYMATHY_CURRICULUM = {
       ]
     },
     {
+      "id": "cs.languages_compilers.dynamic_languages.html_css",
+      "title": "HTML5 & Web Standards: Semantic Markup, CSS & DOM Tree",
+      "parentId": "cs.languages_compilers.dynamic_languages",
+      "prereqIds": [
+        "math.foundations.logic"
+      ],
+      "intro": "World Wide Web document platform: semantic HTML5 markup hierarchy, Cascading Style Sheets (CSS Box Model, Flexbox, Grid layout), Document Object Model (DOM) tree representation, accessibility (ARIA), and browser rendering pipeline (parse, style, layout, paint).",
+      "sources": [
+        {
+          "id": "src_mdn_html_css",
+          "title": "MDN Web Docs - HTML5 & CSS: Structuring and Styling the Web"
+        },
+        {
+          "id": "src_robbins_learning_web_design",
+          "title": "Robbins - Learning Web Design: A Beginner Guide to HTML, CSS, JavaScript, and Web Graphics"
+        }
+      ]
+    },
+    {
       "id": "cs.languages_compilers.dynamic_languages.typescript",
       "title": "JavaScript & TypeScript: Event-Driven Web & Structural Types",
       "parentId": "cs.languages_compilers.dynamic_languages",
       "prereqIds": [
-        "cs.languages_compilers.type_systems"
+        "cs.languages_compilers.type_systems",
+        "cs.languages_compilers.dynamic_languages.html_css"
       ],
       "intro": "Web execution architecture: single-threaded event loop, asynchronous promises, V8 JIT engine, paired with TypeScript compile-time structural type system, union/intersection types, and generics.",
       "sources": [
