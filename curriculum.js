@@ -1029,6 +1029,344 @@ window.POLYMATHY_CURRICULUM = {
       ]
     },
     {
+      "id": "cs.languages_compilers.type_systems",
+      "title": "Type Systems & Formal Semantics",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.theory.automata_computability",
+        "math.foundations.logic"
+      ],
+      "intro": "Operational semantics, typing rules, simply typed lambda calculus $\\lambda^\\to$, System F, Hindley-Milner type inference, parametric polymorphism, and soundness proofs (progress and preservation).",
+      "sources": [
+        {
+          "id": "src_pierce_tapl",
+          "title": "Pierce - Types and Programming Languages"
+        },
+        {
+          "id": "src_harper_pfpl",
+          "title": "Harper - Practical Foundations for Programming Languages"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.compiler_design",
+      "title": "Compiler Construction & Code Generation",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.theory.automata_computability",
+        "cs.systems.digital_architecture"
+      ],
+      "intro": "Lexical analysis (DFA), LR/LL parsing, abstract syntax trees (ASTs), Static Single Assignment (SSA) intermediate representation, control-flow graphs, register allocation via graph coloring, and LLVM machine code generation.",
+      "sources": [
+        {
+          "id": "src_aho_dragon",
+          "title": "Aho, Lam, Sethi, Ullman - Compilers: Principles, Techniques, and Tools"
+        },
+        {
+          "id": "src_cooper_compiler",
+          "title": "Cooper & Torczon - Engineering a Compiler"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.systems_languages",
+      "title": "Systems & Memory-Safe Language Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.systems.digital_architecture",
+        "cs.systems.operating_systems"
+      ],
+      "intro": "Low-level resource control: virtual memory layouts (stack, heap), pointer arithmetic, cache line locality, ABI calling conventions, and modern memory safety without runtime garbage collection.",
+      "sources": [
+        {
+          "id": "src_bryant_csapp",
+          "title": "Bryant & O'Hallaron - Computer Systems: A Programmer's Perspective"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.oop_languages",
+      "title": "Object-Oriented & Managed Runtime Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.languages_compilers.systems_languages"
+      ],
+      "intro": "Encapsulation, inheritance hierarchies, dynamic dispatch via virtual method tables (vtables), subtyping polymorphism, bytecode virtual machines, and tracing garbage collection.",
+      "sources": [
+        {
+          "id": "src_gamma_design_patterns",
+          "title": "Gamma et al. - Design Patterns: Elements of Reusable Object-Oriented Software"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.functional_languages",
+      "title": "Functional & Declarative Language Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.languages_compilers.type_systems",
+        "math.foundations.logic"
+      ],
+      "intro": "Computation via mathematical function evaluation: immutability, referential transparency, higher-order functions, algebraic data types, pattern matching, recursion schemes, and categorical structures (functors, monads).",
+      "sources": [
+        {
+          "id": "src_okasaki_purely_functional",
+          "title": "Okasaki - Purely Functional Data Structures"
+        },
+        {
+          "id": "src_wadler_monads",
+          "title": "Wadler - Monads for Functional Programming"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.logic_languages",
+      "title": "Logic & Constraint Programming Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "math.foundations.logic"
+      ],
+      "intro": "Declarative deduction over relations: first-order predicate logic, Horn clauses, Robinson resolution refutation, unification algorithms, and backtracking search.",
+      "sources": [
+        {
+          "id": "src_bratko_prolog",
+          "title": "Bratko - Prolog Programming for Artificial Intelligence"
+        },
+        {
+          "id": "src_sterling_art_of_prolog",
+          "title": "Sterling & Shapiro - The Art of Prolog"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.dynamic_languages",
+      "title": "Dynamic & Scripting Runtime Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.theory.algorithms"
+      ],
+      "intro": "Late binding, dynamic dispatch, runtime type inspection, eval reflection, prototype-based inheritance, event loops, and tracing JIT compilation for rapid development.",
+      "sources": [
+        {
+          "id": "src_scott_pl_pragmatics",
+          "title": "Scott - Programming Language Pragmatics"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.concurrent_languages",
+      "title": "Concurrent & Distributed Language Paradigm",
+      "parentId": "cs.languages_compilers",
+      "prereqIds": [
+        "cs.systems.operating_systems"
+      ],
+      "intro": "Concurrency primitives: Communicating Sequential Processes (CSP), message-passing channels, actor models, lock-free atomics, lightweight green threads, and structured concurrency.",
+      "sources": [
+        {
+          "id": "src_hoare_csp",
+          "title": "Hoare - Communicating Sequential Processes"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.systems_languages.assembly",
+      "title": "Assembly: Architecture-Specific Instruction Sets",
+      "parentId": "cs.languages_compilers.systems_languages",
+      "prereqIds": [
+        "cs.systems.digital_architecture"
+      ],
+      "intro": "Hardware-close execution: registers, stack frame management, memory segmentation, calling conventions, direct hardware interrupts, and RISC-V/x86 instruction decoding.",
+      "sources": [
+        {
+          "id": "src_patterson_hennessy_riscv",
+          "title": "Patterson & Hennessy - Computer Organization and Design: RISC-V Edition"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.systems_languages.c",
+      "title": "C: Procedural Architecture & Systems Foundations",
+      "parentId": "cs.languages_compilers.systems_languages",
+      "prereqIds": [
+        "cs.languages_compilers.systems_languages.assembly"
+      ],
+      "intro": "Low-level procedural programming: pointers, manual memory allocation (malloc/free), stack frames, struct alignment, preprocessor macros, standard library, and OS kernel interfaces.",
+      "sources": [
+        {
+          "id": "src_kr_c",
+          "title": "Kernighan & Ritchie - The C Programming Language"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.systems_languages.rust",
+      "title": "Rust: Ownership, Borrowing & Fearless Concurrency",
+      "parentId": "cs.languages_compilers.systems_languages",
+      "prereqIds": [
+        "cs.languages_compilers.systems_languages.c",
+        "cs.languages_compilers.type_systems"
+      ],
+      "intro": "Compile-time memory safety without a garbage collector: affine type system, ownership semantics, borrow checker, lifetime parameters $\\text{'a}$, traits, pattern matching, and zero-cost abstractions.",
+      "sources": [
+        {
+          "id": "src_klabnik_rust",
+          "title": "Klabnik & Nichols - The Rust Programming Language"
+        },
+        {
+          "id": "src_blandy_programming_rust",
+          "title": "Blandy, Orendorff, Tindall - Programming Rust"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.oop_languages.cpp",
+      "title": "C++: Multi-Paradigm Systems & Metaprogramming",
+      "parentId": "cs.languages_compilers.oop_languages",
+      "prereqIds": [
+        "cs.languages_compilers.systems_languages.c"
+      ],
+      "intro": "Zero-overhead abstractions: Resource Acquisition Is Initialization (RAII), smart pointers, move semantics, virtual inheritance, template metaprogramming, concepts, and standard template library (STL).",
+      "sources": [
+        {
+          "id": "src_stroustrup_cpp",
+          "title": "Stroustrup - The C++ Programming Language"
+        },
+        {
+          "id": "src_meyers_effective_modern_cpp",
+          "title": "Meyers - Effective Modern C++"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.oop_languages.java",
+      "title": "Java: Managed Object-Oriented Virtual Machine Ecosystem",
+      "parentId": "cs.languages_compilers.oop_languages",
+      "prereqIds": [
+        "cs.languages_compilers.oop_languages"
+      ],
+      "intro": "Pure class-based object orientation: JVM bytecode architecture, class loaders, JIT compilation (HotSpot), generational garbage collection, concurrency utilities, and enterprise design patterns.",
+      "sources": [
+        {
+          "id": "src_bloch_effective_java",
+          "title": "Bloch - Effective Java"
+        },
+        {
+          "id": "src_jvm_spec",
+          "title": "Lindholm et al. - The Java Virtual Machine Specification"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.functional_languages.haskell",
+      "title": "Haskell: Pure Functional Programming & Typeclasses",
+      "parentId": "cs.languages_compilers.functional_languages",
+      "prereqIds": [
+        "cs.languages_compilers.functional_languages"
+      ],
+      "intro": "Pure functional computation: non-strict lazy evaluation, Hindley-Milner type inference, algebraic data types, typeclasses, monads (IO, State, Monad Transformers), and category theoretic abstractions.",
+      "sources": [
+        {
+          "id": "src_lipovaca_haskell",
+          "title": "Lipovaca - Learn You a Haskell for Great Good!"
+        },
+        {
+          "id": "src_peyton_jones_haskell",
+          "title": "Peyton Jones - The Implementation of Functional Programming Languages"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.functional_languages.lisp",
+      "title": "Lisp & Scheme: Homoiconicity & Metalinguistic Abstraction",
+      "parentId": "cs.languages_compilers.functional_languages",
+      "prereqIds": [
+        "cs.languages_compilers.functional_languages"
+      ],
+      "intro": "Code-as-data (homoiconicity): S-expressions, lexical closures, hygienic macros, compiler metaprogramming, and metacircular evaluators.",
+      "sources": [
+        {
+          "id": "src_sicp",
+          "title": "Abelson & Sussman - Structure and Interpretation of Computer Programs"
+        },
+        {
+          "id": "src_graham_on_lisp",
+          "title": "Graham - On Lisp: Advanced Techniques for Common Lisp"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.logic_languages.prolog",
+      "title": "Prolog: Logic Programming & Unification Search",
+      "parentId": "cs.languages_compilers.logic_languages",
+      "prereqIds": [
+        "cs.languages_compilers.logic_languages"
+      ],
+      "intro": "Rule-based deduction: facts, rules, goal queries, unification of terms with occurs-check, depth-first SLD resolution trees, cut operator (!), and constraint logic programming over finite domains.",
+      "sources": [
+        {
+          "id": "src_bratko_prolog",
+          "title": "Bratko - Prolog Programming for Artificial Intelligence"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.dynamic_languages.python",
+      "title": "Python: Dynamic Multi-Paradigm & Scientific Computing",
+      "parentId": "cs.languages_compilers.dynamic_languages",
+      "prereqIds": [
+        "cs.theory.algorithms"
+      ],
+      "intro": "High-level dynamic multi-paradigm: Python data model, dynamic dispatch, generators/iterators, decorators, GIL threading, C-API extensions, and scientific computing foundations.",
+      "sources": [
+        {
+          "id": "src_ramalho_fluent_python",
+          "title": "Ramalho - Fluent Python"
+        },
+        {
+          "id": "src_vanderplas_python_data_science",
+          "title": "VanderPlas - Python Data Science Handbook"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.dynamic_languages.typescript",
+      "title": "JavaScript & TypeScript: Event-Driven Web & Structural Types",
+      "parentId": "cs.languages_compilers.dynamic_languages",
+      "prereqIds": [
+        "cs.languages_compilers.type_systems"
+      ],
+      "intro": "Web execution architecture: single-threaded event loop, asynchronous promises, V8 JIT engine, paired with TypeScript compile-time structural type system, union/intersection types, and generics.",
+      "sources": [
+        {
+          "id": "src_haverbeke_eloquent_js",
+          "title": "Haverbeke - Eloquent JavaScript"
+        },
+        {
+          "id": "src_cherny_programming_typescript",
+          "title": "Cherny - Programming TypeScript"
+        }
+      ]
+    },
+    {
+      "id": "cs.languages_compilers.concurrent_languages.go",
+      "title": "Go: CSP Concurrency & Scalable Systems",
+      "parentId": "cs.languages_compilers.concurrent_languages",
+      "prereqIds": [
+        "cs.systems.operating_systems"
+      ],
+      "intro": "Pragmatic concurrent systems: goroutines (M:N user-space scheduler), typed channels, select multiplexing, structural subtyping via interfaces, escape analysis, and concurrent garbage collection.",
+      "sources": [
+        {
+          "id": "src_donovan_kernighan_go",
+          "title": "Donovan & Kernighan - The Go Programming Language"
+        },
+        {
+          "id": "src_cox_go_memory_model",
+          "title": "Cox - The Go Memory Model"
+        }
+      ]
+    },
+    {
       "id": "cs.ai_ml",
       "title": "Artificial Intelligence & Machine Learning",
       "parentId": "cs",
@@ -1401,9 +1739,3 @@ window.POLYMATHY_CURRICULUM = {
     }
   ]
 };
-
-window.POLYMATHY_SEED_CURRICULUM = window.POLYMATHY_CURRICULUM;
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = window.POLYMATHY_CURRICULUM;
-}
-

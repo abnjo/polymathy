@@ -84,6 +84,26 @@ During migration from early prototype seeds to the MECE Reductionist Universal T
 2. **Obsolete ID Gatekeeper:** Nodes carrying obsolete v1 prefix IDs (e.g. `physics.mechanics`, `physics.modern`, `chemistry.inorganic`, `math.calculus`, `cs.algorithms`) are blocked during the Layer 0 and Layer 1 fold.
 3. **Outgoing Prerequisite Directory Badges:** All outgoing prerequisite edges from `HEAD` to dependent targets render an interactive destination badge along the trajectory curve (`-> Directory / Target`) and list them in the "Downstream Unlocks" side panel drawer.
 
+### 3.4 Extended Programming Domain & Language Taxonomy
+
+The Computer Science domain (`cs.languages_compilers`) is structured as a two-tier hierarchy:
+1. **Language Paradigms & Typology (Depth 3):**
+   - `type_systems`: Type theory, operational semantics, lambda calculus $\lambda^\to$, Hindley-Milner inference, soundness.
+   - `compiler_design`: Lexing, LR/LL parsing, ASTs, SSA intermediate representations, register allocation via graph coloring.
+   - `systems_languages`: Memory layouts, cache line locality, pointer arithmetic, zero-cost abstractions, borrow-checking.
+   - `oop_languages`: Encapsulation, inheritance, dynamic dispatch (vtables), subtyping polymorphism, JVM/CLR bytecode.
+   - `functional_languages`: Referential transparency, immutability, higher-order functions, algebraic data types, monads.
+   - `logic_languages`: Horn clauses, Robinson resolution refutation, unification algorithms, constraint logic programming.
+   - `dynamic_languages`: Late binding, dynamic dispatch, prototype-based inheritance, event loops, JIT runtime optimization.
+   - `concurrent_languages`: Communicating Sequential Processes (CSP), message-passing channels, actors, M:N green threads.
+2. **Canonical Programming Languages (Depth 4):**
+   - Systems: Assembly (`systems_languages.assembly`), C (`systems_languages.c`), Rust (`systems_languages.rust`).
+   - Object-Oriented: C++ (`oop_languages.cpp`), Java (`oop_languages.java`).
+   - Functional: Haskell (`functional_languages.haskell`), Lisp & Scheme (`functional_languages.lisp`).
+   - Logic: Prolog (`logic_languages.prolog`).
+   - Dynamic: Python (`dynamic_languages.python`), JavaScript & TypeScript (`dynamic_languages.typescript`).
+   - Concurrent: Go (`concurrent_languages.go`).
+
 ---
 
 ## 4. Frontier Radar Algorithms
@@ -165,7 +185,8 @@ To decouple curriculum structure from custom study paths without hardcoding larg
    [
      "preset_jee_adv_stem.json",
      "preset_theoretical_physics_gr.json",
-     "preset_modern_ai_foundations.json"
+     "preset_modern_ai_foundations.json",
+     "preset_programming_languages.json"
    ]
    ```
 2. **Individual JSON Preset Definitions (`playlists/*.json`):**
