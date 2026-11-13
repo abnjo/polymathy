@@ -77,6 +77,13 @@ During the Layer 0 $\oplus$ Layer 1 fold, any referenced ID absent from Layer 0/
 - **UI Prerequisite Linking:** Adding edge $(p, t) \in E_{\text{prereq}}$ runs a Depth-First Search from $t$ along outgoing prerequisite dependents. If $p$ is reachable from $t$, the link is rejected and the cycle path is displayed inline.
 - **Patch Import Validation:** Before merging a JSON patch into Layer 0, the engine performs a 3-color DFS cycle check across the entire merged $E_{\text{prereq}}$ graph.
 
+### 3.3 Schema Migration & Deduplication (v1 to v2 Universal Taxonomy)
+
+During migration from early prototype seeds to the MECE Reductionist Universal Taxonomy (`001_reductionist_universal_taxonomy`), local browser caches may retain legacy patches (`001_stem_polymath_curriculum`). To eliminate duplicate topic instances (such as multiple "Classical Mechanics" or "Quantum Physics" nodes under Physics):
+1. **Automated Layer 0 Pruning:** The runtime purges any patch whose `patch_id` matches `001_stem_polymath_curriculum`, guaranteeing a single canonical base patch.
+2. **Obsolete ID Gatekeeper:** Nodes carrying obsolete v1 prefix IDs (e.g. `physics.mechanics`, `physics.modern`, `chemistry.inorganic`, `math.calculus`, `cs.algorithms`) are blocked during the Layer 0 and Layer 1 fold.
+3. **Outgoing Prerequisite Directory Badges:** All outgoing prerequisite edges from `HEAD` to dependent targets render an interactive destination badge along the trajectory curve (`-> Directory / Target`) and list them in the "Downstream Unlocks" side panel drawer.
+
 ---
 
 ## 4. Frontier Radar Algorithms

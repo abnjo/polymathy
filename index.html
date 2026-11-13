@@ -853,6 +853,9 @@ code.inline {
 .svg-expand-badge:hover text { fill: var(--surface); }
 .prereq-arrow-hit { cursor: pointer; }
 .prereq-arrow-hit:hover path.visible-arrow { stroke-width: 3.2px; filter: drop-shadow(0 0 3px rgba(0,0,0,0.25)); }
+.prereq-dir-badge { cursor: pointer; transition: transform 0.12s ease; }
+.prereq-dir-badge:hover rect { stroke-width: 2px; }
+.prereq-dir-badge:hover text { text-decoration: underline; }
 .dimmed { opacity: 0.18; transition: opacity 0.15s; }
 
 @keyframes mainPulse {
@@ -1035,7 +1038,7 @@ code.inline {
    * 1. EXTERNAL GRAPH LOADER (curriculum.json & curriculum.js)
    * ========================================================================= */
   const DEFAULT_FALLBACK_CURRICULUM = {
-    patch_id: "001_stem_polymath_curriculum",
+    patch_id: "001_reductionist_universal_taxonomy",
     title: "Knowledge",
     navigation: {
       MAIN: "knowledge",
@@ -1063,8 +1066,8 @@ code.inline {
   function extractBasePatch(data) {
     if (!data) data = DEFAULT_FALLBACK_CURRICULUM;
     return {
-      patch_id: data.patch_id || "001_stem_polymath_curriculum",
-      title: data.title || "STEM Polymath Curriculum",
+      patch_id: data.patch_id || "001_reductionist_universal_taxonomy",
+      title: data.title || "Universal Reductionist Polymathy Taxonomy",
       nodes: Array.isArray(data.nodes) ? data.nodes : []
     };
   }
@@ -1257,24 +1260,54 @@ code.inline {
   const initialBasePatch = extractBasePatch(activeCurriculumData);
   const initialNavState = extractInitialState(activeCurriculumData);
 
+  const LEGACY_V1_NODE_IDS = new Set([
+    "physics.mechanics", "physics.mechanics.kinematics", "physics.mechanics.newton_laws",
+    "physics.mechanics.work_energy", "physics.mechanics.rotation", "physics.mechanics.gravitation", "physics.mechanics.fluids",
+    "physics.electromagnetism", "physics.electromagnetism.electrostatics", "physics.electromagnetism.capacitance",
+    "physics.electromagnetism.magnetism", "physics.electromagnetism.induction",
+    "physics.thermal_optics", "physics.thermal_optics.thermodynamics", "physics.thermal_optics.wave_optics",
+    "physics.modern", "physics.modern.quantum_basics", "physics.modern.nuclear",
+    "chemistry.physical.mole_concept", "chemistry.physical.atomic_structure",
+    "chemistry.physical.thermodynamics", "chemistry.physical.equilibrium", "chemistry.physical.kinetics", "chemistry.physical.electrochemistry",
+    "chemistry.inorganic", "chemistry.inorganic.periodic_properties", "chemistry.inorganic.chemical_bonding", "chemistry.inorganic.coordination",
+    "chemistry.organic.reaction_mechanisms", "chemistry.organic.hydrocarbons_halides", "chemistry.organic.carbonyls",
+    "math.calculus", "math.calculus.limits_continuity", "math.calculus.integration", "math.calculus.multivariable",
+    "math.algebra.matrices", "math.algebra.coordinate_geom", "math.algebra.probability_discrete",
+    "cs.algorithms", "cs.algorithms.data_structures", "cs.algorithms.graph_algorithms", "cs.algorithms.machine_learning"
+  ]);
+
   let layer0Patches = safeReadJSON(STORAGE_KEYS.patches, [initialBasePatch]);
   if (!Array.isArray(layer0Patches) || layer0Patches.length === 0) {
     layer0Patches = [structuredClone(initialBasePatch)];
   } else {
+    // Purge obsolete v1 patch and any stale duplicate base patches
+    layer0Patches = layer0Patches.filter(p => p && p.patch_id !== "001_stem_polymath_curriculum");
     const idx = layer0Patches.findIndex(p => p.patch_id === initialBasePatch.patch_id);
     if (idx !== -1) {
       layer0Patches[idx] = structuredClone(initialBasePatch);
     } else {
-      layer0Patches.unshift(structuredClone(initialBasePatch));
+      layer0Patches[0] = structuredClone(initialBasePatch);
     }
   }
 
   let layer1Overrides = Object.assign(EMPTY_OVERRIDES(), safeReadJSON(STORAGE_KEYS.overrides, EMPTY_OVERRIDES()));
+  if (layer1Overrides && Array.isArray(layer1Overrides.custom_nodes)) {
+    layer1Overrides.custom_nodes = layer1Overrides.custom_nodes.filter(n => n && !LEGACY_V1_NODE_IDS.has(n.id));
+  }
+
   let layer2State = safeReadJSON(STORAGE_KEYS.state, initialNavState);
   if (!layer2State.navigation) layer2State.navigation = structuredClone(initialNavState.navigation);
   if (!layer2State.nodes) layer2State.nodes = {};
   if (Object.keys(layer2State.nodes).length === 0 && initialNavState.nodes) {
     layer2State.nodes = structuredClone(initialNavState.nodes);
+  }
+  if (layer2State.navigation) {
+    if (LEGACY_V1_NODE_IDS.has(layer2State.navigation.MAIN)) {
+      layer2State.navigation.MAIN = "physics.classical_mechanics.gravitation_rotational";
+    }
+    if (LEGACY_V1_NODE_IDS.has(layer2State.navigation.HEAD)) {
+      layer2State.navigation.HEAD = layer2State.navigation.MAIN;
+    }
   }
 
   let storedPlaylists = safeReadJSON(STORAGE_KEYS.playlists, structuredClone(BUILTIN_PLAYLIST_PRESETS));
@@ -1517,9 +1550,10 @@ code.inline {
   function foldLayer0(patches) {
     const map = new Map();
     for (const patch of patches) {
+      if (patch.patch_id === "001_stem_polymath_curriculum") continue;
       if (Array.isArray(patch.nodes)) {
         for (const raw of patch.nodes) {
-          if (!raw || !raw.id) continue;
+          if (!raw || !raw.id || LEGACY_V1_NODE_IDS.has(raw.id)) continue;
           const existing = map.get(raw.id);
           if (!existing) {
             map.set(raw.id, cloneNode(raw));
@@ -1569,7 +1603,7 @@ code.inline {
     const overriddenIds = new Set();
 
     for (const raw of (overrides.custom_nodes || [])) {
-      if (!raw || !raw.id || tombstones.has(raw.id)) continue;
+      if (!raw || !raw.id || tombstones.has(raw.id) || LEGACY_V1_NODE_IDS.has(raw.id)) continue;
       const node = cloneNode(raw);
       node.isCustom = true;
       map.set(node.id, node);
@@ -1732,7 +1766,11 @@ code.inline {
       node.depth = computeDepth(id, map);
     }
 
-    if (!map.has(layer2State.navigation.MAIN)) layer2State.navigation.MAIN = "physics.mechanics.rotation";
+    if (!map.has(layer2State.navigation.MAIN)) {
+      layer2State.navigation.MAIN = map.has("physics.classical_mechanics.gravitation_rotational")
+        ? "physics.classical_mechanics.gravitation_rotational"
+        : (map.has("physics.classical_mechanics") ? "physics.classical_mechanics" : "knowledge");
+    }
     if (!map.has(layer2State.navigation.HEAD)) layer2State.navigation.HEAD = layer2State.navigation.MAIN;
     layer2State.navigation.detourStack = (layer2State.navigation.detourStack || []).filter(id => map.has(id));
 
@@ -1842,6 +1880,19 @@ code.inline {
     if (n === 1) return sub[0];
     if (n === 2) return `${sub[0]} / ${sub[1]}`;
     return `${sub[0]} / ... / ${sub[n - 2]} / ${sub[n - 1]}`;
+  }
+
+  function formatPrereqArrowDirectory(targetId, nodesMap) {
+    const chain = getAncestorChain(targetId, nodesMap);
+    if (chain.length <= 1) return "Knowledge";
+    const sub = chain.slice(1).map(n => n.title);
+    const n = sub.length;
+    if (n === 1) return sub[0];
+    if (n === 2) return `${sub[0]} / ${sub[1]}`;
+    const parentDir = sub[n - 2];
+    const targetTitle = sub[n - 1];
+    const shortTitle = targetTitle.length > 22 ? targetTitle.slice(0, 20) + ".." : targetTitle;
+    return `${sub[0]} / ${parentDir} -> ${shortTitle}`;
   }
 
   function escapeHtml(str) {
@@ -2463,91 +2514,163 @@ code.inline {
       }
     }
 
-    /* 3) Prerequisite Arrows (Clean curves, no blocking directory pills) */
-    const targetsToDraw = [];
-    if (liveGraph.navigation.MAIN !== liveGraph.navigation.HEAD) {
-      targetsToDraw.push({ id: liveGraph.navigation.MAIN, dimmed: true });
-    }
-    targetsToDraw.push({ id: liveGraph.navigation.HEAD, dimmed: false });
+    /* 3) Prerequisite Arrows (Incoming & Outgoing with Destination Directory Badges) */
+    const edgesToDraw = [];
+    const headId = liveGraph.navigation.HEAD;
+    const mainId = liveGraph.navigation.MAIN;
+    const headNode = liveGraph.nodes.get(headId);
+    const mainNode = liveGraph.nodes.get(mainId);
 
-    const seenPairs = new Set();
-    for (const { id: targetId, dimmed } of targetsToDraw) {
-      const targetNode = liveGraph.nodes.get(targetId);
-      if (!targetNode) continue;
-      const targetAnchor = findVisibleAnchor(targetId);
-      const tPos = targetAnchor.pos;
-      if (!tPos) continue;
-
-      targetNode.prereqIds.forEach((pId, idx) => {
-        const pairKey = `${pId}->${targetId}`;
-        if (seenPairs.has(pairKey)) return;
-        seenPairs.add(pairKey);
-
-        const pNode = liveGraph.nodes.get(pId);
-        if (!pNode) return;
-        const pAnchor = findVisibleAnchor(pId);
-        const sPos = pAnchor.pos;
-        if (!sPos) return;
-
-        const isDone = pNode.isBaselineDone;
-        const dx = tPos.x - sPos.x;
-        const dy = tPos.y - sPos.y;
-        const dist = Math.hypot(dx, dy) || 1;
-        const nx = -dy / dist;
-        const ny = dx / dist;
-
-        const curveSign = idx % 2 === 0 ? 1 : -1;
-        const curveMag = Math.max(38, Math.min(110, dist * 0.22)) + idx * 12;
-        const cx = (sPos.x + tPos.x) / 2 + nx * curveMag * curveSign;
-        const cy = (sPos.y + tPos.y) / 2 + ny * curveMag * curveSign;
-
-        const endT = Math.max(0.72, 1 - 42 / dist);
-        const ex = (1 - endT) * (1 - endT) * sPos.x + 2 * (1 - endT) * endT * cx + endT * endT * tPos.x;
-        const ey = (1 - endT) * (1 - endT) * sPos.y + 2 * (1 - endT) * endT * cy + endT * endT * tPos.y;
-
-        const pathD = `M ${sPos.x.toFixed(1)} ${sPos.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
-        const strokeColor = dimmed ? "#8c959f" : (isDone ? "#116329" : "#a40e26");
-        const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-done)" : "url(#arrow-needed)");
-
-        let arrowDimClass = dimmed ? "dimmed" : "";
-        if (uiSettings.spotlightMode === "playlist" && plSets) {
-          if (!plSets.allSpotlightSet.has(pId) && !plSets.allSpotlightSet.has(targetId)) {
-            arrowDimClass = "dimmed map-faint-edge";
-          }
-        }
-
-        const hitGroup = makeSvgEl("g", {
-          class: `prereq-arrow-hit ${arrowDimClass}`,
-          style: (dimmed || arrowDimClass.includes("faint")) ? "opacity: 0.35;" : ""
-        });
-        const titleEl = makeSvgEl("title");
-        titleEl.textContent = `Prerequisite: ${pNode.title} (${isDone ? "Completed" : "Needs Completion"}) - Click to inspect`;
-        hitGroup.appendChild(titleEl);
-
-        hitGroup.appendChild(makeSvgEl("path", {
-          d: pathD,
-          fill: "none",
-          stroke: "transparent",
-          "stroke-width": 16
-        }));
-        const arrowAttrs = {
-          class: "visible-arrow",
-          d: pathD,
-          fill: "none",
-          stroke: strokeColor,
-          "stroke-width": isDone ? 1.9 : 2.4,
-          "marker-end": markerId
-        };
-        if (isDone) arrowAttrs["stroke-dasharray"] = "5,4";
-        hitGroup.appendChild(makeSvgEl("path", arrowAttrs));
-
-        hitGroup.addEventListener("click", (e) => {
-          e.stopPropagation();
-          detourTo(pId);
-        });
-        gPrereqs.appendChild(hitGroup);
+    // Incoming prerequisites to HEAD
+    if (headNode && Array.isArray(headNode.prereqIds)) {
+      headNode.prereqIds.forEach(pId => {
+        edgesToDraw.push({ sourceId: pId, targetId: headId, role: "incoming", dimmed: false });
       });
     }
+
+    // Outgoing prerequisites from HEAD (downstream unlocks)
+    if (headNode && Array.isArray(headNode.dependentsIds)) {
+      headNode.dependentsIds.forEach(dId => {
+        edgesToDraw.push({ sourceId: headId, targetId: dId, role: "outgoing", dimmed: false });
+      });
+    }
+
+    // Prerequisites of MAIN (if MAIN is different from HEAD)
+    if (mainId && mainId !== headId && mainNode && Array.isArray(mainNode.prereqIds)) {
+      mainNode.prereqIds.forEach(pId => {
+        edgesToDraw.push({ sourceId: pId, targetId: mainId, role: "incoming", dimmed: true });
+      });
+    }
+
+    const seenPairs = new Set();
+    edgesToDraw.forEach(({ sourceId, targetId, role, dimmed }, idx) => {
+      const pairKey = `${sourceId}->${targetId}`;
+      if (seenPairs.has(pairKey)) return;
+      seenPairs.add(pairKey);
+
+      const sourceNode = liveGraph.nodes.get(sourceId);
+      const targetNode = liveGraph.nodes.get(targetId);
+      if (!sourceNode || !targetNode) return;
+
+      const sAnchor = findVisibleAnchor(sourceId);
+      const tAnchor = findVisibleAnchor(targetId);
+      const sPos = sAnchor.pos;
+      const tPos = tAnchor.pos;
+      if (!sPos || !tPos) return;
+      if (sPos.x === tPos.x && sPos.y === tPos.y) return;
+
+      const isDone = sourceNode.isBaselineDone;
+      const dx = tPos.x - sPos.x;
+      const dy = tPos.y - sPos.y;
+      const dist = Math.hypot(dx, dy) || 1;
+      const nx = -dy / dist;
+      const ny = dx / dist;
+
+      const curveSign = idx % 2 === 0 ? 1 : -1;
+      const curveMag = Math.max(38, Math.min(110, dist * 0.22)) + (idx % 3) * 12;
+      const cx = (sPos.x + tPos.x) / 2 + nx * curveMag * curveSign;
+      const cy = (sPos.y + tPos.y) / 2 + ny * curveMag * curveSign;
+
+      const endT = Math.max(0.72, 1 - 42 / dist);
+      const ex = (1 - endT) * (1 - endT) * sPos.x + 2 * (1 - endT) * endT * cx + endT * endT * tPos.x;
+      const ey = (1 - endT) * (1 - endT) * sPos.y + 2 * (1 - endT) * endT * cy + endT * endT * tPos.y;
+
+      const pathD = `M ${sPos.x.toFixed(1)} ${sPos.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${ex.toFixed(1)} ${ey.toFixed(1)}`;
+      const strokeColor = dimmed ? "#8c959f" : (isDone ? "#116329" : "#a40e26");
+      const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-done)" : "url(#arrow-needed)");
+
+      let arrowDimClass = dimmed ? "dimmed" : "";
+      if (uiSettings.spotlightMode === "playlist" && plSets) {
+        if (!plSets.allSpotlightSet.has(sourceId) && !plSets.allSpotlightSet.has(targetId)) {
+          arrowDimClass = "dimmed map-faint-edge";
+        }
+      }
+
+      const hitGroup = makeSvgEl("g", {
+        class: `prereq-arrow-hit ${arrowDimClass}`,
+        style: (dimmed || arrowDimClass.includes("faint")) ? "opacity: 0.35;" : ""
+      });
+
+      const targetDir = formatTruncatedDirectory(targetId, liveGraph.nodes);
+      const titleEl = makeSvgEl("title");
+      titleEl.textContent = `Prerequisite: ${sourceNode.title} -> ${targetNode.title}\nDestination Directory: ${targetDir}\nStatus: ${isDone ? "Completed" : "Needs Completion"} (Click to inspect)`;
+      hitGroup.appendChild(titleEl);
+
+      hitGroup.appendChild(makeSvgEl("path", {
+        d: pathD,
+        fill: "none",
+        stroke: "transparent",
+        "stroke-width": 16
+      }));
+
+      const arrowAttrs = {
+        class: "visible-arrow",
+        d: pathD,
+        fill: "none",
+        stroke: strokeColor,
+        "stroke-width": isDone ? 1.9 : 2.4,
+        "marker-end": markerId
+      };
+      if (isDone) arrowAttrs["stroke-dasharray"] = "5,4";
+      hitGroup.appendChild(makeSvgEl("path", arrowAttrs));
+
+      hitGroup.addEventListener("click", (e) => {
+        e.stopPropagation();
+        detourTo(role === "outgoing" ? targetId : sourceId);
+      });
+      gPrereqs.appendChild(hitGroup);
+
+      // Directory Badge along the arrow curve so destination is visible at a glance
+      if (dist >= 70) {
+        const labelT = role === "outgoing" ? 0.35 : 0.65;
+        const lx = (1 - labelT) * (1 - labelT) * sPos.x + 2 * (1 - labelT) * labelT * cx + labelT * labelT * ex;
+        const ly = (1 - labelT) * (1 - labelT) * sPos.y + 2 * (1 - labelT) * labelT * cy + labelT * labelT * ey;
+
+        const labelText = `-> ${formatPrereqArrowDirectory(targetId, liveGraph.nodes)}`;
+        const badgeWidth = Math.min(240, Math.max(70, labelText.length * 6.0 + 14));
+        const badgeHeight = 17;
+
+        const badgeGroup = makeSvgEl("g", {
+          class: `prereq-dir-badge ${arrowDimClass}`,
+          transform: `translate(${lx.toFixed(1)}, ${ly.toFixed(1)})`,
+          style: (dimmed || arrowDimClass.includes("faint")) ? "opacity: 0.45;" : ""
+        });
+
+        const badgeRect = makeSvgEl("rect", {
+          x: (-badgeWidth / 2).toFixed(1),
+          y: (-badgeHeight / 2).toFixed(1),
+          width: badgeWidth.toFixed(1),
+          height: badgeHeight,
+          rx: 3,
+          fill: "#ffffff",
+          stroke: strokeColor,
+          "stroke-width": 1.1
+        });
+        const badgeText = makeSvgEl("text", {
+          x: 0,
+          y: 3.2,
+          "text-anchor": "middle",
+          "font-family": "var(--font-mono)",
+          "font-size": 9,
+          "font-weight": 700,
+          fill: isDone ? "#116329" : (dimmed ? "#656d76" : "#a40e26")
+        });
+        badgeText.textContent = labelText;
+
+        const bTitle = makeSvgEl("title");
+        bTitle.textContent = `Outgoing prerequisite leading to:\n${targetNode.title} in ${targetDir}\nClick to inspect topic`;
+        badgeGroup.appendChild(bTitle);
+        badgeGroup.appendChild(badgeRect);
+        badgeGroup.appendChild(badgeText);
+
+        badgeGroup.addEventListener("click", (e) => {
+          e.stopPropagation();
+          detourTo(targetId);
+        });
+
+        gPrereqs.appendChild(badgeGroup);
+      }
+    });
 
     /* 4) Topic Node Cards */
     for (const id of visibleNodeIds) {
@@ -3186,6 +3309,45 @@ code.inline {
           <button type="button" class="btn-xs" id="btnLinkPrereq" title="Add this prerequisite">+ Add Prerequisite</button>
         </div>
         ${lastPrereqCycleDiag ? `<div class="diag-warn">${escapeHtml(lastPrereqCycleDiag)}</div>` : ""}
+      </div>
+    `;
+
+    /* Section 1b: Downstream Topics Unlocked (Outgoing Prerequisites) */
+    const depRows = node.dependentsIds.length === 0
+      ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);">Terminal topic: no other topics currently require this as a prerequisite.</div>`
+      : node.dependentsIds.map(dId => {
+          const d = liveGraph.nodes.get(dId);
+          if (!d) return "";
+          const isUnlocked = node.isBaselineDone;
+          const badge = d.isBaselineDone
+            ? `<span class="tag done">Completed</span>`
+            : isUnlocked
+              ? `<span class="tag ready">Unlocked</span>`
+              : `<span class="tag needed">Waiting</span>`;
+          return `
+            <div class="list-row">
+              <div class="list-row-left">
+                ${badge}
+                <div class="list-row-main">
+                  <div class="list-row-title">${escapeHtml(d.title)} ${d.isStub ? '<span class="tag draft">Draft</span>' : ''}</div>
+                  <div class="list-row-sub">${escapeHtml(formatTruncatedDirectory(dId, liveGraph.nodes))}</div>
+                </div>
+              </div>
+              <div class="list-row-actions">
+                <button type="button" class="btn-xs head-btn" data-detour-id="${escapeHtml(dId)}" title="Jump to this downstream topic">Inspect -></button>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+    html += `
+      <div class="box">
+        <div class="box-header">
+          <span class="box-title">Downstream Unlocks (Outgoing Prerequisites)</span>
+          <span class="tag">${node.dependentsIds.length} Topic${node.dependentsIds.length === 1 ? "" : "s"}</span>
+        </div>
+        <div class="section-hint">Topics that depend on mastering this concept first. Outgoing arrows on the canvas lead directly to these directories.</div>
+        <div class="item-list">${depRows}</div>
       </div>
     `;
 
@@ -5272,11 +5434,12 @@ INSTRUCTIONS:
           const curBase = extractBasePatch(activeCurriculumData);
           const curInit = extractInitialState(activeCurriculumData);
 
+          layer0Patches = layer0Patches.filter(p => p && p.patch_id !== "001_stem_polymath_curriculum");
           const idx = layer0Patches.findIndex(p => p.patch_id === curBase.patch_id);
           if (idx !== -1) {
             layer0Patches[idx] = structuredClone(curBase);
           } else {
-            layer0Patches.unshift(structuredClone(curBase));
+            layer0Patches[0] = structuredClone(curBase);
           }
 
           if (!layer2State.navigation || !layer2State.navigation.MAIN) {

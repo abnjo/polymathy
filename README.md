@@ -25,8 +25,8 @@ No build tools, Node.js, or `npm install` are required.
 | :--- | :--- |
 | **Origin Dot `Knowledge`** | Root origin vertex of the graph. All disciplines branch outward from here. |
 | **Hollow Conduit + Crossbar** | Hierarchy resolution edge (`parent -> child`). Fills as you complete material; perpendicular crossbar marks your achievement frontier. |
-| **Red Arrow (Solid)** | Incomplete prerequisite blocking mastery. Hover over arrow for details, or click it to jump straight to that prerequisite topic. |
-| **Green Arrow (Dotted)** | Completed prerequisite foundation. |
+| **Red Arrow (Solid)** | Incomplete prerequisite link. Outgoing arrows display interactive destination directory badges (`-> Directory / Target`) along the curve so you can see where they are leading at a glance; click arrow or badge to jump straight to the connected topic. |
+| **Green Arrow (Dotted)** | Completed prerequisite foundation. Displays destination directory badge along the curve. |
 | **Blue `MAIN` Beacon** | Your primary, long-term learning target anchored on the map. |
 | **Purple `HEAD` Reticle** | The topic currently open in the right-hand inspection & study side panel. |
 | **Dashed Draft Topic Card** | Placeholder synthesized automatically when another topic links to it; hydrates into a full card once created or imported. |
