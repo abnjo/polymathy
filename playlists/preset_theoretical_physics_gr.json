@@ -1,0 +1,58 @@
+{
+  "playlist_id": "preset_theoretical_physics_gr",
+  "title": "Path to General Relativity & QFT",
+  "category": "Degree Track",
+  "description": "Minimum rigorous mathematical and physical trajectory from multivariable calculus to curved spacetime and quantum fields.",
+  "steps": [
+    {
+      "nodeId": "math.algebra.linear",
+      "targetLevel": "baseline",
+      "note": "Inner products, bilinear forms, and spectral decomposition."
+    },
+    {
+      "nodeId": "math.analysis.multivariable_calculus",
+      "targetLevel": "baseline",
+      "note": "Master Jacobians, differential forms, and Stokes theorem."
+    },
+    {
+      "nodeId": "math.analysis.differential_equations",
+      "targetLevel": "baseline",
+      "note": "Boundary value problems, Green functions, and Sturm-Liouville theory."
+    },
+    {
+      "nodeId": "physics.classical_mechanics.analytical",
+      "targetLevel": "baseline",
+      "note": "Stationary action principle, Euler-Lagrange equations, and Noether theorem."
+    },
+    {
+      "nodeId": "physics.em_optics.maxwell_electrodynamics",
+      "targetLevel": "baseline",
+      "note": "Covariant electrodynamics and relativistic field strength tensor."
+    },
+    {
+      "nodeId": "physics.relativity.special",
+      "targetLevel": "baseline",
+      "note": "Minkowski metric, Lorentz group, and 4-tensors."
+    },
+    {
+      "nodeId": "math.geometry.differential_geometry",
+      "targetLevel": "baseline",
+      "note": "Differentiable manifolds, affine connections, geodesics, and Riemann curvature."
+    },
+    {
+      "nodeId": "physics.relativity.general",
+      "targetLevel": "full",
+      "note": "Einstein field equations, Schwarzschild metric, gravitational radiation, and FLRW cosmology."
+    },
+    {
+      "nodeId": "physics.quantum.nonrelativistic",
+      "targetLevel": "baseline",
+      "note": "Hilbert spaces, operators, Schrodinger equation, and harmonic oscillator."
+    },
+    {
+      "nodeId": "physics.quantum.qft",
+      "targetLevel": "baseline",
+      "note": "Canonical quantization, Klein-Gordon and Dirac fields, and Feynman diagrams."
+    }
+  ]
+}

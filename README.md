@@ -87,6 +87,15 @@ The entire STEM curriculum knowledge graph is completely separated from `index.h
 - **`[Load File]` button in Topbar**: Select and load any custom `.json` graph file on demand directly through your browser.
 - **`[Export curriculum.json]` in Storage & Backups**: Export the current graph back into clean standalone JSON format anytime.
 
+### Decoupled Playlist Presets Directory (`playlists/` & `presets/`)
+The examination and degree course playlist presets are separated from `index.html` into standalone external JSON files in a dedicated directory:
+- **`playlists/index.json`**: Manifest array registering all available preset JSON files in the directory.
+- **`playlists/*.json`**: Individual standalone pure JSON preset files (e.g. `preset_jee_adv_stem.json`, `preset_theoretical_physics_gr.json`, `preset_modern_ai_foundations.json`) with step sequences, pedagogical notes, and target mastery levels. You can add new syllabus files or edit existing ones directly.
+- **`playlists/presets.js`**: Synchronously auto-loadable companion script defining `window.POLYMATHY_PLAYLIST_PRESETS` for instant zero-configuration offline execution via direct double-click (`file://`).
+- **`presets/`**: Duplicate directory structure mirroring `playlists/` to guarantee full cross-compatibility regardless of directory naming preference.
+- **`[Reload Presets from Directory]` in Storage & Backups**: Instantly refresh and re-sync presets directly from the directory without restarting the browser or losing user edits.
+- **JavaScript API**: Access programmatic controls via `window.polymathy.reloadPresetsFromDirectory()` and `window.polymathy.getPresetsSource()`.
+
 ### Direct In-App Editing
 Everything in Polymathy is directly editable from the user interface:
 

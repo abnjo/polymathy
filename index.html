@@ -8,6 +8,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <script src="curriculum.js"></script>
+<script src="playlists/presets.js"></script>
 <style>
 :root {
   /* Surfaces & Ink (STEM Monograph Aesthetic, No Blur, Crisp 1px Borders) */
@@ -1172,31 +1173,7 @@ code.inline {
     playlists: "polymathy_playlists_v1"
   };
 
-  const BUILTIN_PLAYLIST_PRESETS = [
-    {
-      playlist_id: "preset_jee_adv_stem",
-      title: "JEE Advanced / Foundational Engineering Entrance",
-      category: "Exam",
-      description: "Rigorous foundational STEM curriculum covering algebra, coordinate geometry, calculus, mechanics, electromagnetism, and chemical principles.",
-      steps: [
-        { nodeId: "math.algebra.elementary", targetLevel: "baseline", note: "Master quadratic equations, binomial theorem, and progressions." },
-        { nodeId: "math.geometry.euclidean_analytic", targetLevel: "baseline", note: "Conic sections, parabolas, ellipses, hyperbolas, and coordinate transformations." },
-        { nodeId: "math.discrete.combinatorics", targetLevel: "baseline", note: "Permutations, combinations, inclusion-exclusion, and generating functions." },
-        { nodeId: "math.prob_stats.probability_theory", targetLevel: "baseline", note: "Conditional probability, Bayes theorem, and discrete distributions." },
-        { nodeId: "math.algebra.linear.matrices_systems", targetLevel: "baseline", note: "Determinants, matrix inversion, and Gaussian elimination." },
-        { nodeId: "math.analysis.single_calculus", targetLevel: "baseline", note: "Limits, continuity, differentiation, and definite Riemann integration." },
-        { nodeId: "math.analysis.differential_equations.odes", targetLevel: "baseline", note: "First-order linear ODEs and integrating factors." },
-        { nodeId: "physics.classical_mechanics.newtonian", targetLevel: "baseline", note: "Newton laws, friction, impulse, and work-energy theorem." },
-        { nodeId: "physics.classical_mechanics.gravitation_rotational", targetLevel: "baseline", note: "Center of mass, rotational inertia, torque, and Keplerian gravity." },
-        { nodeId: "physics.thermo_statmech.thermodynamics", targetLevel: "baseline", note: "Zeroth, First, and Second laws, Carnot engines, and entropy." },
-        { nodeId: "physics.em_optics.electrostatics_magnetostatics", targetLevel: "baseline", note: "Coulomb law, Gauss law, Ampere law, and Biot-Savart law." },
-        { nodeId: "physics.em_optics.maxwell_electrodynamics", targetLevel: "baseline", note: "Faraday law, Lenz rule, and electromagnetic wave propagation." },
-        { nodeId: "physics.em_optics.optics", targetLevel: "baseline", note: "Wavefront interference, diffraction, and geometric ray tracing." },
-        { nodeId: "natural_sciences.chemistry.physical", targetLevel: "baseline", note: "Atomic structure, chemical equilibrium, and kinetics." },
-        { nodeId: "natural_sciences.chemistry.organic", targetLevel: "baseline", note: "Reaction mechanisms, stereochemistry, and functional group synthesis." },
-        { nodeId: "engineering.electrical.circuits", targetLevel: "baseline", note: "Kirchhoff laws, RLC transients, and AC impedance analysis." }
-      ]
-    },
+  const DEFAULT_FALLBACK_PRESETS = [
     {
       playlist_id: "preset_theoretical_physics_gr",
       title: "Path to General Relativity & QFT",
@@ -1214,24 +1191,52 @@ code.inline {
         { nodeId: "physics.quantum.nonrelativistic", targetLevel: "baseline", note: "Hilbert spaces, operators, Schrodinger equation, and harmonic oscillator." },
         { nodeId: "physics.quantum.qft", targetLevel: "baseline", note: "Canonical quantization, Klein-Gordon and Dirac fields, and Feynman diagrams." }
       ]
-    },
-    {
-      playlist_id: "preset_modern_ai_foundations",
-      title: "Mathematical & Algorithmic Foundations of AI",
-      category: "Specialization",
-      description: "Rigorous mathematical and computational foundations for modern artificial intelligence, machine learning, and deep neural architectures.",
-      steps: [
-        { nodeId: "math.algebra.linear", targetLevel: "baseline", note: "Vector spaces, SVD, matrix decompositions, and low-rank approximation." },
-        { nodeId: "math.analysis.multivariable_calculus", targetLevel: "baseline", note: "Multivariate gradients, Hessians, and unconstrained optimization." },
-        { nodeId: "math.prob_stats.probability_theory", targetLevel: "baseline", note: "Joint distributions, expectation, variance, and concentration inequalities." },
-        { nodeId: "math.prob_stats.mathematical_statistics", targetLevel: "baseline", note: "Maximum likelihood estimation, Bayesian inference, and hypothesis testing." },
-        { nodeId: "cs.theory.algorithms", targetLevel: "baseline", note: "Asymptotic analysis, divide-and-conquer, dynamic programming, and graph algorithms." },
-        { nodeId: "cs.theory.information_theory", targetLevel: "baseline", note: "Shannon entropy, mutual information, and Kullback-Leibler divergence." },
-        { nodeId: "cs.ai_ml.statistical_ml", targetLevel: "baseline", note: "Supervised and unsupervised models, loss functions, regularization, and generalization bounds." },
-        { nodeId: "cs.ai_ml.deep_learning", targetLevel: "baseline", note: "Backpropagation, transformers, attention mechanisms, and gradient dynamics." }
-      ]
     }
   ];
+
+  let BUILTIN_PLAYLIST_PRESETS = (window.POLYMATHY_PLAYLIST_PRESETS && Array.isArray(window.POLYMATHY_PLAYLIST_PRESETS))
+    ? window.POLYMATHY_PLAYLIST_PRESETS
+    : DEFAULT_FALLBACK_PRESETS;
+  let activePlaylistPresetsSource = (window.POLYMATHY_PLAYLIST_PRESETS && Array.isArray(window.POLYMATHY_PLAYLIST_PRESETS))
+    ? "playlists/presets.js"
+    : "fallback";
+
+  async function fetchPlaylistPresets() {
+    if (window.location.protocol.startsWith("http")) {
+      const dirs = ["playlists", "presets"];
+      for (const dir of dirs) {
+        try {
+          const resp = await fetch(`./${dir}/index.json?_t=` + Date.now(), { cache: "no-cache" });
+          if (resp.ok) {
+            const files = await resp.json();
+            if (Array.isArray(files) && files.length > 0) {
+              const loaded = [];
+              for (const f of files) {
+                try {
+                  const pResp = await fetch(`./${dir}/${f}?_t=` + Date.now(), { cache: "no-cache" });
+                  if (pResp.ok) {
+                    const pj = await pResp.json();
+                    if (pj && pj.playlist_id && Array.isArray(pj.steps)) loaded.push(pj);
+                  }
+                } catch (err) {
+                  console.warn(`Could not load preset ${f} from ${dir}:`, err);
+                }
+              }
+              if (loaded.length > 0) return { data: loaded, source: `${dir}/` };
+            }
+          }
+        } catch (err) {
+          // Continue to next directory
+        }
+      }
+    }
+
+    if (window.POLYMATHY_PLAYLIST_PRESETS && Array.isArray(window.POLYMATHY_PLAYLIST_PRESETS) && window.POLYMATHY_PLAYLIST_PRESETS.length > 0) {
+      return { data: window.POLYMATHY_PLAYLIST_PRESETS, source: "playlists/presets.js" };
+    }
+
+    return { data: DEFAULT_FALLBACK_PRESETS, source: "fallback" };
+  }
 
   function safeReadJSON(key, fallback) {
     try {
@@ -4745,13 +4750,14 @@ INSTRUCTIONS:
     openModal("STORAGE, EDITS & BACKUPS", `
       <div class="box">
         <div class="box-header">
-          <span class="box-title">CURRICULUM GRAPH FILE</span>
-          <span class="tag ready">${activeCurriculumSource} (${layer0Patches[0]?.nodes?.length || 0} topics)</span>
+          <span class="box-title">CURRICULUM GRAPH &amp; PLAYLIST PRESETS</span>
+          <span class="tag ready">${activeCurriculumSource} · ${activePlaylistPresetsSource}</span>
         </div>
-        <div class="section-hint">The main knowledge graph is decoupled into curriculum.json and curriculum.js instead of being hardcoded into the HTML.</div>
+        <div class="section-hint">Both the reductionist knowledge graph and exam/course playlists are decoupled into standalone files in <code>playlists/</code> and <code>curriculum.json</code> instead of being hardcoded into the HTML.</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
           <button type="button" class="btn-xs accent-btn" id="btnModalLoadGraphFile">Load Graph File (.json)</button>
-          <button type="button" class="btn-xs" id="btnModalReloadFromServer">Reload from curriculum.json</button>
+          <button type="button" class="btn-xs" id="btnModalReloadFromServer">Reload curriculum.json</button>
+          <button type="button" class="btn-xs" id="btnModalReloadPresets">Reload Presets from Directory</button>
           <button type="button" class="btn-xs" id="btnExportCurriculumJson">Export curriculum.json</button>
         </div>
       </div>
@@ -4824,6 +4830,28 @@ INSTRUCTIONS:
         closeModal();
       } else {
         alert("Could not load curriculum.json from server. Make sure you are running a local server (e.g. python3 -m http.server 8080).");
+      }
+    });
+
+    document.getElementById("btnModalReloadPresets")?.addEventListener("click", async () => {
+      const res = await fetchPlaylistPresets();
+      if (res && res.data && res.data.length > 0) {
+        BUILTIN_PLAYLIST_PRESETS = res.data;
+        activePlaylistPresetsSource = res.source;
+        for (const preset of res.data) {
+          const idx = storedPlaylists.findIndex(p => p.playlist_id === preset.playlist_id);
+          if (idx !== -1) {
+            storedPlaylists[idx] = structuredClone(preset);
+          } else {
+            storedPlaylists.push(structuredClone(preset));
+          }
+        }
+        persistAll();
+        renderAll();
+        closeModal();
+        showToast(`Reloaded presets from ${res.source}`);
+      } else {
+        alert("Could not load presets from directory. Make sure you are running a local server (e.g. python3 -m http.server 8080).");
       }
     });
 
@@ -5265,6 +5293,26 @@ INSTRUCTIONS:
       } catch (err) {
         console.warn("Async fetch of curriculum.json failed:", err);
       }
+
+      try {
+        const fetchedPresets = await fetchPlaylistPresets();
+        if (fetchedPresets && Array.isArray(fetchedPresets.data) && fetchedPresets.data.length > 0) {
+          BUILTIN_PLAYLIST_PRESETS = fetchedPresets.data;
+          activePlaylistPresetsSource = fetchedPresets.source;
+          for (const preset of fetchedPresets.data) {
+            const idx = storedPlaylists.findIndex(p => p.playlist_id === preset.playlist_id);
+            if (idx !== -1) {
+              storedPlaylists[idx] = structuredClone(preset);
+            } else {
+              storedPlaylists.push(structuredClone(preset));
+            }
+          }
+          persistAll();
+          renderTopbar();
+        }
+      } catch (err) {
+        console.warn("Async fetch of playlist presets failed:", err);
+      }
     }
 
     renderMathInContainer(document.getElementById("sidePane"));
@@ -5293,7 +5341,27 @@ INSTRUCTIONS:
     setPlaylistStep,
     stepPlaylist,
     togglePlaylistSpotlight,
-    openPlaylistsModal
+    openPlaylistsModal,
+    reloadPresetsFromDirectory: async () => {
+      const res = await fetchPlaylistPresets();
+      if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
+        BUILTIN_PLAYLIST_PRESETS = res.data;
+        activePlaylistPresetsSource = res.source;
+        for (const preset of res.data) {
+          const idx = storedPlaylists.findIndex(p => p.playlist_id === preset.playlist_id);
+          if (idx !== -1) {
+            storedPlaylists[idx] = structuredClone(preset);
+          } else {
+            storedPlaylists.push(structuredClone(preset));
+          }
+        }
+        persistAll();
+        renderTopbar();
+        return res;
+      }
+      return null;
+    },
+    getPresetsSource: () => activePlaylistPresetsSource
   };
 })();
 </script>

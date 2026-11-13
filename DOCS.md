@@ -148,3 +148,23 @@ Total illuminated subgraph: $V_{\text{spotlight}} = V_{\text{steps}} \cup V_{\te
 | **2. Remaining Playlist Steps** | `opacity: 1.0`; solid border; high-contrast route spline (`opacity: 0.85`). | Sequence badges `#1..#N` visible at all zoom levels. |
 | **3. Structural Spine & Prereqs** | `opacity: 0.72`; hollow conduits along spine visible; dashed card border on off-syllabus prereqs. | Off-syllabus prerequisites annotated with `[PREREQ]` tag. |
 | **4. Non-Spotlight Universe** | Dimmed to `opacity: 0.12`; background conduits dimmed to `opacity: 0.08`. | Subdued background blueprint. |
+
+### 5.4 Decoupled Presets Directory Architecture
+
+To decouple curriculum structure from custom study paths without hardcoding large JSON arrays in `index.html`, playlist presets reside in a dedicated external directory:
+
+1. **Manifest File (`playlists/index.json` or `presets/index.json`):**
+   ```json
+   [
+     "preset_jee_adv_stem.json",
+     "preset_theoretical_physics_gr.json",
+     "preset_modern_ai_foundations.json"
+   ]
+   ```
+2. **Individual JSON Preset Definitions (`playlists/*.json`):**
+   Each syllabus is stored as a clean, standalone JSON document containing `playlist_id`, `title`, `category`, `description`, and ordered `steps` array.
+3. **Dual Protocol Hydration Strategy:**
+   - **HTTP/HTTPS Protocol:** On startup or when clicking `[Reload Presets from Directory]`, `fetchPlaylistPresets()` queries `./playlists/index.json` (or `./presets/index.json`), fetches each referenced preset JSON, and merges them into `storedPlaylists`.
+   - **`file://` Offline Protocol:** Browsers block local file fetches due to CORS. To maintain zero-dependency single-click offline launch, `playlists/presets.js` synchronously exports `window.POLYMATHY_PLAYLIST_PRESETS` which acts as the immediate offline source.
+   - **In-Memory Fallback:** If neither directory nor script is reachable, `DEFAULT_FALLBACK_PRESETS` ensures the application never crashes.
+

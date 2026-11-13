@@ -1,0 +1,48 @@
+{
+  "playlist_id": "preset_modern_ai_foundations",
+  "title": "Mathematical & Algorithmic Foundations of AI",
+  "category": "Specialization",
+  "description": "Rigorous mathematical and computational foundations for modern artificial intelligence, machine learning, and deep neural architectures.",
+  "steps": [
+    {
+      "nodeId": "math.algebra.linear",
+      "targetLevel": "baseline",
+      "note": "Vector spaces, SVD, matrix decompositions, and low-rank approximation."
+    },
+    {
+      "nodeId": "math.analysis.multivariable_calculus",
+      "targetLevel": "baseline",
+      "note": "Multivariate gradients, Hessians, and unconstrained optimization."
+    },
+    {
+      "nodeId": "math.prob_stats.probability_theory",
+      "targetLevel": "baseline",
+      "note": "Joint distributions, expectation, variance, and concentration inequalities."
+    },
+    {
+      "nodeId": "math.prob_stats.mathematical_statistics",
+      "targetLevel": "baseline",
+      "note": "Maximum likelihood estimation, Bayesian inference, and hypothesis testing."
+    },
+    {
+      "nodeId": "cs.theory.algorithms",
+      "targetLevel": "baseline",
+      "note": "Asymptotic analysis, divide-and-conquer, dynamic programming, and graph algorithms."
+    },
+    {
+      "nodeId": "cs.theory.information_theory",
+      "targetLevel": "baseline",
+      "note": "Shannon entropy, mutual information, and Kullback-Leibler divergence."
+    },
+    {
+      "nodeId": "cs.ai_ml.statistical_ml",
+      "targetLevel": "baseline",
+      "note": "Supervised and unsupervised models, loss functions, regularization, and generalization bounds."
+    },
+    {
+      "nodeId": "cs.ai_ml.deep_learning",
+      "targetLevel": "baseline",
+      "note": "Backpropagation, transformers, attention mechanisms, and gradient dynamics."
+    }
+  ]
+}
