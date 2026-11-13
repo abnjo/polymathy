@@ -573,9 +573,10 @@
     {
       "id": "physics",
       "title": "Physics",
-      "parentId": "knowledge",
+      "parentId": "pure_sciences",
       "prereqIds": [
-        "math.analysis.single_calculus.limits_derivatives"
+        "math.analysis.multivariable_calculus",
+        "math.algebra.linear"
       ],
       "intro": "Fundamental laws governing matter, energy, spacetime, and physical interactions across all scales.",
       "sources": [
@@ -1517,21 +1518,22 @@
       ]
     },
     {
-      "id": "natural_sciences",
-      "title": "Chemistry & Biology",
+      "id": "pure_sciences",
+      "title": "Pure Sciences (Physics, Chemistry & Biology)",
       "parentId": "knowledge",
       "prereqIds": [
-        "physics.thermo_statmech.thermodynamics"
+        "math.foundations.logic"
       ],
-      "intro": "Molecular structure, chemical reactivity, and self-organizing living systems.",
+      "intro": "The fundamental empirical investigation of the physical universe along the reductionist ladder: foundational spacetime fields and forces (Physics), atomic and molecular transformations (Chemistry), and self-organizing living systems (Biology).",
       "sources": []
     },
     {
       "id": "natural_sciences.chemistry",
       "title": "Chemistry",
-      "parentId": "natural_sciences",
+      "parentId": "pure_sciences",
       "prereqIds": [
-        "physics.quantum.nonrelativistic"
+        "physics.quantum.nonrelativistic",
+        "physics.thermo_statmech.thermodynamics"
       ],
       "intro": "Electronic structure of atoms and molecules, bonding, thermodynamics of reactions, and synthesis.",
       "sources": []
@@ -1569,8 +1571,8 @@
     },
     {
       "id": "natural_sciences.biology",
-      "title": "Biology & Neuroscience",
-      "parentId": "natural_sciences",
+      "title": "Biology & Life Sciences",
+      "parentId": "pure_sciences",
       "prereqIds": [
         "natural_sciences.chemistry.organic"
       ],
@@ -1729,6 +1731,82 @@
         {
           "id": "src_romer_macro",
           "title": "Romer - Advanced Macroeconomics"
+        }
+      ]
+    },
+    {
+      "id": "natural_sciences.chemistry.inorganic",
+      "title": "Inorganic & Coordination Chemistry",
+      "parentId": "natural_sciences.chemistry",
+      "prereqIds": [
+        "natural_sciences.chemistry.physical"
+      ],
+      "intro": "Crystal field theory, ligand field theory, transition metal coordination complexes, organometallics, catalysis, and molecular symmetry group theory.",
+      "sources": [
+        {
+          "id": "src_miessler_inorganic",
+          "title": "Miessler, Fischer & Tarr - Inorganic Chemistry"
+        },
+        {
+          "id": "src_cotton_inorganic",
+          "title": "Cotton & Wilkinson - Advanced Inorganic Chemistry"
+        }
+      ]
+    },
+    {
+      "id": "natural_sciences.chemistry.analytical_biochem",
+      "title": "Analytical Chemistry & Chemical Biology",
+      "parentId": "natural_sciences.chemistry",
+      "prereqIds": [
+        "natural_sciences.chemistry.organic"
+      ],
+      "intro": "Mass spectrometry, NMR spectroscopy, chromatography separation, Michaelis-Menten enzyme kinetics, bioorthogonal chemistry, and quantitative analytical equilibria.",
+      "sources": [
+        {
+          "id": "src_skoog_analytical",
+          "title": "Skoog et al. - Fundamentals of Analytical Chemistry"
+        },
+        {
+          "id": "src_voet_biochem",
+          "title": "Voet & Voet - Biochemistry"
+        }
+      ]
+    },
+    {
+      "id": "natural_sciences.biology.genetics_evolution",
+      "title": "Genetics, Genomics & Evolutionary Dynamics",
+      "parentId": "natural_sciences.biology",
+      "prereqIds": [
+        "natural_sciences.biology.molecular_cell"
+      ],
+      "intro": "Mendelian and molecular genetics, population genetics (Hardy-Weinberg equilibrium), genomics, phylogenetic inference, coalescent theory, and natural selection dynamics.",
+      "sources": [
+        {
+          "id": "src_hartl_popgen",
+          "title": "Hartl & Clark - Principles of Population Genetics"
+        },
+        {
+          "id": "src_futuyma_evolution",
+          "title": "Futuyma & Kirkpatrick - Evolution"
+        }
+      ]
+    },
+    {
+      "id": "natural_sciences.biology.physiology_systems",
+      "title": "Organismal & Systems Physiology",
+      "parentId": "natural_sciences.biology",
+      "prereqIds": [
+        "natural_sciences.biology.molecular_cell"
+      ],
+      "intro": "Organ-system homeostasis: endocrine signaling, cardiovascular hemodynamics, respiratory gas exchange, renal clearance, and adaptive immune receptor recombination.",
+      "sources": [
+        {
+          "id": "src_boron_physiology",
+          "title": "Boron & Boulpaep - Medical Physiology"
+        },
+        {
+          "id": "src_janeway_immunobiology",
+          "title": "Murphy & Weaver - Janeway's Immunobiology"
         }
       ]
     }

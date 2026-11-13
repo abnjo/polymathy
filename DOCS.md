@@ -104,6 +104,34 @@ The Computer Science domain (`cs.languages_compilers`) is structured as a two-ti
    - Dynamic: Python (`dynamic_languages.python`), JavaScript & TypeScript (`dynamic_languages.typescript`).
    - Concurrent: Go (`concurrent_languages.go`).
 
+### 3.5 Pure Sciences Reductionist Domain Hierarchy
+
+Rather than treating Physics, Chemistry, and Biology as asymmetric or fragmented categories, Polymathy unifies them as first-class pillars of the **Pure Sciences** (`pure_sciences`) domain directly under the root origin `knowledge`.
+
+This architecture materializes the natural reductionist ladder of natural philosophy:
+
+$$\text{Mathematics} \xrightarrow{\text{foundations}} \text{Physics} \xrightarrow{\text{microscopic laws}} \text{Chemistry} \xrightarrow{\text{molecular complexity}} \text{Biology}$$
+
+1. **Top-Level Disciplinary Partition (`parentId: knowledge`):**
+   - `math`: Mathematics
+   - `pure_sciences`: Pure Sciences (Physics, Chemistry & Biology)
+   - `cs`: Computer Science
+   - `engineering`: Engineering & Applied Sciences
+   - `humanities`: Philosophy, Linguistics & Economics
+
+2. **The Pure Sciences Triad (`parentId: pure_sciences`):**
+   - **Physics (`physics`):** Classical mechanics, electromagnetism, special & general relativity, quantum mechanics, and thermodynamics & statistical physics.
+   - **Chemistry (`natural_sciences.chemistry`):**
+     - Physical chemistry & quantum kinetics (`physical`)
+     - Organic chemistry, reaction mechanisms & retrosynthesis (`organic`)
+     - Inorganic & coordination chemistry, crystal field theory, organometallics (`inorganic`)
+     - Analytical chemistry, spectroscopy & chemical biology (`analytical_biochem`)
+   - **Biology & Life Sciences (`natural_sciences.biology`):**
+     - Molecular biology & biochemistry (`molecular`)
+     - Cellular biology, membrane transport & bioenergetics (`cellular`)
+     - Genetics, genomics & evolutionary dynamics (`genetics_evolution`)
+     - Organismal & systems physiology (`physiology_systems`)
+
 ---
 
 ## 4. Frontier Radar Algorithms
