@@ -175,3 +175,24 @@ To decouple curriculum structure from custom study paths without hardcoding larg
    - **`file://` Offline Protocol:** Browsers block local file fetches due to CORS. To maintain zero-dependency single-click offline launch, `playlists/presets.js` synchronously exports `window.POLYMATHY_PLAYLIST_PRESETS` which acts as the immediate offline source.
    - **In-Memory Fallback:** If neither directory nor script is reachable, `DEFAULT_FALLBACK_PRESETS` ensures the application never crashes.
 
+---
+
+## 6. Progressive Web App (PWA) & Offline Architecture
+
+Polymathy provides full PWA capability for standalone, offline installation on desktop and mobile operating systems:
+
+### 6.1 Web App Manifest (`manifest.webmanifest`)
+- Defines `standalone` display mode, application theme color `#0969da`, background `#ffffff`, and orientation support.
+- Configures icon sets referencing Da Vinci's Vitruvian Man from `resources/`:
+  - Vector icon: `resources/vinci.svg` (`purpose: any`)
+  - Standard raster icons: `resources/icon-192.png` and `resources/icon-512.png`
+  - Safe-zone maskable icons: `resources/icon-maskable-192.png` and `resources/icon-maskable-512.png` (`purpose: maskable`)
+  - iOS support: `resources/apple-touch-icon.png` (180x180)
+
+### 6.2 Service Worker Caching Engine (`sw.js`)
+- **Pre-Cache Core Assets:** Pre-caches the HTML shell, JSON curricula, playlist presets, icons, and companion scripts during the `install` phase.
+- **Stale-While-Revalidate Strategy:** Intercepts fetch requests, serving cached copies instantaneously while background-refreshing the cache from the network when online.
+- **Third-Party CDN Caching:** Dynamically caches KaTeX scripts, CSS, and mathematical fonts on first request, enabling full LaTeX formula rendering even when completely disconnected from the network.
+- **Automated Lifecycle Management:** Claims active clients on `activate` and purges obsolete cache versions automatically.
+
+

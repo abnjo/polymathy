@@ -11,11 +11,12 @@ Featuring a crisp, high-contrast engineering aesthetic with zero decorative blur
 No build tools, Node.js, or `npm install` are required.
 
 - **Direct Launch:** Double-click `index.html` or open it directly in any browser (`xdg-open index.html` on Linux, `open index.html` on macOS).
-- **Optional Local Server (Recommended for clean `localStorage` isolation):**
+- **Optional Local Server (Recommended for clean `localStorage` isolation & PWA installation):**
   ```bash
   python3 -m http.server 8080
   ```
   Then open `http://localhost:8080` in your browser.
+- **Install as Standalone PWA:** Open `http://localhost:8080` and click **`[Install App]`** in the topbar (or your browser's install icon) to install Polymathy as a standalone desktop or mobile app with offline service worker caching.
 
 ---
 
@@ -95,6 +96,12 @@ The examination and degree course playlist presets are separated from `index.htm
 - **`presets/`**: Duplicate directory structure mirroring `playlists/` to guarantee full cross-compatibility regardless of directory naming preference.
 - **`[Reload Presets from Directory]` in Storage & Backups**: Instantly refresh and re-sync presets directly from the directory without restarting the browser or losing user edits.
 - **JavaScript API**: Access programmatic controls via `window.polymathy.reloadPresetsFromDirectory()` and `window.polymathy.getPresetsSource()`.
+
+### Progressive Web App (PWA) & Offline Caching
+Polymathy is configured as a standalone Progressive Web App powered by service worker caching:
+- **Web App Manifest (`manifest.webmanifest` & `manifest.json`):** Configures display mode (`standalone`), high-resolution Vitruvian Man icons from `resources/`, and theme colors.
+- **Service Worker (`sw.js`):** Pre-caches the core application shell, offline companion scripts, and icons on install. Implements stale-while-revalidate caching with background sync so the entire workspace functions seamlessly offline.
+- **PWA Icons in `resources/`:** Multi-resolution icons derived from the authentic vector `vinci.svg`, including standard sizes (192x192, 512x512), Android safe-zone maskable icons, Apple touch icon (180x180), and multi-size `favicon.ico`.
 
 ### Direct In-App Editing
 Everything in Polymathy is directly editable from the user interface:

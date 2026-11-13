@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <title>POLYMATHY // Knowledge Graph & Learning Assistant</title>
+<meta name="description" content="Local-first Compound DAG visual knowledge workspace and reductionist STEM learning assistant.">
+<meta name="theme-color" content="#0969da">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Polymathy">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="resources/vinci.svg">
+<link rel="icon" type="image/png" sizes="192x192" href="resources/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="resources/icon-32.png">
+<link rel="apple-touch-icon" href="resources/apple-touch-icon.png">
+<link rel="shortcut icon" href="favicon.ico">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
@@ -899,6 +911,7 @@ code.inline {
 <header class="topbar">
   <div class="topbar-left">
     <div class="brand">
+      <img src="resources/vinci.svg" alt="Polymathy" style="width:18px;height:18px;display:inline-block;vertical-align:middle;margin-right:2px;">
       <span>POLYMATHY</span>
     </div>
     <span class="telemetry-pill" id="globalProgressPill" title="Mastered topics / Total topics">Completed: 0 / 0</span>
@@ -934,6 +947,7 @@ code.inline {
     <button class="btn-xs" id="btnLoadGraphTop" title="Load graph from curriculum.json or another file">Load File</button>
     <button class="btn-xs" id="btnImportPatch" title="Import topic bundles or AI-generated curriculum delta patches">+ Import</button>
     <button class="btn-xs" id="btnLayerInspector" title="Manage your edits, backups, and save changes">Storage & Backups</button>
+    <button class="btn-xs accent-btn" id="btnInstallPwa" style="display:none;" title="Install Polymathy as a standalone Progressive Web App">Install App</button>
     <button class="btn-xs" id="btnManual" title="Open field manual, visual legend, and shortcuts">? Guide</button>
   </div>
 </header>
@@ -4939,6 +4953,18 @@ INSTRUCTIONS:
 
       <div class="box">
         <div class="box-header">
+          <span class="box-title">PROGRESSIVE WEB APP &amp; OFFLINE ACCESS</span>
+          <span class="tag ready" id="pwaStatusTag">Offline Ready</span>
+        </div>
+        <div class="section-hint">Polymathy operates as a standalone Progressive Web App with local caching, service worker syncing, and zero internet requirement.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;">
+          <button type="button" class="btn-xs accent-btn" id="btnModalInstallPwa">Install App as PWA</button>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);" id="pwaModalInstallHint">Ready for home screen or desktop install</span>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-header">
           <span class="box-title">RESTORE BACKUP</span>
           <span class="tag ready">JSON</span>
         </div>
@@ -4949,6 +4975,11 @@ INSTRUCTIONS:
         </div>
       </div>
     `);
+
+    document.getElementById("btnModalInstallPwa")?.addEventListener("click", () => {
+      triggerPwaInstall();
+      closeModal();
+    });
 
     document.querySelectorAll("[data-revert-override]").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -5411,6 +5442,43 @@ INSTRUCTIONS:
     });
 
     window.addEventListener("resize", applyWorldTransform);
+
+    const btnInstallPwa = document.getElementById("btnInstallPwa");
+    if (btnInstallPwa) {
+      btnInstallPwa.addEventListener("click", triggerPwaInstall);
+    }
+  }
+
+  let deferredInstallPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const topBtn = document.getElementById("btnInstallPwa");
+    if (topBtn) topBtn.style.display = "inline-flex";
+    const modalHint = document.getElementById("pwaModalInstallHint");
+    if (modalHint) modalHint.textContent = "Ready to install on this device";
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    const topBtn = document.getElementById("btnInstallPwa");
+    if (topBtn) topBtn.style.display = "none";
+    showToast("Polymathy installed successfully as PWA.");
+  });
+
+  async function triggerPwaInstall() {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      const { outcome } = await deferredInstallPrompt.userChoice;
+      if (outcome === "accepted") {
+        showToast("Polymathy install accepted.");
+      }
+      deferredInstallPrompt = null;
+      const topBtn = document.getElementById("btnInstallPwa");
+      if (topBtn) topBtn.style.display = "none";
+    } else {
+      alert("Polymathy is PWA ready! If your browser did not show an automated prompt, click your browser menu (or share icon) and choose 'Add to Home screen' or 'Install App'.");
+    }
   }
 
   /* =========================================================================
@@ -5423,6 +5491,26 @@ INSTRUCTIONS:
     requestAnimationFrame(() => {
       fitVisibleGraph();
     });
+
+    // Service Worker Registration for Offline PWA
+    if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
+      navigator.serviceWorker.register("./sw.js")
+        .then((reg) => {
+          reg.addEventListener("updatefound", () => {
+            const newWorker = reg.installing;
+            if (newWorker) {
+              newWorker.addEventListener("statechange", () => {
+                if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                  showToast("Polymathy updated: reload to view latest changes.");
+                }
+              });
+            }
+          });
+        })
+        .catch((err) => {
+          console.warn("PWA ServiceWorker registration failed:", err);
+        });
+    }
 
     // Check if running on HTTP/HTTPS and dynamic fetch of curriculum.json succeeds
     if (window.location.protocol.startsWith("http")) {
