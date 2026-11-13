@@ -59,6 +59,25 @@ No build tools, Node.js, or `npm install` are required.
 
 ---
 
+## Modular Exam & Course Playlists
+
+While `curriculum.json` organizes all human knowledge into a clean, reductionist taxonomy, real-world study frequently follows structured exams, degree curricula, or book-by-book sequences that cut across distinct branches of science.
+
+Polymathy provides **Playlists** as an independent overlay layer without distorting the underlying tree:
+
+- **Top Bar Integration:** Direct playlist locator pill displaying `PLAYLIST: <title> (<step>/<total>)` with `<` and `>` steppers, `[Spotlight]` toggle, and `[Fit]` framing.
+- **Side Panel Contextual Banner:** When inspecting a playlist step, renders `ACTIVE PLAYLIST // STEP k OF N`, pedagogical notes, target level, and step progression buttons.
+- **Auto-Advance Hook:** When completing baseline mastery on an active playlist step, the system automatically advances to the next step, updates `MAIN` and `HEAD`, and glides the camera smoothly across the map.
+- **Map Route Overlay:** Small `#1`, `#2`... sequence badges on visible playlist nodes and a dashed guided trajectory spline tracing the path across domains.
+- **Playlist Spotlight Mode:** Isolates the active syllabus against the universal map using a 4-tier visual hierarchy (fading unrelated domains to a faint watermark, auto-expanding the directory spine, and auto-framing the syllabus).
+- **Built-in Presets:**
+  1. **JEE Advanced / Foundational Engineering Entrance (`Exam`):** 16-step foundational STEM curriculum spanning algebra, calculus, Newtonian dynamics, thermodynamics, electromagnetism, and chemical principles.
+  2. **Path to General Relativity & QFT (`Degree Track`):** 10-step trajectory from multivariable calculus and analytical mechanics to curved spacetime and quantum field theory.
+  3. **Mathematical & Algorithmic Foundations of AI (`Specialization`):** 8-step rigorous pathway across linear algebra, multivariate optimization, probability theory, statistics, algorithms, information theory, and deep learning.
+- **Custom Builder & AI Prompt Generator:** Interactively build custom playlists in the modal, import external `.json` syllabi (with automatic stub topic synthesis for novel IDs), or click `[Copy LLM Playlist Prompt]` to generate complete playlists with any LLM.
+
+---
+
 ## Full UI Editing & File Architecture
 
 ### Decoupled Graph File (`curriculum.json` & `curriculum.js`)

@@ -86,3 +86,65 @@ Opened via `[Frontier Radar]` in the top telemetry bar:
 1. **Ready to Learn Queue:** Topics with `baselineDone === false` whose prerequisites all satisfy `p.baselineDone === true`.
 2. **High-Leverage Bottlenecks:** Topics sorted descending by their transitive unblocking count across all downstream dependencies.
 3. **Active `MAIN` Dependency Subgraph Spotlight:** Dims unrelated branches on the map to highlight only the learning pathway leading into your main objective.
+
+---
+
+## 5. Modular Exam & Course Playlist System
+
+### 5.1 Playlist JSON Schema & Storage Key (`polymathy_playlists_v1`)
+
+Playlists decouple conceptual knowledge containment ($E_{\text{tree}}, E_{\text{prereq}}$) from arbitrary examination or course study sequences.
+
+```json
+{
+  "playlist_id": "preset_theoretical_physics_gr",
+  "title": "Path to General Relativity & QFT",
+  "category": "Degree Track",
+  "description": "Minimum rigorous mathematical and physical trajectory from multivariable calculus to curved spacetime and quantum fields.",
+  "steps": [
+    {
+      "nodeId": "math.algebra.linear",
+      "targetLevel": "baseline",
+      "note": "Inner products, bilinear forms, and spectral decomposition."
+    }
+  ]
+}
+```
+
+Active telemetry state persists in Layer 2 under `playlistState`:
+
+```json
+{
+  "playlistState": {
+    "activePlaylistId": "preset_theoretical_physics_gr",
+    "activeStepIndex": 0,
+    "showRouteOnMap": true,
+    "autoAdvanceMain": true,
+    "spotlightPlaylist": false,
+    "spotlightIncludePrereqs": true,
+    "autoExpandSpine": true
+  }
+}
+```
+
+### 5.2 Spotlight Vertex Set Algebra ($V_{\text{spotlight}}$)
+
+When `spotlightMode === "playlist"`, Polymathy evaluates:
+
+1. **Syllabus Step Vertices:**
+   $$V_{\text{steps}} = \{ s.\text{nodeId} : s \in \text{activePlaylist.steps} \}$$
+2. **Structural Spine Ancestors:**
+   $$V_{\text{spine}} = \bigcup_{v \in V_{\text{steps}}} \text{Ancestors}(v)$$
+3. **Off-Playlist Prerequisite Cone:**
+   $$V_{\text{prereq}} = \begin{cases} \bigcup_{v \in V_{\text{steps}}} \text{TransitivePrereqs}(v) & \text{if } \texttt{spotlightIncludePrereqs} = \text{true} \\ \emptyset & \text{otherwise} \end{cases}$$
+
+Total illuminated subgraph: $V_{\text{spotlight}} = V_{\text{steps}} \cup V_{\text{spine}} \cup V_{\text{prereq}}$.
+
+### 5.3 Four-Tier Visual Contrast Hierarchy
+
+| Contrast Tier | Opacity & Visual Treatment | Badges & Annotations |
+| :--- | :--- | :--- |
+| **1. Current Active Step** | `opacity: 1.0`; 2px accent border; pulsing `MAIN` beacon. | Sequence badge `#k ACTIVE` in `--accent-soft`. |
+| **2. Remaining Playlist Steps** | `opacity: 1.0`; solid border; high-contrast route spline (`opacity: 0.85`). | Sequence badges `#1..#N` visible at all zoom levels. |
+| **3. Structural Spine & Prereqs** | `opacity: 0.72`; hollow conduits along spine visible; dashed card border on off-syllabus prereqs. | Off-syllabus prerequisites annotated with `[PREREQ]` tag. |
+| **4. Non-Spotlight Universe** | Dimmed to `opacity: 0.12`; background conduits dimmed to `opacity: 0.08`. | Subdued background blueprint. |

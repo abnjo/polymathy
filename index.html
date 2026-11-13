@@ -184,6 +184,112 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   border-color: var(--head-color);
   color: var(--head-color);
 }
+.locator-chip.playlist {
+  background: var(--bg-alt);
+  border-color: var(--accent);
+  color: var(--accent);
+  max-width: 440px;
+}
+.locator-chip.playlist .locator-title {
+  max-width: 140px;
+}
+.btn-xs.active-spotlight {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent) !important;
+  font-weight: 800;
+}
+.playlist-step-banner {
+  border-left: 3px solid var(--accent);
+  background: var(--bg);
+  margin-bottom: 8px;
+}
+.playlist-step-badge {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+.playlist-route-spline {
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+.map-dimmed {
+  opacity: 0.12 !important;
+  transition: opacity 0.2s ease;
+}
+.map-faint-edge {
+  opacity: 0.08 !important;
+  transition: opacity 0.2s ease;
+}
+.map-spine-node {
+  opacity: 0.72 !important;
+  transition: opacity 0.2s ease;
+}
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+  gap: 4px;
+}
+.tab-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.tab-btn:hover {
+  color: var(--text);
+  background: var(--bg-alt);
+}
+.tab-btn.active {
+  color: var(--accent);
+  background: var(--bg);
+  border-color: var(--border) var(--border) transparent var(--border);
+  margin-bottom: -1px;
+  border-bottom: 1px solid var(--bg);
+}
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+.progress-bar-wrap {
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  height: 7px;
+  width: 100%;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.progress-bar-fill {
+  background: var(--accent);
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.progress-bar-fill.done {
+  background: #2da44e;
+}
+.playlist-card-box {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background: var(--bg);
+}
+.playlist-card-box.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
 .locator-label {
   font-weight: 800;
   letter-spacing: 0.04em;
@@ -805,12 +911,22 @@ code.inline {
       <span class="locator-title" id="topHeadTitle">Loading...</span>
       <button class="btn-xs head-btn" id="btnLocateHead" title="Center camera on inspected HEAD topic (HotKey: H)">Locate</button>
     </div>
+    <div class="locator-chip playlist" id="topPlaylistChip" title="Active Study Playlist">
+      <span class="locator-label">PLAYLIST:</span>
+      <span class="locator-title" id="topPlaylistTitle">None</span>
+      <button class="btn-xs" id="btnPlaylistPrev" title="Previous playlist step">&lt;</button>
+      <button class="btn-xs" id="btnPlaylistNext" title="Next playlist step">&gt;</button>
+      <button class="btn-xs" id="btnPlaylistSpotlight" title="Toggle Playlist Spotlight Mode">Spotlight</button>
+      <button class="btn-xs" id="btnPlaylistFit" title="Fit active playlist bounding box">Fit</button>
+      <button class="btn-xs" id="btnOpenPlaylists" title="Open Playlist Manager &amp; Builder">Playlists</button>
+    </div>
   </div>
 
   <div class="topbar-right">
     <button class="btn-xs" id="btnNewTopicTop" title="Add a brand new topic anywhere in the graph">+ New Topic</button>
     <button class="btn-xs" id="btnToggleLayout" title="Switch between top-down hierarchy tree and radial circular map">Layout: Tree</button>
     <button class="btn-xs" id="btnFrontierRadar" title="Discover what to study next and which topics unlock the most branches">Frontier Radar</button>
+    <button class="btn-xs" id="btnOpenPlaylistsTop" title="Open Playlist Manager &amp; Builder">Playlists</button>
     <button class="btn-xs" id="btnLoadGraphTop" title="Load graph from curriculum.json or another file">Load File</button>
     <button class="btn-xs" id="btnImportPatch" title="Import topic bundles or AI-generated curriculum delta patches">+ Import</button>
     <button class="btn-xs" id="btnLayerInspector" title="Manage your edits, backups, and save changes">Storage & Backups</button>
@@ -882,6 +998,7 @@ code.inline {
       </defs>
       <g id="svgWorld">
         <g id="layerConduits"></g>
+        <g id="layerRoute"></g>
         <g id="layerPrereqs"></g>
         <g id="layerNodes"></g>
       </g>
@@ -939,8 +1056,8 @@ code.inline {
     ]
   };
 
-  let activeCurriculumData = window.POLYMATHY_CURRICULUM || DEFAULT_FALLBACK_CURRICULUM;
-  let activeCurriculumSource = window.POLYMATHY_CURRICULUM ? "curriculum.js" : "fallback";
+  let activeCurriculumData = window.POLYMATHY_CURRICULUM || window.POLYMATHY_SEED_CURRICULUM || DEFAULT_FALLBACK_CURRICULUM;
+  let activeCurriculumSource = (window.POLYMATHY_CURRICULUM || window.POLYMATHY_SEED_CURRICULUM) ? "curriculum.js" : "fallback";
 
   function extractBasePatch(data) {
     if (!data) data = DEFAULT_FALLBACK_CURRICULUM;
@@ -1051,8 +1168,70 @@ code.inline {
     patches: "polymathy_v3_patches",
     overrides: "polymathy_v3_overrides",
     state: "polymathy_v3_state",
-    ui: "polymathy_v3_ui"
+    ui: "polymathy_v3_ui",
+    playlists: "polymathy_playlists_v1"
   };
+
+  const BUILTIN_PLAYLIST_PRESETS = [
+    {
+      playlist_id: "preset_jee_adv_stem",
+      title: "JEE Advanced / Foundational Engineering Entrance",
+      category: "Exam",
+      description: "Rigorous foundational STEM curriculum covering algebra, coordinate geometry, calculus, mechanics, electromagnetism, and chemical principles.",
+      steps: [
+        { nodeId: "math.algebra.elementary", targetLevel: "baseline", note: "Master quadratic equations, binomial theorem, and progressions." },
+        { nodeId: "math.geometry.euclidean_analytic", targetLevel: "baseline", note: "Conic sections, parabolas, ellipses, hyperbolas, and coordinate transformations." },
+        { nodeId: "math.discrete.combinatorics", targetLevel: "baseline", note: "Permutations, combinations, inclusion-exclusion, and generating functions." },
+        { nodeId: "math.prob_stats.probability_theory", targetLevel: "baseline", note: "Conditional probability, Bayes theorem, and discrete distributions." },
+        { nodeId: "math.algebra.linear.matrices_systems", targetLevel: "baseline", note: "Determinants, matrix inversion, and Gaussian elimination." },
+        { nodeId: "math.analysis.single_calculus", targetLevel: "baseline", note: "Limits, continuity, differentiation, and definite Riemann integration." },
+        { nodeId: "math.analysis.differential_equations.odes", targetLevel: "baseline", note: "First-order linear ODEs and integrating factors." },
+        { nodeId: "physics.classical_mechanics.newtonian", targetLevel: "baseline", note: "Newton laws, friction, impulse, and work-energy theorem." },
+        { nodeId: "physics.classical_mechanics.gravitation_rotational", targetLevel: "baseline", note: "Center of mass, rotational inertia, torque, and Keplerian gravity." },
+        { nodeId: "physics.thermo_statmech.thermodynamics", targetLevel: "baseline", note: "Zeroth, First, and Second laws, Carnot engines, and entropy." },
+        { nodeId: "physics.em_optics.electrostatics_magnetostatics", targetLevel: "baseline", note: "Coulomb law, Gauss law, Ampere law, and Biot-Savart law." },
+        { nodeId: "physics.em_optics.maxwell_electrodynamics", targetLevel: "baseline", note: "Faraday law, Lenz rule, and electromagnetic wave propagation." },
+        { nodeId: "physics.em_optics.optics", targetLevel: "baseline", note: "Wavefront interference, diffraction, and geometric ray tracing." },
+        { nodeId: "natural_sciences.chemistry.physical", targetLevel: "baseline", note: "Atomic structure, chemical equilibrium, and kinetics." },
+        { nodeId: "natural_sciences.chemistry.organic", targetLevel: "baseline", note: "Reaction mechanisms, stereochemistry, and functional group synthesis." },
+        { nodeId: "engineering.electrical.circuits", targetLevel: "baseline", note: "Kirchhoff laws, RLC transients, and AC impedance analysis." }
+      ]
+    },
+    {
+      playlist_id: "preset_theoretical_physics_gr",
+      title: "Path to General Relativity & QFT",
+      category: "Degree Track",
+      description: "Minimum rigorous mathematical and physical trajectory from multivariable calculus to curved spacetime and quantum fields.",
+      steps: [
+        { nodeId: "math.algebra.linear", targetLevel: "baseline", note: "Inner products, bilinear forms, and spectral decomposition." },
+        { nodeId: "math.analysis.multivariable_calculus", targetLevel: "baseline", note: "Master Jacobians, differential forms, and Stokes theorem." },
+        { nodeId: "math.analysis.differential_equations", targetLevel: "baseline", note: "Boundary value problems, Green functions, and Sturm-Liouville theory." },
+        { nodeId: "physics.classical_mechanics.analytical", targetLevel: "baseline", note: "Stationary action principle, Euler-Lagrange equations, and Noether theorem." },
+        { nodeId: "physics.em_optics.maxwell_electrodynamics", targetLevel: "baseline", note: "Covariant electrodynamics and relativistic field strength tensor." },
+        { nodeId: "physics.relativity.special", targetLevel: "baseline", note: "Minkowski metric, Lorentz group, and 4-tensors." },
+        { nodeId: "math.geometry.differential_geometry", targetLevel: "baseline", note: "Differentiable manifolds, affine connections, geodesics, and Riemann curvature." },
+        { nodeId: "physics.relativity.general", targetLevel: "full", note: "Einstein field equations, Schwarzschild metric, gravitational radiation, and FLRW cosmology." },
+        { nodeId: "physics.quantum.nonrelativistic", targetLevel: "baseline", note: "Hilbert spaces, operators, Schrodinger equation, and harmonic oscillator." },
+        { nodeId: "physics.quantum.qft", targetLevel: "baseline", note: "Canonical quantization, Klein-Gordon and Dirac fields, and Feynman diagrams." }
+      ]
+    },
+    {
+      playlist_id: "preset_modern_ai_foundations",
+      title: "Mathematical & Algorithmic Foundations of AI",
+      category: "Specialization",
+      description: "Rigorous mathematical and computational foundations for modern artificial intelligence, machine learning, and deep neural architectures.",
+      steps: [
+        { nodeId: "math.algebra.linear", targetLevel: "baseline", note: "Vector spaces, SVD, matrix decompositions, and low-rank approximation." },
+        { nodeId: "math.analysis.multivariable_calculus", targetLevel: "baseline", note: "Multivariate gradients, Hessians, and unconstrained optimization." },
+        { nodeId: "math.prob_stats.probability_theory", targetLevel: "baseline", note: "Joint distributions, expectation, variance, and concentration inequalities." },
+        { nodeId: "math.prob_stats.mathematical_statistics", targetLevel: "baseline", note: "Maximum likelihood estimation, Bayesian inference, and hypothesis testing." },
+        { nodeId: "cs.theory.algorithms", targetLevel: "baseline", note: "Asymptotic analysis, divide-and-conquer, dynamic programming, and graph algorithms." },
+        { nodeId: "cs.theory.information_theory", targetLevel: "baseline", note: "Shannon entropy, mutual information, and Kullback-Leibler divergence." },
+        { nodeId: "cs.ai_ml.statistical_ml", targetLevel: "baseline", note: "Supervised and unsupervised models, loss functions, regularization, and generalization bounds." },
+        { nodeId: "cs.ai_ml.deep_learning", targetLevel: "baseline", note: "Backpropagation, transformers, attention mechanisms, and gradient dynamics." }
+      ]
+    }
+  ];
 
   function safeReadJSON(key, fallback) {
     try {
@@ -1093,20 +1272,210 @@ code.inline {
     layer2State.nodes = structuredClone(initialNavState.nodes);
   }
 
+  let storedPlaylists = safeReadJSON(STORAGE_KEYS.playlists, structuredClone(BUILTIN_PLAYLIST_PRESETS));
+  if (!Array.isArray(storedPlaylists) || storedPlaylists.length === 0) {
+    storedPlaylists = structuredClone(BUILTIN_PLAYLIST_PRESETS);
+  } else {
+    for (const preset of BUILTIN_PLAYLIST_PRESETS) {
+      if (!storedPlaylists.some(p => p.playlist_id === preset.playlist_id)) {
+        storedPlaylists.push(structuredClone(preset));
+      }
+    }
+  }
+
+  if (!layer2State.playlistState) {
+    layer2State.playlistState = {
+      activePlaylistId: "preset_theoretical_physics_gr",
+      activeStepIndex: 0,
+      showRouteOnMap: true,
+      autoAdvanceMain: true,
+      spotlightPlaylist: false,
+      spotlightIncludePrereqs: true,
+      autoExpandSpine: true
+    };
+  }
+
   let uiSettings = safeReadJSON(STORAGE_KEYS.ui, {
     layoutMode: "tree",
     learnChecklistActive: {},
     spotlightMain: false,
+    spotlightMode: "off",
     wheelMode: "scroll",
     minimapMinimized: false,
     sidePaneWidth: null
   });
+
+  if (!uiSettings.spotlightMode) {
+    uiSettings.spotlightMode = layer2State.playlistState?.spotlightPlaylist ? "playlist" : (uiSettings.spotlightMain ? "node" : "off");
+  }
+
+  let preSpotlightExpandedSnapshot = null;
 
   function persistAll() {
     safeWriteJSON(STORAGE_KEYS.patches, layer0Patches);
     safeWriteJSON(STORAGE_KEYS.overrides, layer1Overrides);
     safeWriteJSON(STORAGE_KEYS.state, layer2State);
     safeWriteJSON(STORAGE_KEYS.ui, uiSettings);
+    safeWriteJSON(STORAGE_KEYS.playlists, storedPlaylists);
+  }
+
+  function getActivePlaylist() {
+    const pId = layer2State.playlistState?.activePlaylistId;
+    if (!pId) return null;
+    return storedPlaylists.find(p => p.playlist_id === pId) || null;
+  }
+
+  function getActivePlaylistStep() {
+    const pl = getActivePlaylist();
+    if (!pl || !Array.isArray(pl.steps) || pl.steps.length === 0) return null;
+    const idx = Math.max(0, Math.min(pl.steps.length - 1, layer2State.playlistState.activeStepIndex || 0));
+    return pl.steps[idx] || null;
+  }
+
+  function setPlaylistStep(index) {
+    const pl = getActivePlaylist();
+    if (!pl || !Array.isArray(pl.steps) || pl.steps.length === 0) return;
+    const clamped = Math.max(0, Math.min(pl.steps.length - 1, index));
+    layer2State.playlistState.activeStepIndex = clamped;
+    const targetStep = pl.steps[clamped];
+    if (targetStep && targetStep.nodeId) {
+      layer2State.navigation.MAIN = targetStep.nodeId;
+      layer2State.navigation.HEAD = targetStep.nodeId;
+      layer2State.navigation.detourStack = [];
+      ensureAncestorsExpanded(targetStep.nodeId);
+      persistAll();
+      renderAll();
+      locateNode(targetStep.nodeId, 1.05);
+    } else {
+      persistAll();
+      renderAll();
+    }
+  }
+
+  function stepPlaylist(direction) {
+    const curIdx = layer2State.playlistState?.activeStepIndex || 0;
+    setPlaylistStep(curIdx + direction);
+  }
+
+  function computePlaylistSpotlightSets(playlist, graph) {
+    if (!playlist || !Array.isArray(playlist.steps)) {
+      return { stepSet: new Set(), spineSet: new Set(), prereqSet: new Set(), allSpotlightSet: new Set() };
+    }
+    const stepSet = new Set(playlist.steps.map(s => s.nodeId));
+    const spineSet = new Set();
+    for (const stepId of stepSet) {
+      for (const anc of getAncestorChain(stepId, graph.nodes)) {
+        spineSet.add(anc.id);
+      }
+    }
+    const prereqSet = new Set();
+    if (layer2State.playlistState?.spotlightIncludePrereqs) {
+      const queue = [...stepSet];
+      const visited = new Set(stepSet);
+      while (queue.length > 0) {
+        const u = queue.shift();
+        const node = graph.nodes.get(u);
+        if (!node) continue;
+        for (const pId of node.prereqIds) {
+          if (!visited.has(pId)) {
+            visited.add(pId);
+            prereqSet.add(pId);
+            queue.push(pId);
+          }
+        }
+      }
+    }
+    const allSpotlightSet = new Set([...stepSet, ...spineSet, ...prereqSet]);
+    return { stepSet, spineSet, prereqSet, allSpotlightSet };
+  }
+
+  function togglePlaylistSpotlight(forceState = null) {
+    const plState = layer2State.playlistState;
+    if (!plState) return;
+    const nextState = forceState !== null ? !!forceState : !plState.spotlightPlaylist;
+    plState.spotlightPlaylist = nextState;
+    if (nextState) {
+      uiSettings.spotlightMode = "playlist";
+      uiSettings.spotlightMain = false;
+      const pl = getActivePlaylist();
+      if (pl && plState.autoExpandSpine) {
+        preSpotlightExpandedSnapshot = new Map();
+        for (const [id, st] of Object.entries(layer2State.nodes)) {
+          preSpotlightExpandedSnapshot.set(id, !!st.expandedOnMap);
+        }
+        for (const step of pl.steps) {
+          ensureAncestorsExpanded(step.nodeId);
+        }
+      }
+      persistAll();
+      renderAll();
+      fitPlaylistNodes(450);
+      showToast("Playlist Spotlight active: Isolating course syllabus.");
+    } else {
+      uiSettings.spotlightMode = "off";
+      if (preSpotlightExpandedSnapshot) {
+        for (const [id, exp] of preSpotlightExpandedSnapshot.entries()) {
+          if (layer2State.nodes[id]) {
+            layer2State.nodes[id].expandedOnMap = exp;
+          }
+        }
+        preSpotlightExpandedSnapshot = null;
+      }
+      persistAll();
+      renderAll();
+      showToast("Playlist Spotlight turned off.");
+    }
+  }
+
+  function fitPlaylistNodes(duration = 450) {
+    const pl = getActivePlaylist();
+    if (!pl || !Array.isArray(pl.steps) || pl.steps.length === 0) return;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    let count = 0;
+    for (const step of pl.steps) {
+      const anchor = findVisibleAnchor(step.nodeId);
+      const pos = anchor.pos;
+      if (pos) {
+        minX = Math.min(minX, pos.x - 90);
+        maxX = Math.max(maxX, pos.x + 90);
+        minY = Math.min(minY, pos.y - 45);
+        maxY = Math.max(maxY, pos.y + 45);
+        count++;
+      }
+    }
+    if (count === 0) return;
+    const canvas = document.getElementById("canvasPane");
+    const w = canvas.clientWidth || 800;
+    const h = canvas.clientHeight || 600;
+    const spanX = Math.max(260, maxX - minX);
+    const spanY = Math.max(260, maxY - minY);
+    const k = Math.max(0.24, Math.min(1.2, Math.min((w - 100) / spanX, (h - 100) / spanY)));
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    animateCameraTo(cx, cy, k, duration);
+  }
+
+  function addNodeToActivePlaylist(nodeId, note = "", targetLevel = "baseline") {
+    let pl = getActivePlaylist();
+    if (!pl) {
+      if (storedPlaylists.length > 0) {
+        layer2State.playlistState.activePlaylistId = storedPlaylists[0].playlist_id;
+        pl = storedPlaylists[0];
+      } else {
+        pl = structuredClone(BUILTIN_PLAYLIST_PRESETS[0]);
+        storedPlaylists.push(pl);
+        layer2State.playlistState.activePlaylistId = pl.playlist_id;
+      }
+    }
+    if (pl.steps.some(s => s.nodeId === nodeId)) {
+      showToast(`Topic is already in active playlist: ${pl.title}`);
+      return;
+    }
+    pl.steps.push({ nodeId, targetLevel, note });
+    persistAll();
+    renderAll();
+    const node = liveGraph.nodes.get(nodeId);
+    showToast(`Added "${node ? node.title : nodeId}" as Step ${pl.steps.length} to ${pl.title}.`);
   }
 
   function cloneNode(n) {
@@ -1841,8 +2210,52 @@ code.inline {
     document.getElementById("topHeadTitle").textContent = headNode ? headNode.title : "—";
     document.getElementById("btnToggleLayout").textContent = uiSettings.layoutMode === "tree" ? "Layout: Tree" : "Layout: Radial";
 
+    const pl = getActivePlaylist();
+    const plState = layer2State.playlistState;
+    const topPlTitle = document.getElementById("topPlaylistTitle");
+    const btnPlPrev = document.getElementById("btnPlaylistPrev");
+    const btnPlNext = document.getElementById("btnPlaylistNext");
+    const btnPlSpot = document.getElementById("btnPlaylistSpotlight");
+
+    if (pl && Array.isArray(pl.steps) && pl.steps.length > 0) {
+      const stepIdx = Math.max(0, Math.min(pl.steps.length - 1, plState?.activeStepIndex || 0));
+      if (topPlTitle) {
+        topPlTitle.textContent = `${pl.title} (${stepIdx + 1}/${pl.steps.length})`;
+        topPlTitle.title = `${pl.title}: Step ${stepIdx + 1} of ${pl.steps.length}`;
+      }
+      if (btnPlPrev) btnPlPrev.disabled = stepIdx <= 0;
+      if (btnPlNext) btnPlNext.disabled = stepIdx >= pl.steps.length - 1;
+      if (btnPlSpot) {
+        if (uiSettings.spotlightMode === "playlist") {
+          btnPlSpot.classList.add("active-spotlight");
+          btnPlSpot.textContent = "Spotlight: ON";
+        } else {
+          btnPlSpot.classList.remove("active-spotlight");
+          btnPlSpot.textContent = "Spotlight";
+        }
+      }
+    } else {
+      if (topPlTitle) topPlTitle.textContent = "None";
+      if (btnPlPrev) btnPlPrev.disabled = true;
+      if (btnPlNext) btnPlNext.disabled = true;
+      if (btnPlSpot) {
+        btnPlSpot.classList.remove("active-spotlight");
+        btnPlSpot.textContent = "Spotlight";
+      }
+    }
+
     const spotHud = document.getElementById("spotlightHudBox");
-    spotHud.style.display = uiSettings.spotlightMain ? "flex" : "none";
+    if (spotHud) {
+      if (uiSettings.spotlightMode === "playlist") {
+        spotHud.style.display = "flex";
+        spotHud.textContent = `PLAYLIST SPOTLIGHT: ${pl ? pl.title : ""}`;
+      } else if (uiSettings.spotlightMode === "node") {
+        spotHud.style.display = "flex";
+        spotHud.textContent = `SPOTLIGHT: ${mainNode ? mainNode.title : ""}`;
+      } else {
+        spotHud.style.display = "none";
+      }
+    }
   }
 
   function renderFloatingDetour() {
@@ -1878,15 +2291,39 @@ code.inline {
 
   function renderSvgScene() {
     const gConduits = document.getElementById("layerConduits");
+    const gRoute = document.getElementById("layerRoute");
     const gPrereqs = document.getElementById("layerPrereqs");
     const gNodes = document.getElementById("layerNodes");
 
     gConduits.innerHTML = "";
+    if (gRoute) gRoute.innerHTML = "";
     gPrereqs.innerHTML = "";
     gNodes.innerHTML = "";
 
-    const spotlightSet = uiSettings.spotlightMain ? computeMainDependencySubgraph(liveGraph) : null;
-    const isDimmed = (id) => spotlightSet && !spotlightSet.has(id);
+    const activePl = getActivePlaylist();
+    const plSets = (uiSettings.spotlightMode === "playlist" && activePl)
+      ? computePlaylistSpotlightSets(activePl, liveGraph)
+      : null;
+    const nodeSpotlightSet = (uiSettings.spotlightMode === "node")
+      ? computeMainDependencySubgraph(liveGraph)
+      : null;
+
+    const activeStepNodeId = (activePl && Array.isArray(activePl.steps) && activePl.steps[layer2State.playlistState?.activeStepIndex]?.nodeId) || null;
+
+    function getNodeSpotlightTier(id) {
+      if (uiSettings.spotlightMode === "playlist" && plSets) {
+        if (id === activeStepNodeId) return 1; // 1. Current Active Step
+        if (plSets.stepSet.has(id)) return 2;  // 2. Remaining Playlist Steps
+        if (plSets.spineSet.has(id) || plSets.prereqSet.has(id)) return 3; // 3. Structural Spine & Off-Syllabus Prereqs
+        return 4; // 4. Non-Spotlight Universe
+      }
+      if (uiSettings.spotlightMode === "node" && nodeSpotlightSet) {
+        if (id === liveGraph.navigation.MAIN || id === liveGraph.navigation.HEAD) return 1;
+        if (nodeSpotlightSet.has(id)) return 2;
+        return 4;
+      }
+      return 1;
+    }
 
     /* 1) Hollow Progress Conduits */
     for (const vId of visibleNodeIds) {
@@ -1913,7 +2350,19 @@ code.inline {
 
       const sampled = sampleCubicBezier(uPos, p1, p2, vPos, 36);
       const fullPath = subPolylinePath(sampled, 0, 1);
-      const conduitGroup = makeSvgEl("g", { class: isDimmed(vId) ? "dimmed" : "" });
+
+      let conduitClass = "";
+      if (uiSettings.spotlightMode === "playlist" && plSets) {
+        if (!plSets.allSpotlightSet.has(vId) && !plSets.allSpotlightSet.has(v.parentId)) {
+          conduitClass = "dimmed map-faint-edge";
+        }
+      } else if (uiSettings.spotlightMode === "node" && nodeSpotlightSet) {
+        if (!nodeSpotlightSet.has(vId)) {
+          conduitClass = "dimmed map-faint-edge";
+        }
+      }
+
+      const conduitGroup = makeSvgEl("g", { class: conduitClass });
 
       // Outer wall
       conduitGroup.appendChild(makeSvgEl("path", {
@@ -1970,7 +2419,46 @@ code.inline {
       gConduits.appendChild(conduitGroup);
     }
 
-    /* 2) Prerequisite Arrows (Clean curves, no blocking directory pills) */
+    /* 2) Guided Trajectory Route Spline */
+    if (gRoute && activePl && layer2State.playlistState?.showRouteOnMap && Array.isArray(activePl.steps) && activePl.steps.length > 1) {
+      const isPlaylistSpotlight = uiSettings.spotlightMode === "playlist";
+      const splineOpacity = isPlaylistSpotlight ? 0.85 : 0.45;
+      const splineStrokeWidth = isPlaylistSpotlight ? 2.6 : 2.0;
+
+      for (let i = 0; i < activePl.steps.length - 1; i++) {
+        const uId = activePl.steps[i].nodeId;
+        const vId = activePl.steps[i + 1].nodeId;
+        const uAnchor = findVisibleAnchor(uId);
+        const vAnchor = findVisibleAnchor(vId);
+        const uPos = uAnchor.pos;
+        const vPos = vAnchor.pos;
+        if (!uPos || !vPos) continue;
+
+        const dx = vPos.x - uPos.x;
+        const dy = vPos.y - uPos.y;
+        const dist = Math.hypot(dx, dy) || 1;
+        const nx = -dy / dist;
+        const ny = dx / dist;
+
+        const curveOffset = Math.min(60, dist * 0.18) * (i % 2 === 0 ? 1 : -1);
+        const cx = (uPos.x + vPos.x) / 2 + nx * curveOffset;
+        const cy = (uPos.y + vPos.y) / 2 + ny * curveOffset;
+
+        const pathD = `M ${uPos.x.toFixed(1)} ${uPos.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${vPos.x.toFixed(1)} ${vPos.y.toFixed(1)}`;
+        const splinePath = makeSvgEl("path", {
+          class: "playlist-route-spline",
+          d: pathD,
+          fill: "none",
+          stroke: "#0969da",
+          "stroke-width": splineStrokeWidth,
+          "stroke-dasharray": "4,5",
+          opacity: splineOpacity
+        });
+        gRoute.appendChild(splinePath);
+      }
+    }
+
+    /* 3) Prerequisite Arrows (Clean curves, no blocking directory pills) */
     const targetsToDraw = [];
     if (liveGraph.navigation.MAIN !== liveGraph.navigation.HEAD) {
       targetsToDraw.push({ id: liveGraph.navigation.MAIN, dimmed: true });
@@ -2016,9 +2504,16 @@ code.inline {
         const strokeColor = dimmed ? "#8c959f" : (isDone ? "#116329" : "#a40e26");
         const markerId = dimmed ? "url(#arrow-dim)" : (isDone ? "url(#arrow-done)" : "url(#arrow-needed)");
 
+        let arrowDimClass = dimmed ? "dimmed" : "";
+        if (uiSettings.spotlightMode === "playlist" && plSets) {
+          if (!plSets.allSpotlightSet.has(pId) && !plSets.allSpotlightSet.has(targetId)) {
+            arrowDimClass = "dimmed map-faint-edge";
+          }
+        }
+
         const hitGroup = makeSvgEl("g", {
-          class: `prereq-arrow-hit ${dimmed ? "dimmed" : ""}`,
-          style: dimmed ? "opacity: 0.45;" : ""
+          class: `prereq-arrow-hit ${arrowDimClass}`,
+          style: (dimmed || arrowDimClass.includes("faint")) ? "opacity: 0.35;" : ""
         });
         const titleEl = makeSvgEl("title");
         titleEl.textContent = `Prerequisite: ${pNode.title} (${isDone ? "Completed" : "Needs Completion"}) - Click to inspect`;
@@ -2049,7 +2544,7 @@ code.inline {
       });
     }
 
-    /* 3) Topic Node Cards */
+    /* 4) Topic Node Cards */
     for (const id of visibleNodeIds) {
       const n = liveGraph.nodes.get(id);
       const pos = layoutPositions.get(id);
@@ -2057,8 +2552,17 @@ code.inline {
 
       const isMain = id === liveGraph.navigation.MAIN;
       const isHead = id === liveGraph.navigation.HEAD;
+      const tier = getNodeSpotlightTier(id);
+
+      let tierClass = "";
+      if (tier === 4) {
+        tierClass = "dimmed map-dimmed";
+      } else if (tier === 3) {
+        tierClass = "map-spine-node";
+      }
+
       const nodeG = makeSvgEl("g", {
-        class: `svg-node ${isDimmed(id) ? "dimmed" : ""}`,
+        class: `svg-node ${tierClass}`.trim(),
         transform: `translate(${pos.x.toFixed(1)}, ${pos.y.toFixed(1)})`
       });
 
@@ -2113,6 +2617,10 @@ code.inline {
         } else if (n.progress > 0) {
           fill = "#fffdf0";
           stroke = "#d4a72c";
+        }
+
+        if (tier === 3 && plSets && plSets.prereqSet.has(id) && !plSets.stepSet.has(id)) {
+          dash = "3,3";
         }
 
         if (isMain) {
@@ -2223,6 +2731,86 @@ code.inline {
             ht.textContent = "HEAD";
             nodeG.appendChild(ht);
           }
+        }
+
+        // Sequence Number Badges for Active Playlist
+        if (activePl && layer2State.playlistState?.showRouteOnMap && Array.isArray(activePl.steps)) {
+          const stepIndices = [];
+          activePl.steps.forEach((s, sIdx) => {
+            if (s.nodeId === id) stepIndices.push(sIdx);
+          });
+
+          if (stepIndices.length > 0) {
+            stepIndices.forEach((sIdx, badgeNum) => {
+              const isCurStep = sIdx === (layer2State.playlistState?.activeStepIndex || 0);
+              const isStepDone = n.isBaselineDone;
+              const badgeW = isCurStep ? 62 : 28;
+              const badgeH = 14;
+              const badgeX = -w / 2 + (isMain ? 42 : 0) + (isHead ? 42 : 0) + badgeNum * 32;
+              const badgeY = -h / 2 - 17;
+
+              const bgFill = isCurStep ? "#ddf4ff" : (isStepDone ? "#dafbe1" : "#eaeef2");
+              const bgStroke = isCurStep ? "#0969da" : (isStepDone ? "#4ac26b" : "#8c959f");
+              const textColor = isCurStep ? "#0969da" : (isStepDone ? "#116329" : "#57606a");
+              const badgeText = isCurStep ? `#${sIdx + 1} ACTIVE` : `#${sIdx + 1}`;
+
+              const badgeG = makeSvgEl("g", { class: "playlist-step-badge" });
+              badgeG.appendChild(makeSvgEl("rect", {
+                x: badgeX,
+                y: badgeY,
+                width: badgeW,
+                height: badgeH,
+                rx: 2,
+                fill: bgFill,
+                stroke: bgStroke,
+                "stroke-width": 1
+              }));
+              const bTxt = makeSvgEl("text", {
+                x: badgeX + badgeW / 2,
+                y: badgeY + 10,
+                "text-anchor": "middle",
+                "font-family": "var(--font-mono)",
+                "font-size": 8.5,
+                "font-weight": 800,
+                fill: textColor
+              });
+              bTxt.textContent = badgeText;
+              badgeG.appendChild(bTxt);
+              nodeG.appendChild(badgeG);
+            });
+          }
+        }
+
+        // Off-syllabus prereq badge in Playlist Spotlight mode
+        if (uiSettings.spotlightMode === "playlist" && plSets && plSets.prereqSet.has(id) && !plSets.stepSet.has(id)) {
+          const pBadgeW = 50;
+          const pBadgeH = 14;
+          const pBadgeX = w / 2 - pBadgeW - 4;
+          const pBadgeY = -h / 2 - 17;
+          const pG = makeSvgEl("g", { class: "prereq-badge" });
+          pG.appendChild(makeSvgEl("rect", {
+            x: pBadgeX,
+            y: pBadgeY,
+            width: pBadgeW,
+            height: pBadgeH,
+            rx: 2,
+            fill: "#f6f8fa",
+            stroke: "#8c959f",
+            "stroke-width": 1,
+            "stroke-dasharray": "2,2"
+          }));
+          const pTxt = makeSvgEl("text", {
+            x: pBadgeX + pBadgeW / 2,
+            y: pBadgeY + 10,
+            "text-anchor": "middle",
+            "font-family": "var(--font-mono)",
+            "font-size": 8.5,
+            "font-weight": 800,
+            fill: "#57606a"
+          });
+          pTxt.textContent = "PREREQ";
+          pG.appendChild(pTxt);
+          nodeG.appendChild(pG);
         }
 
         if (n.childrenIds.length > 0) {
@@ -2502,6 +3090,39 @@ code.inline {
       </div>
     `;
 
+    const activePl = getActivePlaylist();
+    const plState = layer2State.playlistState;
+    if (activePl && Array.isArray(activePl.steps)) {
+      const stepIdx = activePl.steps.findIndex(s => s.nodeId === headId);
+      if (stepIdx !== -1) {
+        const step = activePl.steps[stepIdx];
+        const isCurrentActive = stepIdx === plState.activeStepIndex;
+        const isSpotlight = uiSettings.spotlightMode === "playlist";
+        const catTag = activePl.category ? activePl.category.toUpperCase() : "COURSE TRACK";
+
+        html += `
+          <div class="box playlist-step-banner">
+            <div class="box-header">
+              <span class="box-title">ACTIVE PLAYLIST // STEP ${stepIdx + 1} OF ${activePl.steps.length}</span>
+              <div style="display:flex;gap:4px;align-items:center;">
+                <span class="tag flag-W">[${escapeHtml(catTag)}]</span>
+                <button type="button" class="btn-xs ${isSpotlight ? "active-spotlight" : ""}" id="btnSidePlaylistToggleSpotlight" title="Toggle syllabus spotlight isolation">
+                  ${isSpotlight ? "Exit Spotlight" : "Spotlight Route"}
+                </button>
+              </div>
+            </div>
+            ${step.note ? `<div style="font-size:12px;color:var(--text);margin:4px 0 8px 0;padding:6px 8px;background:var(--bg-alt);border-left:2px solid var(--accent);border-radius:2px;"><em>${escapeHtml(step.note)}</em></div>` : ""}
+            <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;">
+              <span class="tag" title="Target mastery level">Target: ${escapeHtml(step.targetLevel || "baseline")}</span>
+              ${stepIdx > 0 ? `<button type="button" class="btn-xs" id="btnSidePlaylistPrev" title="Jump to previous step">&lt; Prev Step</button>` : ""}
+              ${stepIdx < activePl.steps.length - 1 ? `<button type="button" class="btn-xs primary" id="btnSidePlaylistNext" title="Advance to next step">Advance to Step ${stepIdx + 2} -&gt;</button>` : ""}
+              ${!isCurrentActive ? `<button type="button" class="btn-xs accent-btn" id="btnSidePlaylistSetAsActive" title="Set this as current active step">Set as Active Step</button>` : `<span class="tag active">Active Step</span>`}
+            </div>
+          </div>
+        `;
+      }
+    }
+
     /* Section 1: Prerequisites */
     const allPrereqsDone = node.prereqIds.every(pId => {
       const p = liveGraph.nodes.get(pId);
@@ -2720,6 +3341,10 @@ code.inline {
             : `<button type="button" class="primary" id="btnMarkBaseline" title="Mark this topic complete to unblock downstream topics">Mark Topic Completed</button>`
           }
           <button type="button" id="btnCopyLlmSlice" title="Copy an AI prompt formatted for ChatGPT/Claude to expand this topic">Copy AI Prompt for Expanding</button>
+          ${(activePl && !activePl.steps.some(s => s.nodeId === headId) && headId !== "knowledge")
+            ? `<button type="button" class="btn-xs" id="btnSideAddToPlaylist" title="Add this topic to your active study playlist">+ Add to Active Playlist</button>`
+            : ""
+          }
         </div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">
           ${node.isBaselineDone
@@ -3093,12 +3718,57 @@ code.inline {
       });
     }
 
+    const btnSidePlSpot = document.getElementById("btnSidePlaylistToggleSpotlight");
+    if (btnSidePlSpot) {
+      btnSidePlSpot.addEventListener("click", () => togglePlaylistSpotlight());
+    }
+
+    const btnSidePlPrev = document.getElementById("btnSidePlaylistPrev");
+    if (btnSidePlPrev) {
+      btnSidePlPrev.addEventListener("click", () => stepPlaylist(-1));
+    }
+
+    const btnSidePlNext = document.getElementById("btnSidePlaylistNext");
+    if (btnSidePlNext) {
+      btnSidePlNext.addEventListener("click", () => stepPlaylist(1));
+    }
+
+    const btnSidePlSetActive = document.getElementById("btnSidePlaylistSetAsActive");
+    if (btnSidePlSetActive) {
+      btnSidePlSetActive.addEventListener("click", () => {
+        const pl = getActivePlaylist();
+        if (pl && Array.isArray(pl.steps)) {
+          const sIdx = pl.steps.findIndex(s => s.nodeId === headId);
+          if (sIdx !== -1) setPlaylistStep(sIdx);
+        }
+      });
+    }
+
+    const btnSideAddPl = document.getElementById("btnSideAddToPlaylist");
+    if (btnSideAddPl) {
+      btnSideAddPl.addEventListener("click", () => addNodeToActivePlaylist(headId));
+    }
+
     const btnBase = document.getElementById("btnMarkBaseline");
     if (btnBase) {
       btnBase.addEventListener("click", () => {
         const st = ensureNodeState(headId);
         st.baselineDone = true;
         st.introDone = true;
+
+        const activePl = getActivePlaylist();
+        const plState = layer2State.playlistState;
+        if (activePl && plState && plState.autoAdvanceMain) {
+          const curStep = activePl.steps[plState.activeStepIndex];
+          if (curStep && curStep.nodeId === headId && plState.activeStepIndex < activePl.steps.length - 1) {
+            persistAll();
+            renderAll();
+            stepPlaylist(1);
+            showToast(`Topic completed. Auto-advanced to Step ${plState.activeStepIndex + 1}: ${liveGraph.nodes.get(activePl.steps[plState.activeStepIndex].nodeId)?.title || ""}`);
+            return;
+          }
+        }
+
         persistAll();
         renderAll();
         showToast("Topic marked completed. Dependent topics unlocked.");
@@ -3301,6 +3971,584 @@ code.inline {
 
   function closeModal() {
     document.getElementById("modalBackdrop").classList.remove("open");
+  }
+
+  let playlistBuilderState = {
+    title: "",
+    category: "Specialization",
+    description: "",
+    steps: []
+  };
+
+  function openPlaylistsModal(activeTab = "library") {
+    const plState = layer2State.playlistState || {};
+    const activePlId = plState.activePlaylistId;
+
+    const libraryCardsHtml = storedPlaylists.map(p => {
+      const isCur = p.playlist_id === activePlId;
+      const totalSteps = Array.isArray(p.steps) ? p.steps.length : 0;
+      const doneSteps = Array.isArray(p.steps)
+        ? p.steps.filter(s => liveGraph.nodes.get(s.nodeId)?.isBaselineDone).length
+        : 0;
+      const pct = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
+      const isPreset = BUILTIN_PLAYLIST_PRESETS.some(b => b.playlist_id === p.playlist_id);
+
+      return `
+        <div class="playlist-card-box ${isCur ? "active" : ""}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+            <div>
+              <div style="font-weight:700;font-size:13px;display:flex;align-items:center;gap:6px;">
+                <span>${escapeHtml(p.title)}</span>
+                <span class="tag flag-W">[${escapeHtml((p.category || "Track").toUpperCase())}]</span>
+                ${isCur ? `<span class="tag active">Active</span>` : ""}
+              </div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">
+                id: <code class="inline">${escapeHtml(p.playlist_id)}</code> · ${totalSteps} Steps
+              </div>
+            </div>
+            <div style="display:flex;gap:4px;flex-shrink:0;">
+              <button type="button" class="btn-xs ${isCur ? "accent-btn" : ""}" data-pl-activate="${escapeHtml(p.playlist_id)}">
+                ${isCur ? "Activated" : "Activate"}
+              </button>
+              <button type="button" class="btn-xs head-btn" data-pl-spotlight="${escapeHtml(p.playlist_id)}" title="Activate and spotlight syllabus on map">
+                Spotlight
+              </button>
+              <button type="button" class="btn-xs" data-pl-export="${escapeHtml(p.playlist_id)}" title="Export playlist as JSON">
+                Export
+              </button>
+              ${!isPreset ? `
+                <button type="button" class="btn-xs danger-btn" data-pl-delete="${escapeHtml(p.playlist_id)}" title="Delete custom playlist">
+                  Delete
+                </button>
+              ` : ""}
+            </div>
+          </div>
+
+          ${p.description ? `<div style="font-size:11.5px;color:var(--text);margin-top:6px;line-height:1.4;">${escapeHtml(p.description)}</div>` : ""}
+
+          <div style="margin-top:8px;">
+            <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--text-muted);">
+              <span>Progress: ${doneSteps} / ${totalSteps} Steps Baseline Complete</span>
+              <span>${pct}%</span>
+            </div>
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-fill ${pct === 100 ? "done" : ""}" style="width:${pct}%;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    const candidateNodes = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== "knowledge")
+      .slice(0, 50);
+
+    const builderStepsHtml = playlistBuilderState.steps.map((st, idx) => {
+      const node = liveGraph.nodes.get(st.nodeId);
+      const title = node ? node.title : st.nodeId;
+      return `
+        <div class="list-row" style="padding:6px 8px;margin-bottom:4px;border:1px solid var(--border);border-radius:3px;">
+          <div style="display:flex;align-items:center;gap:6px;flex:1 1 200px;">
+            <span class="tag" style="font-weight:800;">#${idx + 1}</span>
+            <div style="min-width:0;">
+              <div style="font-weight:700;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(title)}</div>
+              <div style="font-family:var(--font-mono);font-size:9.5px;color:var(--text-muted);">${escapeHtml(st.nodeId)}</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex:2 1 240px;">
+            <input type="text" data-builder-step-note="${idx}" placeholder="Pedagogical focus note..." value="${escapeHtml(st.note || "")}" style="flex:1;font-size:11px;" title="Step focus note">
+            <select data-builder-step-level="${idx}" style="font-size:10.5px;padding:2px 4px;" title="Target mastery level">
+              <option value="baseline" ${st.targetLevel !== "full" ? "selected" : ""}>Baseline</option>
+              <option value="full" ${st.targetLevel === "full" ? "selected" : ""}>Full</option>
+            </select>
+          </div>
+          <div style="display:flex;gap:3px;flex-shrink:0;">
+            <button type="button" class="btn-xs" data-builder-step-up="${idx}" ${idx === 0 ? "disabled" : ""} title="Move step up">↑</button>
+            <button type="button" class="btn-xs" data-builder-step-down="${idx}" ${idx === playlistBuilderState.steps.length - 1 ? "disabled" : ""} title="Move step down">↓</button>
+            <button type="button" class="btn-xs danger-btn" data-builder-step-del="${idx}" title="Remove step">X</button>
+          </div>
+        </div>
+      `;
+    }).join("") || `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);padding:8px 0;">No steps added yet. Search topics below to add steps.</div>`;
+
+    const html = `
+      <div class="tab-bar">
+        <button type="button" class="tab-btn ${activeTab === "library" ? "active" : ""}" data-pl-tab="library">Library & Presets</button>
+        <button type="button" class="tab-btn ${activeTab === "builder" ? "active" : ""}" data-pl-tab="builder">Custom Playlist Builder</button>
+        <button type="button" class="tab-btn ${activeTab === "import" ? "active" : ""}" data-pl-tab="import">Import / AI Generator</button>
+      </div>
+
+      <div class="tab-pane ${activeTab === "library" ? "active" : ""}" id="pane_library">
+        <div class="box" style="margin-bottom:10px;background:var(--bg-alt);">
+          <div class="box-header">
+            <span class="box-title">PLAYLIST PREFERENCES & DISPLAY OPTIONS</span>
+            <span class="tag">Options</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:8px;font-size:11.5px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="chkPlRoute" ${plState.showRouteOnMap !== false ? "checked" : ""}>
+              <span>Show route overlay & badges on map</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="chkPlAutoAdvance" ${plState.autoAdvanceMain !== false ? "checked" : ""}>
+              <span>Auto-advance MAIN upon completion</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="chkPlIncludePrereqs" ${plState.spotlightIncludePrereqs !== false ? "checked" : ""}>
+              <span>Include off-syllabus prereqs in Spotlight</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="checkbox" id="chkPlAutoExpandSpine" ${plState.autoExpandSpine !== false ? "checked" : ""}>
+              <span>Auto-expand collapsed branches on Spotlight</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--text-muted);">AVAILABLE PLAYLISTS & EXAM PRESETS (${storedPlaylists.length})</span>
+          <button type="button" class="btn-xs primary" id="btnPlOpenNewBuilder">+ Create New Playlist</button>
+        </div>
+
+        <div style="max-height:420px;overflow-y:auto;padding-right:2px;">
+          ${libraryCardsHtml}
+        </div>
+      </div>
+
+      <div class="tab-pane ${activeTab === "builder" ? "active" : ""}" id="pane_builder">
+        <div class="box" style="margin-bottom:10px;">
+          <div class="box-header"><span class="box-title">PLAYLIST METADATA</span><span class="tag ready">Builder</span></div>
+          <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px;">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Playlist Title:</label>
+              <input type="text" id="inputBuilderTitle" value="${escapeHtml(playlistBuilderState.title)}" placeholder="e.g. Embedded Robotics Track" style="width:100%;">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Category:</label>
+              <select id="selectBuilderCategory" style="width:100%;">
+                <option value="Exam" ${playlistBuilderState.category === "Exam" ? "selected" : ""}>Exam</option>
+                <option value="Degree Track" ${playlistBuilderState.category === "Degree Track" ? "selected" : ""}>Degree Track</option>
+                <option value="Specialization" ${playlistBuilderState.category === "Specialization" ? "selected" : ""}>Specialization</option>
+                <option value="Book Reading" ${playlistBuilderState.category === "Book Reading" ? "selected" : ""}>Book Reading</option>
+                <option value="Custom" ${playlistBuilderState.category === "Custom" ? "selected" : ""}>Custom</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label style="display:block;font-size:11px;font-weight:600;margin-bottom:2px;">Description / Goal:</label>
+            <input type="text" id="inputBuilderDesc" value="${escapeHtml(playlistBuilderState.description)}" placeholder="Short syllabus overview..." style="width:100%;">
+          </div>
+        </div>
+
+        <div class="box" style="margin-bottom:10px;">
+          <div class="box-header">
+            <span class="box-title">ORDERED STEPS (${playlistBuilderState.steps.length})</span>
+            <span class="tag">Sequence</span>
+          </div>
+          <div class="section-hint">Drag or use arrows to order steps. The user's MAIN beacon will navigate through this exact sequence.</div>
+          <div id="builderStepsContainer" style="max-height:220px;overflow-y:auto;margin-bottom:8px;">
+            ${builderStepsHtml}
+          </div>
+
+          <div style="display:flex;gap:6px;align-items:center;border-top:1px solid var(--border);padding-top:8px;">
+            <input type="text" id="inputBuilderSearch" placeholder="Filter graph topics to add..." style="flex:1 1 120px;" title="Search topics">
+            <select id="selectBuilderCandidate" style="flex:1.5 1 180px;" title="Select topic">
+              <option value="">-- Choose Topic to Add --</option>
+              ${candidateNodes.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("")}
+            </select>
+            <button type="button" class="btn-xs primary" id="btnBuilderAddStep">+ Add Step</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <button type="button" class="btn-xs danger-btn" id="btnBuilderClear">Clear Builder</button>
+          <button type="button" class="primary" id="btnBuilderSave">Save & Activate Playlist</button>
+        </div>
+      </div>
+
+      <div class="tab-pane ${activeTab === "import" ? "active" : ""}" id="pane_import">
+        <div class="box" style="margin-bottom:10px;">
+          <div class="box-header">
+            <span class="box-title">AI PLAYLIST PROMPT GENERATOR</span>
+            <span class="tag ready">ChatGPT / Claude</span>
+          </div>
+          <div class="section-hint">Copy a tailored prompt containing all canonical topic IDs in this knowledge graph and paste it into any LLM to generate custom exams or course playlists in 1 click.</div>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+            <button type="button" class="accent-btn" id="btnCopyLlmPlaylistPrompt">Copy LLM Playlist Prompt</button>
+            <span style="font-size:11px;color:var(--text-muted);">Includes full schema and ${liveGraph.nodes.size} topic IDs.</span>
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-header">
+            <span class="box-title">IMPORT PLAYLIST JSON</span>
+            <span class="tag">JSON</span>
+          </div>
+          <div class="section-hint">Paste raw playlist JSON below or upload a .json file. Any unknown topic IDs will be automatically synthesized as placeholder stub nodes.</div>
+          <textarea id="txtImportPlaylistJson" rows="9" style="width:100%;font-family:var(--font-mono);font-size:11px;" placeholder='{\n  "playlist_id": "custom_track",\n  "title": "Quantum Information",\n  "category": "Specialization",\n  "steps": [\n    { "nodeId": "physics.quantum.nonrelativistic", "targetLevel": "baseline" }\n  ]\n}'></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+            <input type="file" id="fileImportPlaylist" accept=".json,application/json" style="font-size:11px;">
+            <button type="button" class="primary" id="btnSubmitImportPlaylist">Import & Activate</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    openModal("STUDY PLAYLISTS & EXAM TRACKS", html);
+    bindPlaylistsModalEvents();
+  }
+
+  function bindPlaylistsModalEvents() {
+    document.querySelectorAll(".modal [data-pl-tab]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.plTab;
+        document.querySelectorAll(".modal [data-pl-tab]").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".modal .tab-pane").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active");
+        const pane = document.getElementById(`pane_${tab}`);
+        if (pane) pane.classList.add("active");
+      });
+    });
+
+    const plState = layer2State.playlistState;
+    const chkRoute = document.getElementById("chkPlRoute");
+    if (chkRoute) {
+      chkRoute.addEventListener("change", () => {
+        plState.showRouteOnMap = chkRoute.checked;
+        persistAll();
+        renderAll();
+      });
+    }
+    const chkAutoAdv = document.getElementById("chkPlAutoAdvance");
+    if (chkAutoAdv) {
+      chkAutoAdv.addEventListener("change", () => {
+        plState.autoAdvanceMain = chkAutoAdv.checked;
+        persistAll();
+      });
+    }
+    const chkIncPrereq = document.getElementById("chkPlIncludePrereqs");
+    if (chkIncPrereq) {
+      chkIncPrereq.addEventListener("change", () => {
+        plState.spotlightIncludePrereqs = chkIncPrereq.checked;
+        persistAll();
+        if (uiSettings.spotlightMode === "playlist") renderAll();
+      });
+    }
+    const chkAutoExp = document.getElementById("chkPlAutoExpandSpine");
+    if (chkAutoExp) {
+      chkAutoExp.addEventListener("change", () => {
+        plState.autoExpandSpine = chkAutoExp.checked;
+        persistAll();
+      });
+    }
+
+    document.querySelectorAll("[data-pl-activate]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pId = btn.dataset.plActivate;
+        plState.activePlaylistId = pId;
+        plState.activeStepIndex = 0;
+        setPlaylistStep(0);
+        closeModal();
+        showToast(`Activated playlist: ${getActivePlaylist()?.title || pId}`);
+      });
+    });
+
+    document.querySelectorAll("[data-pl-spotlight]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pId = btn.dataset.plSpotlight;
+        plState.activePlaylistId = pId;
+        plState.activeStepIndex = 0;
+        setPlaylistStep(0);
+        togglePlaylistSpotlight(true);
+        closeModal();
+      });
+    });
+
+    document.querySelectorAll("[data-pl-export]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pId = btn.dataset.plExport;
+        const pl = storedPlaylists.find(p => p.playlist_id === pId);
+        if (pl) {
+          downloadJSONFile(`${pl.playlist_id}.json`, pl);
+          showToast(`Exported playlist: ${pl.title}`);
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-pl-delete]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const pId = btn.dataset.plDelete;
+        const pl = storedPlaylists.find(p => p.playlist_id === pId);
+        if (!confirm(`Delete playlist "${pl ? pl.title : pId}"?`)) return;
+        storedPlaylists = storedPlaylists.filter(p => p.playlist_id !== pId);
+        if (plState.activePlaylistId === pId) {
+          plState.activePlaylistId = storedPlaylists[0] ? storedPlaylists[0].playlist_id : null;
+          plState.activeStepIndex = 0;
+        }
+        persistAll();
+        openPlaylistsModal("library");
+        renderTopbar();
+        showToast("Playlist deleted.");
+      });
+    });
+
+    const btnNewBuilder = document.getElementById("btnPlOpenNewBuilder");
+    if (btnNewBuilder) {
+      btnNewBuilder.addEventListener("click", () => {
+        playlistBuilderState = {
+          title: "",
+          category: "Specialization",
+          description: "",
+          steps: []
+        };
+        openPlaylistsModal("builder");
+      });
+    }
+
+    const bTitle = document.getElementById("inputBuilderTitle");
+    if (bTitle) bTitle.addEventListener("input", () => { playlistBuilderState.title = bTitle.value; });
+    const bCat = document.getElementById("selectBuilderCategory");
+    if (bCat) bCat.addEventListener("change", () => { playlistBuilderState.category = bCat.value; });
+    const bDesc = document.getElementById("inputBuilderDesc");
+    if (bDesc) bDesc.addEventListener("input", () => { playlistBuilderState.description = bDesc.value; });
+
+    document.querySelectorAll("[data-builder-step-note]").forEach(inp => {
+      inp.addEventListener("input", () => {
+        const idx = Number(inp.dataset.builderStepNote);
+        if (playlistBuilderState.steps[idx]) playlistBuilderState.steps[idx].note = inp.value;
+      });
+    });
+
+    document.querySelectorAll("[data-builder-step-level]").forEach(sel => {
+      sel.addEventListener("change", () => {
+        const idx = Number(sel.dataset.builderStepLevel);
+        if (playlistBuilderState.steps[idx]) playlistBuilderState.steps[idx].targetLevel = sel.value;
+      });
+    });
+
+    document.querySelectorAll("[data-builder-step-up]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.builderStepUp);
+        if (idx > 0) {
+          const tmp = playlistBuilderState.steps[idx - 1];
+          playlistBuilderState.steps[idx - 1] = playlistBuilderState.steps[idx];
+          playlistBuilderState.steps[idx] = tmp;
+          openPlaylistsModal("builder");
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-builder-step-down]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.builderStepDown);
+        if (idx < playlistBuilderState.steps.length - 1) {
+          const tmp = playlistBuilderState.steps[idx + 1];
+          playlistBuilderState.steps[idx + 1] = playlistBuilderState.steps[idx];
+          playlistBuilderState.steps[idx] = tmp;
+          openPlaylistsModal("builder");
+        }
+      });
+    });
+
+    document.querySelectorAll("[data-builder-step-del]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = Number(btn.dataset.builderStepDel);
+        playlistBuilderState.steps.splice(idx, 1);
+        openPlaylistsModal("builder");
+      });
+    });
+
+    const builderSearch = document.getElementById("inputBuilderSearch");
+    if (builderSearch) {
+      builderSearch.addEventListener("input", () => {
+        const q = builderSearch.value.toLowerCase().trim();
+        const sel = document.getElementById("selectBuilderCandidate");
+        const candidates = [...liveGraph.nodes.values()]
+          .filter(n => n.id !== "knowledge")
+          .filter(n => !q || n.title.toLowerCase().includes(q) || n.id.toLowerCase().includes(q))
+          .slice(0, 50);
+        sel.innerHTML = `<option value="">-- Choose Topic to Add --</option>` +
+          candidates.map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.title)} (${escapeHtml(c.id)})</option>`).join("");
+      });
+    }
+
+    const btnAddStep = document.getElementById("btnBuilderAddStep");
+    if (btnAddStep) {
+      btnAddStep.addEventListener("click", () => {
+        const sel = document.getElementById("selectBuilderCandidate");
+        const candId = sel ? sel.value : null;
+        if (!candId) return;
+        playlistBuilderState.steps.push({
+          nodeId: candId,
+          targetLevel: "baseline",
+          note: ""
+        });
+        openPlaylistsModal("builder");
+      });
+    }
+
+    const btnClearBuilder = document.getElementById("btnBuilderClear");
+    if (btnClearBuilder) {
+      btnClearBuilder.addEventListener("click", () => {
+        playlistBuilderState = { title: "", category: "Specialization", description: "", steps: [] };
+        openPlaylistsModal("builder");
+      });
+    }
+
+    const btnSaveBuilder = document.getElementById("btnBuilderSave");
+    if (btnSaveBuilder) {
+      btnSaveBuilder.addEventListener("click", () => {
+        const title = playlistBuilderState.title.trim();
+        if (!title) {
+          alert("Please enter a title for the playlist.");
+          return;
+        }
+        if (playlistBuilderState.steps.length === 0) {
+          alert("Please add at least one step to the playlist.");
+          return;
+        }
+
+        const slug = "pl_" + title.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+        const newPl = {
+          playlist_id: slug,
+          title,
+          category: playlistBuilderState.category || "Custom",
+          description: playlistBuilderState.description || "",
+          steps: structuredClone(playlistBuilderState.steps)
+        };
+
+        const existingIdx = storedPlaylists.findIndex(p => p.playlist_id === newPl.playlist_id);
+        if (existingIdx !== -1) {
+          storedPlaylists[existingIdx] = newPl;
+        } else {
+          storedPlaylists.push(newPl);
+        }
+
+        plState.activePlaylistId = newPl.playlist_id;
+        plState.activeStepIndex = 0;
+        persistAll();
+        closeModal();
+        setPlaylistStep(0);
+        showToast(`Saved and activated playlist: ${newPl.title}`);
+      });
+    }
+
+    const btnCopyPrompt = document.getElementById("btnCopyLlmPlaylistPrompt");
+    if (btnCopyPrompt) {
+      btnCopyPrompt.addEventListener("click", () => {
+        copyLlmPlaylistPrompt();
+      });
+    }
+
+    const fileInp = document.getElementById("fileImportPlaylist");
+    if (fileInp) {
+      fileInp.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const txt = document.getElementById("txtImportPlaylistJson");
+          if (txt) txt.value = reader.result;
+        };
+        reader.readAsText(file);
+      });
+    }
+
+    const btnImport = document.getElementById("btnSubmitImportPlaylist");
+    if (btnImport) {
+      btnImport.addEventListener("click", () => {
+        const raw = document.getElementById("txtImportPlaylistJson")?.value.trim();
+        if (!raw) return;
+        try {
+          const parsed = JSON.parse(raw);
+          if (!parsed.playlist_id || !parsed.title || !Array.isArray(parsed.steps) || parsed.steps.length === 0) {
+            alert("Invalid Playlist schema: playlist_id, title, and steps array are required.");
+            return;
+          }
+
+          let stubsCreated = 0;
+          for (const st of parsed.steps) {
+            if (st.nodeId && !liveGraph.nodes.has(st.nodeId)) {
+              if (!layer1Overrides.custom_nodes.some(cn => cn.id === st.nodeId)) {
+                layer1Overrides.custom_nodes.push({
+                  id: st.nodeId,
+                  title: prettifySlug(st.nodeId),
+                  parentId: "knowledge",
+                  prereqIds: [],
+                  intro: "Placeholder stub topic auto-synthesized during playlist import.",
+                  sources: [],
+                  isStub: true,
+                  isCustom: true
+                });
+                stubsCreated++;
+              }
+            }
+          }
+
+          const existingIdx = storedPlaylists.findIndex(p => p.playlist_id === parsed.playlist_id);
+          if (existingIdx !== -1) {
+            storedPlaylists[existingIdx] = parsed;
+          } else {
+            storedPlaylists.push(parsed);
+          }
+
+          plState.activePlaylistId = parsed.playlist_id;
+          plState.activeStepIndex = 0;
+          persistAll();
+          liveGraph = buildLiveGraph();
+          computeLayout(liveGraph);
+          closeModal();
+          setPlaylistStep(0);
+          showToast(`Imported playlist: ${parsed.title}${stubsCreated > 0 ? ` (${stubsCreated} stub topics created)` : ""}`);
+        } catch (err) {
+          alert("Error parsing JSON: " + err.message);
+        }
+      });
+    }
+  }
+
+  function copyLlmPlaylistPrompt() {
+    const topicList = [...liveGraph.nodes.values()]
+      .filter(n => n.id !== "knowledge")
+      .map(n => `- ${n.id}: ${n.title}`)
+      .join("\n");
+
+    const promptText = `You are an expert curriculum designer. Construct a structured, pedagogical study playlist using ONLY the topic IDs listed below from the Polymathy reductionist knowledge graph.
+
+JSON SCHEMA REQUIREMENT:
+{
+  "playlist_id": "custom_track_identifier",
+  "title": "Title of the Course, Degree Track, or Exam Syllabus",
+  "category": "Exam" | "Degree Track" | "Specialization" | "Custom",
+  "description": "Short explanation of the trajectory and learning objectives.",
+  "steps": [
+    {
+      "nodeId": "<valid_nodeId_from_list_below>",
+      "targetLevel": "baseline" | "full",
+      "note": "Pedagogical focus for this step (e.g., focus on particular theorems or techniques)"
+    }
+  ]
+}
+
+AVAILABLE TOPIC IDS IN POLYMATHY:
+${topicList}
+
+INSTRUCTIONS:
+1. Select 6 to 20 topics from the list above in strict pedagogical dependency order.
+2. Ensure every step's "nodeId" exactly matches one of the canonical IDs above.
+3. Provide crisp pedagogical notes for each step.
+4. Respond ONLY with valid, parseable JSON conforming to the schema above (no conversational filler).`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(promptText).then(() => {
+        showToast("LLM Playlist Prompt copied to clipboard.");
+      }).catch(() => {
+        fallbackCopyText(promptText);
+        showToast("LLM Playlist Prompt copied to clipboard.");
+      });
+    } else {
+      fallbackCopyText(promptText);
+      showToast("LLM Playlist Prompt copied to clipboard.");
+    }
   }
 
   function openFrontierRadarModal() {
@@ -3852,6 +5100,14 @@ code.inline {
 
     document.getElementById("btnLocateMain").addEventListener("click", () => locateNode(liveGraph.navigation.MAIN, 0.98));
     document.getElementById("btnLocateHead").addEventListener("click", () => locateNode(liveGraph.navigation.HEAD, 0.98));
+    document.getElementById("btnPlaylistPrev").addEventListener("click", () => stepPlaylist(-1));
+    document.getElementById("btnPlaylistNext").addEventListener("click", () => stepPlaylist(1));
+    document.getElementById("btnPlaylistSpotlight").addEventListener("click", () => togglePlaylistSpotlight());
+    document.getElementById("btnPlaylistFit").addEventListener("click", () => fitPlaylistNodes(450));
+    document.getElementById("btnOpenPlaylists").addEventListener("click", () => openPlaylistsModal());
+    const btnOpenPlTop = document.getElementById("btnOpenPlaylistsTop");
+    if (btnOpenPlTop) btnOpenPlTop.addEventListener("click", () => openPlaylistsModal());
+
     document.getElementById("btnNewTopicTop").addEventListener("click", () => openNewTopicModal());
     document.getElementById("btnFloatingGetBack").addEventListener("click", popDetour);
 
@@ -3912,7 +5168,17 @@ code.inline {
       fitVisibleGraph();
     });
     document.getElementById("btnClearSpotlight").addEventListener("click", () => {
+      uiSettings.spotlightMode = "off";
       uiSettings.spotlightMain = false;
+      if (layer2State.playlistState) layer2State.playlistState.spotlightPlaylist = false;
+      if (preSpotlightExpandedSnapshot) {
+        for (const [id, exp] of preSpotlightExpandedSnapshot.entries()) {
+          if (layer2State.nodes[id]) {
+            layer2State.nodes[id].expandedOnMap = exp;
+          }
+        }
+        preSpotlightExpandedSnapshot = null;
+      }
       persistAll();
       renderAll();
     });
@@ -4011,7 +5277,7 @@ code.inline {
   });
 
   window.polymathy = {
-    state: liveGraph,
+    get state() { return liveGraph; },
     computeLayout,
     getCurriculum: () => activeCurriculumData,
     getSource: () => activeCurriculumSource,
@@ -4021,7 +5287,13 @@ code.inline {
       if (res?.data) {
         loadGraphFromJSONString(JSON.stringify(res.data), res.source);
       }
-    }
+    },
+    getPlaylists: () => storedPlaylists,
+    getActivePlaylist,
+    setPlaylistStep,
+    stepPlaylist,
+    togglePlaylistSpotlight,
+    openPlaylistsModal
   };
 })();
 </script>
