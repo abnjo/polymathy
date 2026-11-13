@@ -67,3 +67,4 @@ window.POLYMATHY_PLAYLIST_PRESETS = [
 if (typeof module !== "undefined" && module.exports) {
   module.exports = window.POLYMATHY_PLAYLIST_PRESETS;
 }
+
