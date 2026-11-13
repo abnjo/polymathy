@@ -195,4 +195,29 @@ Polymathy provides full PWA capability for standalone, offline installation on d
 - **Third-Party CDN Caching:** Dynamically caches KaTeX scripts, CSS, and mathematical fonts on first request, enabling full LaTeX formula rendering even when completely disconnected from the network.
 - **Automated Lifecycle Management:** Claims active clients on `activate` and purges obsolete cache versions automatically.
 
+---
+
+## 7. Layout Spacing Engine & Edge De-Cluttering
+
+### 7.1 Generous Tree Layout Spacing
+- Horizontal unit width: $\text{NODE\_WIDTH} = 180\text{px}$, $\text{HORIZ\_GAP} = 95\text{px} \implies \text{UNIT\_WIDTH} = 275\text{px}$ (providing 115px horizontal clearance between standard 160px topic cards).
+- Vertical level height: $\text{LEVEL\_HEIGHT} = 220\text{px}$ (providing 176px vertical clearance between 44px topic cards).
+- Bottom-up subtree width propagation: guarantees zero card overlap between adjacent sibling subtrees.
+
+### 7.2 Dynamic Radial Layout Scaling
+- Angular leaf distribution: dynamically scales the base circumference so that leaf nodes at the outer perimeter maintain at least 240px arc spacing:
+  $$\text{outerRadius} = \max\left(1200, \frac{\text{totalLeaves} \cdot 240}{2\pi}\right)$$
+- Proportional depth ring radii:
+  $$\vec{R} = [0, 0.28, 0.52, 0.76, 1.0, 1.25] \cdot \text{outerRadius}$$
+  Ring 1 circumference exceeds 2100px, ensuring domain cards at depth 1 have over 420px of radial space and eliminating all card crowding.
+
+### 7.3 Downstream Arrows & Prerequisite Badge De-Cluttering
+- **Downstream Toggle (`uiSettings.showDownstreamArrows`):** Downstream outgoing prerequisite links can be toggled on/off on demand via the canvas HUD (`[Downstream: ON/OFF]`) or the side panel Downstream Unlocks header (`[Hide on Map / Show on Map]`).
+- **Prerequisite Arrow Directory Badges:** Rendered only when the Euclidean distance satisfies $\text{dist} \ge 380\text{px}$ at spline parameter $t = 0.45$. This prevents 150-180px directory label badges from physically overlapping source or target topic cards on short prerequisite connections.
+
+### 7.4 Main Goal Spotlight Visibility
+- **Main Dashboard Access:** Toggled directly from the `MAIN:` locator chip in the topbar center (`[Spotlight]`), the canvas HUD (`[Goal Spotlight]`), or via hotkey `S`.
+- **Active Visual Feedback:** Topbar and HUD buttons glow amber/accent when active (`Spotlight: ON`), the canvas bottom HUD displays an active spotlight banner with a 1-click `[Clear]` button, and unrelated branches fade to faint watermarks while the camera centers onto the active goal.
+
+
 

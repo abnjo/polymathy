@@ -38,10 +38,12 @@ No build tools, Node.js, or `npm install` are required.
 
 | Input Method | How to Navigate |
 | :--- | :--- |
-| **Pan / Scroll Canvas** | • **Mouse wheel / Trackpad 2-finger scroll:** Natural canvas scrolling (scrolls vertically/horizontally)<br>• **Mouse drag:** Click and drag background anywhere<br>• **Touch screens:** 1-finger swipe to pan<br>• **On-screen buttons:** Click `[<]` `[^]` `[v]` `[>]` in the bottom HUD |
+| **Pan / Scroll Canvas** | • **Mouse wheel / Trackpad 2-finger scroll:** Natural canvas scrolling (scrolls vertically/horizontally)<br>• **Mouse drag:** Click and drag background anywhere<br>• **Touch screens:** 1-finger swipe to pan<br>• **On-screen buttons:** Click `[Left]` `[Up]` `[Down]` `[Right]` in the bottom HUD |
 | **Zoom In / Out** | • **Pinch gesture:** 2 fingers on touch screens or trackpads<br>• **Ctrl + Scroll / Cmd + Scroll:** Mouse wheel zoom centered on cursor<br>• **HUD Buttons:** Click `[+]` or `[-]`, or toggle `[Wheel: Scroll / Zoom]` |
-| **Fit / Center** | Click **`[Fit]`** to zoom-to-fit all visible topics |
-| **Keyboard Shortcuts** | • `M`: Smoothly glide camera to `MAIN`<br>• `H`: Smoothly glide camera to `HEAD`<br>• `Esc`: Return from detour or close active dialog |
+| **Fit / Center** | Click **`[Fit]`** in HUD to zoom-to-fit all visible topics |
+| **Main Goal Spotlight** | • Click **`[Spotlight]`** in the `MAIN:` chip on the topbar center<br>• Click **`[Goal Spotlight]`** in the canvas HUD<br>• Press key `S` on your keyboard<br>• Dims unrelated branches to spotlight the exact pathway leading to your primary goal |
+| **Toggle Downstream Arrows** | • Click **`[Downstream: ON/OFF]`** in the canvas HUD<br>• Click **`[Hide on Map / Show on Map]`** in the side panel Downstream Unlocks header<br>• Hides outgoing prerequisite arrows from the canvas for a clean view |
+| **Keyboard Shortcuts** | • `M`: Smoothly glide camera to `MAIN`<br>• `H`: Smoothly glide camera to `HEAD`<br>• `S`: Toggle Main Goal Spotlight on/off<br>• `Esc`: Return from detour or close active dialog |
 
 ---
 

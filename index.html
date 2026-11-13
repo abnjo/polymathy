@@ -191,6 +191,10 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
+  max-width: 360px;
+}
+.locator-chip.main .locator-title {
+  max-width: 140px;
 }
 .locator-chip.head {
   background: var(--head-soft);
@@ -211,6 +215,12 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   color: #ffffff !important;
   border-color: var(--accent) !important;
   font-weight: 800;
+}
+.btn-xs.active-pill {
+  background: var(--bg-alt) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  font-weight: 700;
 }
 .playlist-step-banner {
   border-left: 3px solid var(--accent);
@@ -921,6 +931,7 @@ code.inline {
     <div class="locator-chip main" title="Your main study target. Always highlighted on the map.">
       <span class="locator-label">MAIN:</span>
       <span class="locator-title" id="topMainTitle">Loading...</span>
+      <button class="btn-xs" id="btnMainSpotlight" title="Toggle Spotlight on your MAIN study goal">Spotlight</button>
       <button class="btn-xs accent-btn" id="btnLocateMain" title="Center camera on your MAIN goal (HotKey: M)">Locate</button>
     </div>
     <div class="locator-chip head" title="The topic currently open in the side panel.">
@@ -989,6 +1000,9 @@ code.inline {
         <button class="btn-xs" id="btnToggleWheelMode" title="Toggle mouse wheel behavior between Scrolling and Zooming">Wheel: Scroll</button>
         <button class="btn-xs" id="btnExpandAll" title="Expand all branches">Expand All</button>
         <button class="btn-xs" id="btnCollapseDomains" title="Collapse back to main domains">Reset Fold</button>
+        <span style="border-left:1px solid var(--border);height:14px;margin:0 2px;"></span>
+        <button class="btn-xs" id="btnHudMainSpotlight" title="Toggle Spotlight on your MAIN study goal">Goal Spotlight</button>
+        <button class="btn-xs" id="btnToggleDownstreamArrows" title="Toggle downstream outgoing prerequisite arrows on map">Downstream: ON</button>
       </div>
 
       <div class="hud-hint-pill">
@@ -1354,8 +1368,12 @@ code.inline {
     spotlightMode: "off",
     wheelMode: "scroll",
     minimapMinimized: false,
-    sidePaneWidth: null
+    sidePaneWidth: null,
+    showDownstreamArrows: true
   });
+  if (uiSettings.showDownstreamArrows === undefined) {
+    uiSettings.showDownstreamArrows = true;
+  }
 
   if (!uiSettings.spotlightMode) {
     uiSettings.spotlightMode = layer2State.playlistState?.spotlightPlaylist ? "playlist" : (uiSettings.spotlightMain ? "node" : "off");
@@ -1477,6 +1495,64 @@ code.inline {
       renderAll();
       showToast("Playlist Spotlight turned off.");
     }
+  }
+
+  function toggleMainSpotlight(forceState = null) {
+    const nextState = forceState !== null ? !!forceState : !uiSettings.spotlightMain;
+    uiSettings.spotlightMain = nextState;
+    if (nextState) {
+      uiSettings.spotlightMode = "node";
+      if (layer2State.playlistState) {
+        layer2State.playlistState.spotlightPlaylist = false;
+      }
+      const mainId = liveGraph.navigation.MAIN;
+      if (mainId) {
+        ensureAncestorsExpanded(mainId);
+        const mainNode = liveGraph.nodes.get(mainId);
+        if (mainNode && Array.isArray(mainNode.prereqIds)) {
+          mainNode.prereqIds.forEach(pId => ensureAncestorsExpanded(pId));
+        }
+      }
+      persistAll();
+      renderAll();
+      locateNode(mainId, 0.98);
+      showToast("Main Goal Spotlight active: Isolating pathway to main goal.");
+    } else {
+      uiSettings.spotlightMode = "off";
+      persistAll();
+      renderAll();
+      showToast("Main Goal Spotlight turned off.");
+    }
+  }
+
+  function toggleDownstreamArrows(forceState = null) {
+    const nextState = forceState !== null ? !!forceState : !uiSettings.showDownstreamArrows;
+    uiSettings.showDownstreamArrows = nextState;
+    persistAll();
+    renderSvgScene();
+    renderTopbar();
+    const btnSide = document.getElementById("btnToggleDownstreamSide");
+    if (btnSide) {
+      btnSide.textContent = nextState ? "Hide on Map" : "Show on Map";
+    }
+    showToast(`Downstream arrows: ${nextState ? "ON (visible on map)" : "OFF (hidden from map)"}`);
+  }
+
+  function clearSpotlightMode() {
+    uiSettings.spotlightMode = "off";
+    uiSettings.spotlightMain = false;
+    if (layer2State.playlistState) layer2State.playlistState.spotlightPlaylist = false;
+    if (preSpotlightExpandedSnapshot) {
+      for (const [id, exp] of preSpotlightExpandedSnapshot.entries()) {
+        if (layer2State.nodes[id]) {
+          layer2State.nodes[id].expandedOnMap = exp;
+        }
+      }
+      preSpotlightExpandedSnapshot = null;
+    }
+    persistAll();
+    renderAll();
+    showToast("Spotlight cleared.");
   }
 
   function fitPlaylistNodes(duration = 450) {
@@ -1968,10 +2044,10 @@ code.inline {
     const pos = new Map();
 
     if (uiSettings.layoutMode === "tree") {
-      const NODE_WIDTH = 175;
-      const HORIZ_GAP = 55;
+      const NODE_WIDTH = 180;
+      const HORIZ_GAP = 95;
       const UNIT_WIDTH = NODE_WIDTH + HORIZ_GAP;
-      const LEVEL_HEIGHT = 180;
+      const LEVEL_HEIGHT = 220;
 
       const subtreeWidths = new Map();
       function calcSubtreeWidth(id) {
@@ -2024,8 +2100,8 @@ code.inline {
       countLeaves("knowledge");
 
       const totalLeaves = leafCountMap.get("knowledge") || 1;
-      const minRadius = Math.max(300, (totalLeaves * 210) / (2 * Math.PI));
-      const ringRadii = [0, minRadius * 0.45, minRadius * 0.85, minRadius * 1.3, minRadius * 1.75, minRadius * 2.2];
+      const outerRadius = Math.max(1200, (totalLeaves * 240) / (2 * Math.PI));
+      const ringRadii = [0, outerRadius * 0.28, outerRadius * 0.52, outerRadius * 0.76, outerRadius, outerRadius * 1.25];
 
       pos.set("knowledge", { x: 0, y: 0, angle: 0, depth: 0 });
 
@@ -2040,7 +2116,7 @@ code.inline {
           const span = ((thetaEnd - thetaStart) * w) / totalW;
           const mid = curAngle + span / 2;
           const d = graph.nodes.get(cId).depth;
-          const r = ringRadii[d] || (d * 240);
+          const r = ringRadii[d] || (d * 280);
           pos.set(cId, {
             x: r * Math.cos(mid),
             y: r * Math.sin(mid),
@@ -2280,6 +2356,39 @@ code.inline {
     document.getElementById("topHeadTitle").textContent = headNode ? headNode.title : "—";
     document.getElementById("btnToggleLayout").textContent = uiSettings.layoutMode === "tree" ? "Layout: Tree" : "Layout: Radial";
 
+    const btnMainSpot = document.getElementById("btnMainSpotlight");
+    if (btnMainSpot) {
+      if (uiSettings.spotlightMain) {
+        btnMainSpot.classList.add("active-spotlight");
+        btnMainSpot.textContent = "Spotlight: ON";
+      } else {
+        btnMainSpot.classList.remove("active-spotlight");
+        btnMainSpot.textContent = "Spotlight";
+      }
+    }
+
+    const btnHudSpot = document.getElementById("btnHudMainSpotlight");
+    if (btnHudSpot) {
+      if (uiSettings.spotlightMain) {
+        btnHudSpot.classList.add("active-spotlight");
+        btnHudSpot.textContent = "Goal Spotlight: ON";
+      } else {
+        btnHudSpot.classList.remove("active-spotlight");
+        btnHudSpot.textContent = "Goal Spotlight";
+      }
+    }
+
+    const btnToggleDown = document.getElementById("btnToggleDownstreamArrows");
+    if (btnToggleDown) {
+      const isDownOn = uiSettings.showDownstreamArrows !== false;
+      btnToggleDown.textContent = `Downstream: ${isDownOn ? "ON" : "OFF"}`;
+      if (isDownOn) {
+        btnToggleDown.classList.add("active-pill");
+      } else {
+        btnToggleDown.classList.remove("active-pill");
+      }
+    }
+
     const pl = getActivePlaylist();
     const plState = layer2State.playlistState;
     const topPlTitle = document.getElementById("topPlaylistTitle");
@@ -2318,10 +2427,14 @@ code.inline {
     if (spotHud) {
       if (uiSettings.spotlightMode === "playlist") {
         spotHud.style.display = "flex";
-        spotHud.textContent = `PLAYLIST SPOTLIGHT: ${pl ? pl.title : ""}`;
-      } else if (uiSettings.spotlightMode === "node") {
+        spotHud.innerHTML = `<span>PLAYLIST SPOTLIGHT: ${escapeHtml(pl ? pl.title : "")}</span> <button class="btn-xs accent-btn" id="btnClearSpotlight">Clear</button>`;
+        const btnClr = document.getElementById("btnClearSpotlight");
+        if (btnClr) btnClr.addEventListener("click", clearSpotlightMode);
+      } else if (uiSettings.spotlightMode === "node" || uiSettings.spotlightMain) {
         spotHud.style.display = "flex";
-        spotHud.textContent = `SPOTLIGHT: ${mainNode ? mainNode.title : ""}`;
+        spotHud.innerHTML = `<span>MAIN GOAL SPOTLIGHT: ${escapeHtml(mainNode ? mainNode.title : "")}</span> <button class="btn-xs accent-btn" id="btnClearSpotlight">Clear</button>`;
+        const btnClr = document.getElementById("btnClearSpotlight");
+        if (btnClr) btnClr.addEventListener("click", clearSpotlightMode);
       } else {
         spotHud.style.display = "none";
       }
@@ -2543,7 +2656,7 @@ code.inline {
     }
 
     // Outgoing prerequisites from HEAD (downstream unlocks)
-    if (headNode && Array.isArray(headNode.dependentsIds)) {
+    if (uiSettings.showDownstreamArrows !== false && headNode && Array.isArray(headNode.dependentsIds)) {
       headNode.dependentsIds.forEach(dId => {
         edgesToDraw.push({ sourceId: headId, targetId: dId, role: "outgoing", dimmed: false });
       });
@@ -2635,8 +2748,8 @@ code.inline {
       gPrereqs.appendChild(hitGroup);
 
       // Directory Badge along the arrow curve so destination is visible at a glance
-      if (dist >= 70) {
-        const labelT = role === "outgoing" ? 0.35 : 0.65;
+      if (dist >= 380) {
+        const labelT = 0.45;
         const lx = (1 - labelT) * (1 - labelT) * sPos.x + 2 * (1 - labelT) * labelT * cx + labelT * labelT * ex;
         const ly = (1 - labelT) * (1 - labelT) * sPos.y + 2 * (1 - labelT) * labelT * cy + labelT * labelT * ey;
 
@@ -3358,7 +3471,10 @@ code.inline {
       <div class="box">
         <div class="box-header">
           <span class="box-title">Downstream Unlocks (Outgoing Prerequisites)</span>
-          <span class="tag">${node.dependentsIds.length} Topic${node.dependentsIds.length === 1 ? "" : "s"}</span>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <button type="button" class="btn-xs" id="btnToggleDownstreamSide" title="Toggle downstream outgoing prerequisite arrows on map">${uiSettings.showDownstreamArrows === false ? "Show on Map" : "Hide on Map"}</button>
+            <span class="tag">${node.dependentsIds.length} Topic${node.dependentsIds.length === 1 ? "" : "s"}</span>
+          </div>
         </div>
         <div class="section-hint">Topics that depend on mastering this concept first. Outgoing arrows on the canvas lead directly to these directories.</div>
         <div class="item-list">${depRows}</div>
@@ -3601,6 +3717,13 @@ code.inline {
 
     const btnSetMain = document.getElementById("btnSetAsMain");
     if (btnSetMain) btnSetMain.addEventListener("click", setHeadAsMain);
+
+    const btnToggleDownSide = document.getElementById("btnToggleDownstreamSide");
+    if (btnToggleDownSide) {
+      btnToggleDownSide.addEventListener("click", () => {
+        toggleDownstreamArrows();
+      });
+    }
 
     const btnEdit = document.getElementById("btnToggleEditTopic");
     if (btnEdit) {
@@ -4815,9 +4938,7 @@ INSTRUCTIONS:
     `);
 
     document.getElementById("btnToggleSpotlightModal").addEventListener("click", () => {
-      uiSettings.spotlightMain = !uiSettings.spotlightMain;
-      persistAll();
-      renderAll();
+      toggleMainSpotlight();
       closeModal();
     });
     document.querySelectorAll("[data-radar-jump]").forEach(btn => {
@@ -5139,6 +5260,8 @@ INSTRUCTIONS:
               <tr><td><strong>Pan / Scroll Canvas</strong></td><td>Mouse drag on background | 2-finger swipe on trackpad | 1-finger swipe on touch screens | On-screen navigation buttons</td></tr>
               <tr><td><strong>Zoom In / Out</strong></td><td>Mouse wheel (or Ctrl+Scroll) | Pinch gesture with 2 fingers on touch screens / trackpads | HUD [-][+] buttons</td></tr>
               <tr><td><strong>Jump to Main Goal</strong></td><td>Press key <code class="inline">M</code> or click <strong>[Locate]</strong> in topbar</td></tr>
+              <tr><td><strong>Toggle Main Goal Spotlight</strong></td><td>Press key <code class="inline">S</code> or click <strong>[Spotlight]</strong> in topbar / <strong>[Goal Spotlight]</strong> in HUD</td></tr>
+              <tr><td><strong>Toggle Downstream Arrows</strong></td><td>Click <strong>[Downstream: ON/OFF]</strong> in canvas HUD or <strong>[Hide on Map]</strong> in side panel</td></tr>
               <tr><td><strong>Jump to Inspected Topic</strong></td><td>Press key <code class="inline">H</code> or click <strong>[Locate]</strong> in topbar</td></tr>
               <tr><td><strong>Return from Detour / Close Modal</strong></td><td>Press key <code class="inline">Esc</code> or click <strong>[Back]</strong></td></tr>
             </tbody>
@@ -5321,6 +5444,16 @@ INSTRUCTIONS:
 
     document.getElementById("btnLocateMain").addEventListener("click", () => locateNode(liveGraph.navigation.MAIN, 0.98));
     document.getElementById("btnLocateHead").addEventListener("click", () => locateNode(liveGraph.navigation.HEAD, 0.98));
+
+    const btnMainSpot = document.getElementById("btnMainSpotlight");
+    if (btnMainSpot) btnMainSpot.addEventListener("click", () => toggleMainSpotlight());
+
+    const btnHudSpot = document.getElementById("btnHudMainSpotlight");
+    if (btnHudSpot) btnHudSpot.addEventListener("click", () => toggleMainSpotlight());
+
+    const btnToggleDown = document.getElementById("btnToggleDownstreamArrows");
+    if (btnToggleDown) btnToggleDown.addEventListener("click", () => toggleDownstreamArrows());
+
     document.getElementById("btnPlaylistPrev").addEventListener("click", () => stepPlaylist(-1));
     document.getElementById("btnPlaylistNext").addEventListener("click", () => stepPlaylist(1));
     document.getElementById("btnPlaylistSpotlight").addEventListener("click", () => togglePlaylistSpotlight());
@@ -5388,21 +5521,8 @@ INSTRUCTIONS:
       renderAll();
       fitVisibleGraph();
     });
-    document.getElementById("btnClearSpotlight").addEventListener("click", () => {
-      uiSettings.spotlightMode = "off";
-      uiSettings.spotlightMain = false;
-      if (layer2State.playlistState) layer2State.playlistState.spotlightPlaylist = false;
-      if (preSpotlightExpandedSnapshot) {
-        for (const [id, exp] of preSpotlightExpandedSnapshot.entries()) {
-          if (layer2State.nodes[id]) {
-            layer2State.nodes[id].expandedOnMap = exp;
-          }
-        }
-        preSpotlightExpandedSnapshot = null;
-      }
-      persistAll();
-      renderAll();
-    });
+    const btnClrSpot = document.getElementById("btnClearSpotlight");
+    if (btnClrSpot) btnClrSpot.addEventListener("click", clearSpotlightMode);
 
     const inputLoadGraphFile = document.getElementById("inputLoadGraphFile");
     if (inputLoadGraphFile) {
@@ -5439,6 +5559,7 @@ INSTRUCTIONS:
       if (inInput) return;
       if (e.key === "m" || e.key === "M") locateNode(liveGraph.navigation.MAIN, 0.98);
       if (e.key === "h" || e.key === "H") locateNode(liveGraph.navigation.HEAD, 0.98);
+      if (e.key === "s" || e.key === "S") toggleMainSpotlight();
     });
 
     window.addEventListener("resize", applyWorldTransform);
