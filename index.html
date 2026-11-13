@@ -191,7 +191,7 @@ textarea { font-family: var(--font-sans); resize: vertical; }
   background: var(--accent-soft);
   border-color: var(--accent);
   color: var(--accent);
-  max-width: 360px;
+  max-width: 480px;
 }
 .locator-chip.main .locator-title {
   max-width: 140px;
@@ -932,6 +932,7 @@ code.inline {
       <span class="locator-label">MAIN:</span>
       <span class="locator-title" id="topMainTitle">Loading...</span>
       <button class="btn-xs" id="btnMainSpotlight" title="Toggle Spotlight on your MAIN study goal">Spotlight</button>
+      <button class="btn-xs" id="btnGoalSpotlightTypeTop" title="Switch Goal Spotlight Mode: Hybrid | Hierarchy | Prerequisites" style="display:none;">Mode: Hybrid</button>
       <button class="btn-xs accent-btn" id="btnLocateMain" title="Center camera on your MAIN goal (HotKey: M)">Locate</button>
     </div>
     <div class="locator-chip head" title="The topic currently open in the side panel.">
@@ -1002,6 +1003,7 @@ code.inline {
         <button class="btn-xs" id="btnCollapseDomains" title="Collapse back to main domains">Reset Fold</button>
         <span style="border-left:1px solid var(--border);height:14px;margin:0 2px;"></span>
         <button class="btn-xs" id="btnHudMainSpotlight" title="Toggle Spotlight on your MAIN study goal">Goal Spotlight</button>
+        <button class="btn-xs" id="btnHudGoalSpotlightMode" title="Cycle Goal Spotlight Mode: Hybrid | Hierarchy | Prerequisites" style="display:none;">Mode: Hybrid</button>
         <button class="btn-xs" id="btnToggleDownstreamArrows" title="Toggle downstream outgoing prerequisite arrows on map">Downstream: ON</button>
       </div>
 
@@ -1366,6 +1368,7 @@ code.inline {
     learnChecklistActive: {},
     spotlightMain: false,
     spotlightMode: "off",
+    goalSpotlightType: "hybrid",
     wheelMode: "scroll",
     minimapMinimized: false,
     sidePaneWidth: null,
@@ -1373,6 +1376,9 @@ code.inline {
   });
   if (uiSettings.showDownstreamArrows === undefined) {
     uiSettings.showDownstreamArrows = true;
+  }
+  if (!uiSettings.goalSpotlightType) {
+    uiSettings.goalSpotlightType = "hybrid";
   }
 
   if (!uiSettings.spotlightMode) {
@@ -1497,7 +1503,10 @@ code.inline {
     }
   }
 
-  function toggleMainSpotlight(forceState = null) {
+  function toggleMainSpotlight(forceState = null, specificType = null) {
+    if (specificType) {
+      uiSettings.goalSpotlightType = specificType;
+    }
     const nextState = forceState !== null ? !!forceState : !uiSettings.spotlightMain;
     uiSettings.spotlightMain = nextState;
     if (nextState) {
@@ -1505,24 +1514,49 @@ code.inline {
       if (layer2State.playlistState) {
         layer2State.playlistState.spotlightPlaylist = false;
       }
-      const mainId = liveGraph.navigation.MAIN;
-      if (mainId) {
-        ensureAncestorsExpanded(mainId);
-        const mainNode = liveGraph.nodes.get(mainId);
-        if (mainNode && Array.isArray(mainNode.prereqIds)) {
-          mainNode.prereqIds.forEach(pId => ensureAncestorsExpanded(pId));
-        }
-      }
       persistAll();
       renderAll();
-      locateNode(mainId, 0.98);
-      showToast("Main Goal Spotlight active: Isolating pathway to main goal.");
+      fitVisibleGraph();
+      const typeLabel = uiSettings.goalSpotlightType === "hierarchy" ? "Hierarchy (Strict Tree)" : (uiSettings.goalSpotlightType === "prereq" ? "Prerequisites (Dependency DAG)" : "Hybrid (Spine + Prereqs)");
+      showToast(`Goal Spotlight [${typeLabel}] active.`);
     } else {
       uiSettings.spotlightMode = "off";
       persistAll();
       renderAll();
+      fitVisibleGraph();
       showToast("Main Goal Spotlight turned off.");
     }
+  }
+
+  function cycleGoalSpotlightType() {
+    const modes = ["hybrid", "hierarchy", "prereq"];
+    const curIdx = modes.indexOf(uiSettings.goalSpotlightType || "hybrid");
+    const nextMode = modes[(curIdx + 1) % modes.length];
+    uiSettings.goalSpotlightType = nextMode;
+    if (!uiSettings.spotlightMain) {
+      uiSettings.spotlightMain = true;
+      uiSettings.spotlightMode = "node";
+      if (layer2State.playlistState) layer2State.playlistState.spotlightPlaylist = false;
+    }
+    persistAll();
+    renderAll();
+    fitVisibleGraph();
+    const typeLabel = nextMode === "hierarchy" ? "Hierarchy (Strict Tree)" : (nextMode === "prereq" ? "Prerequisites (Dependency DAG)" : "Hybrid (Spine + Prereqs)");
+    showToast(`Spotlight Mode: ${typeLabel}`);
+  }
+
+  function setGoalSpotlightType(type) {
+    uiSettings.goalSpotlightType = type;
+    if (!uiSettings.spotlightMain) {
+      uiSettings.spotlightMain = true;
+      uiSettings.spotlightMode = "node";
+      if (layer2State.playlistState) layer2State.playlistState.spotlightPlaylist = false;
+    }
+    persistAll();
+    renderAll();
+    fitVisibleGraph();
+    const typeLabel = type === "hierarchy" ? "Hierarchy (Strict Tree)" : (type === "prereq" ? "Prerequisites (Dependency DAG)" : "Hybrid (Spine + Prereqs)");
+    showToast(`Spotlight Mode: ${typeLabel}`);
   }
 
   function toggleDownstreamArrows(forceState = null) {
@@ -2023,7 +2057,55 @@ code.inline {
   let layoutPositions = new Map();
   let visibleNodeIds = new Set();
 
+  function computeGoalSpotlightSets(mainId, graph) {
+    const hierarchySet = new Set(["knowledge"]);
+    for (const anc of getAncestorChain(mainId, graph.nodes)) hierarchySet.add(anc.id);
+    hierarchySet.add(mainId);
+
+    const mainNode = graph.nodes.get(mainId);
+    if (mainNode && mainNode.state?.expandedOnMap && Array.isArray(mainNode.childrenIds)) {
+      for (const cId of mainNode.childrenIds) hierarchySet.add(cId);
+    }
+
+    const prereqOnlySet = new Set();
+    const queue = [mainId];
+    while (queue.length > 0) {
+      const cur = queue.shift();
+      const node = graph.nodes.get(cur);
+      if (!node) continue;
+      for (const pId of node.prereqIds) {
+        if (!prereqOnlySet.has(pId)) {
+          prereqOnlySet.add(pId);
+          queue.push(pId);
+        }
+      }
+    }
+
+    const prereqSpineSet = new Set(["knowledge", mainId]);
+    for (const pId of prereqOnlySet) {
+      prereqSpineSet.add(pId);
+      for (const anc of getAncestorChain(pId, graph.nodes)) prereqSpineSet.add(anc.id);
+    }
+
+    const hybridSet = new Set([...hierarchySet, ...prereqSpineSet]);
+    return { hierarchySet, prereqOnlySet, prereqSpineSet, hybridSet };
+  }
+
   function computeVisibleSet(graph) {
+    if (uiSettings.spotlightMain && uiSettings.spotlightMode === "node") {
+      const mainId = graph.navigation.MAIN;
+      if (mainId && graph.nodes.has(mainId)) {
+        const goalSets = computeGoalSpotlightSets(mainId, graph);
+        if (uiSettings.goalSpotlightType === "hierarchy") {
+          return new Set(goalSets.hierarchySet);
+        } else if (uiSettings.goalSpotlightType === "prereq") {
+          return new Set(goalSets.prereqSpineSet);
+        } else {
+          return new Set(goalSets.hybridSet);
+        }
+      }
+    }
+
     const vis = new Set(["knowledge"]);
     function walk(id) {
       const n = graph.nodes.get(id);
@@ -2367,6 +2449,20 @@ code.inline {
       }
     }
 
+    const goalType = uiSettings.goalSpotlightType || "hybrid";
+    const goalTypeShort = goalType === "hierarchy" ? "Hierarchy" : (goalType === "prereq" ? "Prereqs" : "Hybrid");
+
+    const btnGoalTypeTop = document.getElementById("btnGoalSpotlightTypeTop");
+    if (btnGoalTypeTop) {
+      if (uiSettings.spotlightMain) {
+        btnGoalTypeTop.style.display = "inline-flex";
+        btnGoalTypeTop.textContent = `Mode: ${goalTypeShort}`;
+        btnGoalTypeTop.title = `Current spotlight mode: ${goalTypeShort}. Click to switch (Hybrid -> Hierarchy -> Prerequisites).`;
+      } else {
+        btnGoalTypeTop.style.display = "none";
+      }
+    }
+
     const btnHudSpot = document.getElementById("btnHudMainSpotlight");
     if (btnHudSpot) {
       if (uiSettings.spotlightMain) {
@@ -2375,6 +2471,17 @@ code.inline {
       } else {
         btnHudSpot.classList.remove("active-spotlight");
         btnHudSpot.textContent = "Goal Spotlight";
+      }
+    }
+
+    const btnHudGoalMode = document.getElementById("btnHudGoalSpotlightMode");
+    if (btnHudGoalMode) {
+      if (uiSettings.spotlightMain) {
+        btnHudGoalMode.style.display = "inline-flex";
+        btnHudGoalMode.textContent = `Mode: ${goalTypeShort}`;
+        btnHudGoalMode.title = `Current spotlight mode: ${goalTypeShort}. Click to switch (Hybrid -> Hierarchy -> Prerequisites).`;
+      } else {
+        btnHudGoalMode.style.display = "none";
       }
     }
 
@@ -2432,9 +2539,11 @@ code.inline {
         if (btnClr) btnClr.addEventListener("click", clearSpotlightMode);
       } else if (uiSettings.spotlightMode === "node" || uiSettings.spotlightMain) {
         spotHud.style.display = "flex";
-        spotHud.innerHTML = `<span>MAIN GOAL SPOTLIGHT: ${escapeHtml(mainNode ? mainNode.title : "")}</span> <button class="btn-xs accent-btn" id="btnClearSpotlight">Clear</button>`;
+        spotHud.innerHTML = `<span>GOAL SPOTLIGHT [${goalTypeShort.toUpperCase()}]: ${escapeHtml(mainNode ? mainNode.title : "")}</span> <button class="btn-xs" id="btnBannerCycleMode" title="Cycle mode: Hybrid | Hierarchy | Prerequisites">Mode: ${goalTypeShort}</button> <button class="btn-xs accent-btn" id="btnClearSpotlight">Exit</button>`;
         const btnClr = document.getElementById("btnClearSpotlight");
         if (btnClr) btnClr.addEventListener("click", clearSpotlightMode);
+        const btnCycle = document.getElementById("btnBannerCycleMode");
+        if (btnCycle) btnCycle.addEventListener("click", cycleGoalSpotlightType);
       } else {
         spotHud.style.display = "none";
       }
@@ -2651,22 +2760,42 @@ code.inline {
     // Incoming prerequisites to HEAD
     if (headNode && Array.isArray(headNode.prereqIds)) {
       headNode.prereqIds.forEach(pId => {
-        edgesToDraw.push({ sourceId: pId, targetId: headId, role: "incoming", dimmed: false });
+        if (!uiSettings.spotlightMain || uiSettings.goalSpotlightType !== "hierarchy" || visibleNodeIds.has(pId)) {
+          edgesToDraw.push({ sourceId: pId, targetId: headId, role: "incoming", dimmed: false });
+        }
       });
     }
 
     // Outgoing prerequisites from HEAD (downstream unlocks)
     if (uiSettings.showDownstreamArrows !== false && headNode && Array.isArray(headNode.dependentsIds)) {
       headNode.dependentsIds.forEach(dId => {
-        edgesToDraw.push({ sourceId: headId, targetId: dId, role: "outgoing", dimmed: false });
+        if (!uiSettings.spotlightMain || uiSettings.goalSpotlightType !== "hierarchy" || visibleNodeIds.has(dId)) {
+          edgesToDraw.push({ sourceId: headId, targetId: dId, role: "outgoing", dimmed: false });
+        }
       });
     }
 
     // Prerequisites of MAIN (if MAIN is different from HEAD)
     if (mainId && mainId !== headId && mainNode && Array.isArray(mainNode.prereqIds)) {
       mainNode.prereqIds.forEach(pId => {
-        edgesToDraw.push({ sourceId: pId, targetId: mainId, role: "incoming", dimmed: true });
+        if (!uiSettings.spotlightMain || uiSettings.goalSpotlightType !== "hierarchy" || visibleNodeIds.has(pId)) {
+          edgesToDraw.push({ sourceId: pId, targetId: mainId, role: "incoming", dimmed: true });
+        }
       });
+    }
+
+    // Interconnecting prerequisites between visible nodes in spotlight mode
+    if (uiSettings.spotlightMain && (uiSettings.goalSpotlightType === "prereq" || uiSettings.goalSpotlightType === "hybrid")) {
+      for (const tId of visibleNodeIds) {
+        const tNode = liveGraph.nodes.get(tId);
+        if (tNode && Array.isArray(tNode.prereqIds)) {
+          for (const pId of tNode.prereqIds) {
+            if (visibleNodeIds.has(pId)) {
+              edgesToDraw.push({ sourceId: pId, targetId: tId, role: "incoming", dimmed: false });
+            }
+          }
+        }
+      }
     }
 
     const seenPairs = new Set();
@@ -4914,7 +5043,12 @@ INSTRUCTIONS:
           <span class="box-title">MAIN GOAL SPOTLIGHT</span>
           <span class="tag ${uiSettings.spotlightMain ? "edited" : ""}">${uiSettings.spotlightMain ? "Spotlight Active" : "Off"}</span>
         </div>
-        <div class="section-hint">Dim unrelated branches on the map to spotlight only the pathway leading into your main study goal: <strong>${escapeHtml(liveGraph.nodes.get(liveGraph.navigation.MAIN)?.title || "")}</strong>.</div>
+        <div class="section-hint">Isolate the exact pathway and tree leading into your main study goal: <strong>${escapeHtml(liveGraph.nodes.get(liveGraph.navigation.MAIN)?.title || "")}</strong>.</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:8px 0;">
+          <button type="button" class="btn-xs ${uiSettings.spotlightMain && (uiSettings.goalSpotlightType === 'hybrid' || !uiSettings.goalSpotlightType) ? 'active-spotlight' : ''}" id="btnRadarModeHybrid" title="Show category containment spine plus all required prerequisites">Hybrid (Spine + Prereqs)</button>
+          <button type="button" class="btn-xs ${uiSettings.spotlightMain && uiSettings.goalSpotlightType === 'hierarchy' ? 'active-spotlight' : ''}" id="btnRadarModeHierarchy" title="Show strictly the exact category containment branch from Knowledge down to the goal">Hierarchy (Strict Tree)</button>
+          <button type="button" class="btn-xs ${uiSettings.spotlightMain && uiSettings.goalSpotlightType === 'prereq' ? 'active-spotlight' : ''}" id="btnRadarModePrereq" title="Show only the prerequisite dependency graph">Prerequisites (Dependency DAG)</button>
+        </div>
         <button type="button" class="accent-btn" id="btnToggleSpotlightModal">${uiSettings.spotlightMain ? "Turn Off Spotlight" : "Spotlight Main Goal Path"}</button>
       </div>
 
@@ -4941,6 +5075,12 @@ INSTRUCTIONS:
       toggleMainSpotlight();
       closeModal();
     });
+    const btnRadHyb = document.getElementById("btnRadarModeHybrid");
+    if (btnRadHyb) btnRadHyb.addEventListener("click", () => { setGoalSpotlightType("hybrid"); closeModal(); });
+    const btnRadHie = document.getElementById("btnRadarModeHierarchy");
+    if (btnRadHie) btnRadHie.addEventListener("click", () => { setGoalSpotlightType("hierarchy"); closeModal(); });
+    const btnRadPre = document.getElementById("btnRadarModePrereq");
+    if (btnRadPre) btnRadPre.addEventListener("click", () => { setGoalSpotlightType("prereq"); closeModal(); });
     document.querySelectorAll("[data-radar-jump]").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = btn.dataset.radarJump;
@@ -5261,6 +5401,7 @@ INSTRUCTIONS:
               <tr><td><strong>Zoom In / Out</strong></td><td>Mouse wheel (or Ctrl+Scroll) | Pinch gesture with 2 fingers on touch screens / trackpads | HUD [-][+] buttons</td></tr>
               <tr><td><strong>Jump to Main Goal</strong></td><td>Press key <code class="inline">M</code> or click <strong>[Locate]</strong> in topbar</td></tr>
               <tr><td><strong>Toggle Main Goal Spotlight</strong></td><td>Press key <code class="inline">S</code> or click <strong>[Spotlight]</strong> in topbar / <strong>[Goal Spotlight]</strong> in HUD</td></tr>
+              <tr><td><strong>Cycle Spotlight Mode</strong></td><td>Press key <code class="inline">Shift + S</code> or click <strong>[Mode: ...]</strong> button (cycles Hybrid | Hierarchy | Prerequisites)</td></tr>
               <tr><td><strong>Toggle Downstream Arrows</strong></td><td>Click <strong>[Downstream: ON/OFF]</strong> in canvas HUD or <strong>[Hide on Map]</strong> in side panel</td></tr>
               <tr><td><strong>Jump to Inspected Topic</strong></td><td>Press key <code class="inline">H</code> or click <strong>[Locate]</strong> in topbar</td></tr>
               <tr><td><strong>Return from Detour / Close Modal</strong></td><td>Press key <code class="inline">Esc</code> or click <strong>[Back]</strong></td></tr>
@@ -5448,8 +5589,14 @@ INSTRUCTIONS:
     const btnMainSpot = document.getElementById("btnMainSpotlight");
     if (btnMainSpot) btnMainSpot.addEventListener("click", () => toggleMainSpotlight());
 
+    const btnTopGoalMode = document.getElementById("btnGoalSpotlightTypeTop");
+    if (btnTopGoalMode) btnTopGoalMode.addEventListener("click", () => cycleGoalSpotlightType());
+
     const btnHudSpot = document.getElementById("btnHudMainSpotlight");
     if (btnHudSpot) btnHudSpot.addEventListener("click", () => toggleMainSpotlight());
+
+    const btnHudGoalMode = document.getElementById("btnHudGoalSpotlightMode");
+    if (btnHudGoalMode) btnHudGoalMode.addEventListener("click", () => cycleGoalSpotlightType());
 
     const btnToggleDown = document.getElementById("btnToggleDownstreamArrows");
     if (btnToggleDown) btnToggleDown.addEventListener("click", () => toggleDownstreamArrows());
@@ -5559,7 +5706,13 @@ INSTRUCTIONS:
       if (inInput) return;
       if (e.key === "m" || e.key === "M") locateNode(liveGraph.navigation.MAIN, 0.98);
       if (e.key === "h" || e.key === "H") locateNode(liveGraph.navigation.HEAD, 0.98);
-      if (e.key === "s" || e.key === "S") toggleMainSpotlight();
+      if (e.key === "s" || e.key === "S") {
+        if (e.shiftKey) {
+          cycleGoalSpotlightType();
+        } else {
+          toggleMainSpotlight();
+        }
+      }
     });
 
     window.addEventListener("resize", applyWorldTransform);

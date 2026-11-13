@@ -215,9 +215,15 @@ Polymathy provides full PWA capability for standalone, offline installation on d
 - **Downstream Toggle (`uiSettings.showDownstreamArrows`):** Downstream outgoing prerequisite links can be toggled on/off on demand via the canvas HUD (`[Downstream: ON/OFF]`) or the side panel Downstream Unlocks header (`[Hide on Map / Show on Map]`).
 - **Prerequisite Arrow Directory Badges:** Rendered only when the Euclidean distance satisfies $\text{dist} \ge 380\text{px}$ at spline parameter $t = 0.45$. This prevents 150-180px directory label badges from physically overlapping source or target topic cards on short prerequisite connections.
 
-### 7.4 Main Goal Spotlight Visibility
+### 7.4 Main Goal Spotlight: Dual Mode & Hybrid Mode System
+
 - **Main Dashboard Access:** Toggled directly from the `MAIN:` locator chip in the topbar center (`[Spotlight]`), the canvas HUD (`[Goal Spotlight]`), or via hotkey `S`.
-- **Active Visual Feedback:** Topbar and HUD buttons glow amber/accent when active (`Spotlight: ON`), the canvas bottom HUD displays an active spotlight banner with a 1-click `[Clear]` button, and unrelated branches fade to faint watermarks while the camera centers onto the active goal.
+- **Tri-Mode Selection (Dual Mode + Hybrid Mode):**
+  1. **Hierarchy Mode (`uiSettings.goalSpotlightType = "hierarchy"`):** Isolates strictly the direct category containment tree lineage from `Knowledge` down to the active `MAIN` goal ($\text{Knowledge} \to \text{Domain} \to \text{Subdomain} \to \text{Goal}$). All unrelated domains, non-ancestor branches, and cross-domain prerequisites are completely pruned and hidden from the layout engine, resulting in an exact, clean vertical hierarchy.
+  2. **Prerequisites Mode (`uiSettings.goalSpotlightType = "prereq"`):** Isolates strictly the prerequisite dependency DAG leading into `MAIN`. Draws all intermediate prerequisite arrows connecting earlier foundation concepts to later ones, while completely hiding unrelated domains and non-prerequisite siblings.
+  3. **Hybrid Mode (`uiSettings.goalSpotlightType = "hybrid"`):** Combines the exact category containment spine of `MAIN` with all required prerequisite paths and full interconnecting arrows, cleanly pruning out all irrelevant sibling cards and unrelated domains from the layout.
+- **Interactive Switching:** Click the `[Mode: Hybrid / Hierarchy / Prereqs]` button in the topbar chip, canvas HUD, or bottom spotlight banner, use segmented buttons in the Frontier Radar modal, or press `Shift + S` on the keyboard to cycle modes instantaneously.
+- **Active Telemetry & Framing:** The bottom HUD displays an active status banner with 1-click mode switching and `[Exit]` button, automatically centering camera focus onto the isolated structure.
 
 
 
