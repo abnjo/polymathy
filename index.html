@@ -1144,12 +1144,83 @@ code.inline {
     return { data: DEFAULT_FALLBACK_CURRICULUM, source: "fallback" };
   }
 
+  const CANONICAL_PREREQ_ALIASES = {
+    "physics.optics.geometric_optics": "physics.em_optics.optics",
+    "math.geometry_topology.analytic_geometry": "math.geometry.euclidean_analytic",
+    "chemistry.inorganic.bonding_coordination": "natural_sciences.chemistry.inorganic",
+    "math.algebra.linear_algebra": "math.algebra.linear",
+    "math.algebra.number_theory": "math.discrete.number_theory",
+    "engineering.signals_control.signals_dsp": "engineering.electrical.signals_systems",
+    "physics.classical_mechanics.continuum_fluids": "physics.classical_mechanics.fluid_continuum"
+  };
+
+  function normalizePatchNodes(nodes) {
+    if (!Array.isArray(nodes)) return [];
+    return nodes.map(n => {
+      const copy = { ...n };
+      if (Array.isArray(copy.prereqIds)) {
+        copy.prereqIds = copy.prereqIds.map(p => CANONICAL_PREREQ_ALIASES[p] || p);
+      }
+      return copy;
+    });
+  }
+
+  function isDeltaPatch(parsed) {
+    if (!parsed || typeof parsed !== "object") return false;
+    if (parsed.patch_id === "001_reductionist_universal_taxonomy" || parsed.patch_id === "001_stem_polymath_curriculum") {
+      return false;
+    }
+    if (parsed.patch_id) return true;
+    if (Array.isArray(parsed.extensions) && parsed.extensions.length > 0) return true;
+    const nodes = Array.isArray(parsed.nodes) ? parsed.nodes : [];
+    const topDomains = nodes.filter(n => n && (n.parentId === "knowledge" || n.parentId === null));
+    if (topDomains.length >= 3) return false;
+    return true;
+  }
+
+  function applyDeltaPatch(patchObj, sourceName = "patch") {
+    if (!patchObj || typeof patchObj !== "object") return false;
+    const patchId = patchObj.patch_id || ("patch_" + Date.now());
+    const normalized = {
+      ...patchObj,
+      patch_id: patchId,
+      nodes: normalizePatchNodes(patchObj.nodes || [])
+    };
+
+    const testPatches = structuredClone(layer0Patches);
+    const existingIdx = testPatches.findIndex(p => p && p.patch_id === patchId);
+    if (existingIdx !== -1) {
+      testPatches[existingIdx] = normalized;
+    } else {
+      testPatches.push(normalized);
+    }
+
+    const { map: mergedMap } = foldLayer0And1(testPatches, layer1Overrides);
+    const cycle = validateFullDagAcyclicity(mergedMap);
+    if (cycle) {
+      alert("Cannot apply patch: Dependency cycle detected:\n" + cycle.join(" -> "));
+      return false;
+    }
+
+    layer0Patches = testPatches;
+    persistAll();
+    liveGraph = buildLiveGraph();
+    computeLayout(liveGraph);
+    renderAll();
+    fitVisibleGraph();
+    showToast(`Applied patch "${normalized.title || patchId}" (+${normalized.nodes?.length || 0} topics).`);
+    return true;
+  }
+
   function loadGraphFromJSONString(jsonStr, fileName) {
     try {
       const parsed = JSON.parse(jsonStr);
-      if (!parsed || (!Array.isArray(parsed.nodes) && !parsed.topics)) {
-        alert("Invalid graph file: Expected a JSON object with a 'nodes' array.");
+      if (!parsed || (!Array.isArray(parsed.nodes) && !parsed.topics && !Array.isArray(parsed.extensions))) {
+        alert("Invalid file: Expected a JSON object with 'nodes' or 'extensions'.");
         return false;
+      }
+      if (isDeltaPatch(parsed)) {
+        return applyDeltaPatch(parsed, fileName || "loaded patch");
       }
       activeCurriculumData = parsed;
       activeCurriculumSource = fileName || "loaded file";
@@ -1356,8 +1427,15 @@ code.inline {
     if (idx !== -1) {
       layer0Patches[idx] = structuredClone(initialBasePatch);
     } else {
-      layer0Patches[0] = structuredClone(initialBasePatch);
+      layer0Patches.unshift(structuredClone(initialBasePatch));
     }
+    const seenPatchIds = new Set();
+    layer0Patches = layer0Patches.filter(p => {
+      if (!p || !p.patch_id) return true;
+      if (seenPatchIds.has(p.patch_id)) return false;
+      seenPatchIds.add(p.patch_id);
+      return true;
+    });
   }
 
   let layer1Overrides = Object.assign(EMPTY_OVERRIDES(), safeReadJSON(STORAGE_KEYS.overrides, EMPTY_OVERRIDES()));
@@ -5142,9 +5220,11 @@ INSTRUCTIONS:
           <span class="box-title">PASTE JSON OR UPLOAD .JSON PATCH FILE</span>
           <span class="tag ready">Schema Validated</span>
         </div>
-        <div class="section-hint">Import AI-generated curriculum expansions or topic bundles. Validates acyclicity to prevent dependency loops.</div>
+        <div class="section-hint">Import curriculum expansions, disciplinary patches, or AI-generated topic bundles. Validates acyclicity to prevent dependency loops.</div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap;">
           <input type="file" id="patchFileInput" accept=".json,application/json">
+          <button type="button" class="btn-xs" id="btnPastePatchClipboard" title="Paste patch JSON directly from your clipboard without opening device file manager">Paste Clipboard</button>
+          <button type="button" class="btn-xs" id="btnQuickLoadPatch002" style="display:none;" title="Directly load 002_arts_and_cad_patch.json from server">Load 002 Arts Patch</button>
         </div>
         <textarea id="patchJsonInput" rows="12" style="width:100%;font-family:var(--font-mono);font-size:11px;" placeholder='{ "patch_id": "...", "extensions": [], "nodes": [] }'></textarea>
         <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
@@ -5155,11 +5235,59 @@ INSTRUCTIONS:
       </div>
     `);
 
+    const patchInput = document.getElementById("patchJsonInput");
+    if (patchInput) {
+      patchInput.addEventListener("input", () => {
+        try { sessionStorage.setItem("polymathy_pending_patch", patchInput.value); } catch {}
+      });
+    }
+
+    const btnPaste = document.getElementById("btnPastePatchClipboard");
+    if (btnPaste && navigator.clipboard && navigator.clipboard.readText) {
+      btnPaste.addEventListener("click", async () => {
+        try {
+          const txt = await navigator.clipboard.readText();
+          if (txt) {
+            document.getElementById("patchJsonInput").value = txt;
+            try { sessionStorage.setItem("polymathy_pending_patch", txt); } catch {}
+            parseAndValidatePatch();
+            showToast("Pasted patch from clipboard.");
+          }
+        } catch {
+          showToast("Clipboard read blocked: please paste into the textarea.");
+        }
+      });
+    }
+
+    const btnQuick002 = document.getElementById("btnQuickLoadPatch002");
+    if (btnQuick002 && window.location.protocol.startsWith("http")) {
+      btnQuick002.style.display = "inline-block";
+      btnQuick002.addEventListener("click", async () => {
+        try {
+          const resp = await fetch("./002_arts_and_cad_patch.json?_t=" + Date.now());
+          if (resp.ok) {
+            const txt = await resp.text();
+            document.getElementById("patchJsonInput").value = txt;
+            try { sessionStorage.setItem("polymathy_pending_patch", txt); } catch {}
+            parseAndValidatePatch();
+            showToast("Loaded 002_arts_and_cad_patch.json from disk.");
+          }
+        } catch (err) {
+          showToast("Could not load patch from disk: " + err.message);
+        }
+      });
+    }
+
     document.getElementById("patchFileInput").addEventListener("change", (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = () => { document.getElementById("patchJsonInput").value = reader.result; };
+      reader.onload = () => {
+        const res = reader.result;
+        document.getElementById("patchJsonInput").value = res;
+        try { sessionStorage.setItem("polymathy_pending_patch", res); } catch {}
+        parseAndValidatePatch();
+      };
       reader.readAsText(file);
     });
 
@@ -5177,7 +5305,20 @@ INSTRUCTIONS:
         return null;
       }
 
-      const testPatches = [...layer0Patches, parsed];
+      if (Array.isArray(parsed.nodes)) {
+        parsed.nodes = normalizePatchNodes(parsed.nodes);
+      }
+
+      const testPatches = structuredClone(layer0Patches);
+      const patchId = parsed.patch_id || ("patch_" + Date.now());
+      parsed.patch_id = patchId;
+      const existingIdx = testPatches.findIndex(p => p && p.patch_id === patchId);
+      if (existingIdx !== -1) {
+        testPatches[existingIdx] = parsed;
+      } else {
+        testPatches.push(parsed);
+      }
+
       const { map: mergedMap } = foldLayer0And1(testPatches, layer1Overrides);
       const cycle = validateFullDagAcyclicity(mergedMap);
       if (cycle) {
@@ -5186,7 +5327,7 @@ INSTRUCTIONS:
       }
 
       const newNodes = (parsed.nodes || []).filter(n => !liveGraph.nodes.has(n.id));
-      diag.innerHTML = `<div class="diag-info">Valid curriculum patch. +${newNodes.length} new topics detected with zero cycles.</div>`;
+      diag.innerHTML = `<div class="diag-info">Valid curriculum patch "${escapeHtml(parsed.title || patchId)}". +${newNodes.length} new topics detected with zero cycles.</div>`;
       return parsed;
     }
 
@@ -5194,11 +5335,9 @@ INSTRUCTIONS:
     document.getElementById("btnMergePatch").addEventListener("click", () => {
       const parsed = parseAndValidatePatch();
       if (!parsed) return;
-      layer0Patches.push(parsed);
-      persistAll();
-      renderAll();
-      closeModal();
-      showToast(`Imported patch "${parsed.patch_id || "custom"}".`);
+      try { sessionStorage.removeItem("polymathy_pending_patch"); } catch {}
+      const ok = applyDeltaPatch(parsed, parsed.patch_id || "imported patch");
+      if (ok) closeModal();
     });
   }
 
@@ -5718,7 +5857,9 @@ INSTRUCTIONS:
         if (!file) return;
         const reader = new FileReader();
         reader.onload = () => {
+          try { sessionStorage.setItem("polymathy_pending_patch", reader.result); } catch {}
           loadGraphFromJSONString(reader.result, file.name);
+          try { sessionStorage.removeItem("polymathy_pending_patch"); } catch {}
         };
         reader.readAsText(file);
         e.target.value = "";
@@ -5806,6 +5947,21 @@ INSTRUCTIONS:
       fitVisibleGraph();
     });
 
+    // Recover pending patch if mobile browser reloaded during system file picker activity
+    try {
+      const pendingPatchStr = sessionStorage.getItem("polymathy_pending_patch");
+      if (pendingPatchStr) {
+        sessionStorage.removeItem("polymathy_pending_patch");
+        const parsed = JSON.parse(pendingPatchStr);
+        if (parsed && (Array.isArray(parsed.nodes) || Array.isArray(parsed.extensions))) {
+          applyDeltaPatch(parsed, "recovered patch");
+          showToast("Restored and applied patch from file picker.");
+        }
+      }
+    } catch (e) {
+      console.warn("Could not process pending patch:", e);
+    }
+
     // Service Worker Registration for Offline PWA
     if ("serviceWorker" in navigator && window.location.protocol.startsWith("http")) {
       navigator.serviceWorker.register("./sw.js")
@@ -5841,8 +5997,15 @@ INSTRUCTIONS:
           if (idx !== -1) {
             layer0Patches[idx] = structuredClone(curBase);
           } else {
-            layer0Patches[0] = structuredClone(curBase);
+            layer0Patches.unshift(structuredClone(curBase));
           }
+          const seenPatchIds = new Set();
+          layer0Patches = layer0Patches.filter(p => {
+            if (!p || !p.patch_id) return true;
+            if (seenPatchIds.has(p.patch_id)) return false;
+            seenPatchIds.add(p.patch_id);
+            return true;
+          });
 
           if (!layer2State.navigation || !layer2State.navigation.MAIN) {
             layer2State.navigation = structuredClone(curInit.navigation);
