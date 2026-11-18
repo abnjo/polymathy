@@ -1538,6 +1538,70 @@
       ]
     },
     {
+      "id": "engineering.mechanical_design",
+      "title": "Mechanical Design & Fabrication",
+      "parentId": "engineering",
+      "prereqIds": [],
+      "intro": "Parametric solid modeling, structural stress analysis, tolerancing, and subtractive/additive physical manufacturing.",
+      "sources": [
+        {
+          "id": "src_eng_shigley",
+          "title": "Budynas & Nisbett - Shigley's Mechanical Engineering Design"
+        }
+      ]
+    },
+    {
+      "id": "engineering.mechanical_design.cad_modeling",
+      "title": "Parametric CAD & Solid Modeling",
+      "parentId": "engineering.mechanical_design",
+      "prereqIds": [
+        "math.geometry.euclidean_analytic",
+        "arts.visual_foundations.perspective_drafting"
+      ],
+      "intro": "2D geometric constraint solvers & degrees-of-freedom elimination, feature-tree parametric history, Constructive Solid Geometry (CSG), Boundary Representation (B-Rep), NURBS spline surfaces, assembly kinematic mates, and STEP/IGES/STL interoperability.",
+      "sources": [
+        {
+          "id": "src_eng_zeid",
+          "title": "Ibrahim Zeid - Mastering CAD/CAM"
+        },
+        {
+          "id": "src_eng_far",
+          "title": "Farin - Curves and Surfaces for CAGD"
+        }
+      ]
+    },
+    {
+      "id": "engineering.mechanical_design.mechanics_of_materials",
+      "title": "Mechanics of Materials & Machine Elements",
+      "parentId": "engineering.mechanical_design",
+      "prereqIds": [
+        "physics.classical_mechanics.fluid_continuum",
+        "engineering.mechanical_design.cad_modeling"
+      ],
+      "intro": "Axial, torsional, and bending stress ($\\sigma = My/I$), Mohr's circle, von Mises yield criterion, deflection, springs, bearings, gears, and bolted/welded joints.",
+      "sources": [
+        {
+          "id": "src_eng_beer",
+          "title": "Beer, Johnston, DeWolf - Mechanics of Materials"
+        }
+      ]
+    },
+    {
+      "id": "engineering.mechanical_design.manufacturing_gdt",
+      "title": "GD&T, Tolerancing & Digital Fabrication",
+      "parentId": "engineering.mechanical_design",
+      "prereqIds": [
+        "engineering.mechanical_design.cad_modeling"
+      ],
+      "intro": "ASME Y14.5 Geometric Dimensioning & Tolerancing (datums, flatness, true position), clearance/interference fit classes, Design for Manufacturing (DFM), CNC toolpaths, and FDM/SLA additive slicing.",
+      "sources": [
+        {
+          "id": "src_eng_kalpakjian",
+          "title": "Kalpakjian & Schmid - Manufacturing Engineering and Technology"
+        }
+      ]
+    },
+    {
       "id": "pure_sciences",
       "title": "Pure Sciences (Physics, Chemistry & Biology)",
       "parentId": "knowledge",
@@ -1627,6 +1691,267 @@
         {
           "id": "src_dayan_abbott",
           "title": "Dayan & Abbott - Theoretical Neuroscience"
+        }
+      ]
+    },
+    {
+      "id": "arts",
+      "title": "Arts & Design",
+      "parentId": "knowledge",
+      "prereqIds": [],
+      "intro": "Systematic study of visual form, spatial projection, calligraphic proportion, materiality, sonic structure, and generative media.",
+      "sources": [
+        {
+          "id": "src_arts_arnheim",
+          "title": "Arnheim - Art and Visual Perception: A Psychology of the Creative Eye"
+        }
+      ]
+    },
+    {
+      "id": "arts.visual_foundations",
+      "title": "Visual Foundations & Spatial Projection",
+      "parentId": "arts",
+      "prereqIds": [],
+      "intro": "Perceptual grammar of two- and three-dimensional space: light, color, projective geometry, and structural composition.",
+      "sources": [
+        {
+          "id": "src_arts_gurney",
+          "title": "Gurney - Color and Light: A Guide for the Realist Painter"
+        }
+      ]
+    },
+    {
+      "id": "arts.visual_foundations.color_light",
+      "title": "Color Theory, Value & Illumination",
+      "parentId": "arts.visual_foundations",
+      "prereqIds": [
+        "physics.em_optics.optics"
+      ],
+      "intro": "Additive (RGB) vs. subtractive (CMYK/pigment) color mixing, Munsell/CIELAB perceptual color spaces (hue, value, chroma), simultaneous contrast, subsurface scattering, and chiaroscuro tonal modeling.",
+      "sources": [
+        {
+          "id": "src_arts_albers",
+          "title": "Josef Albers - Interaction of Color"
+        }
+      ]
+    },
+    {
+      "id": "arts.visual_foundations.perspective_drafting",
+      "title": "Perspective, Descriptive Geometry & Orthographic Projection",
+      "parentId": "arts.visual_foundations",
+      "prereqIds": [
+        "math.geometry.euclidean_analytic"
+      ],
+      "intro": "Linear 1-, 2-, and 3-point perspective, horizon/vanishing-point construction, foreshortening, axonometric/isometric projection, and Monge's orthographic multi-view drafting.",
+      "sources": [
+        {
+          "id": "src_arts_robertson",
+          "title": "Scott Robertson - How to Draw: Drawing and Sketching Objects and Environments from Your Imagination"
+        }
+      ]
+    },
+    {
+      "id": "arts.visual_foundations.composition_form",
+      "title": "Composition, Proportion & Visual Hierarchy",
+      "parentId": "arts.visual_foundations",
+      "prereqIds": [],
+      "intro": "Modular grid geometry, harmonic and golden proportions ($\\phi = \\frac{1+\\sqrt{5}}{2}$), Gestalt perceptual grouping, figure-ground tension, negative space, and visual rhythm.",
+      "sources": [
+        {
+          "id": "src_arts_muller",
+          "title": "Müller-Brockmann - Grid Systems in Graphic Design"
+        }
+      ]
+    },
+    {
+      "id": "arts.calligraphy_typography",
+      "title": "Calligraphy, Script & Typography",
+      "parentId": "arts",
+      "prereqIds": [],
+      "intro": "Constructive geometry of letterforms, reed-pen proportional canons, ink-substrate physics, and digital glyph engineering.",
+      "sources": [
+        {
+          "id": "src_arts_bringhurst",
+          "title": "Bringhurst - The Elements of Typographic Style"
+        }
+      ]
+    },
+    {
+      "id": "arts.calligraphy_typography.classical_calligraphy",
+      "title": "Classical Calligraphy & Proportional Canons",
+      "parentId": "arts.calligraphy_typography",
+      "prereqIds": [
+        "arts.visual_foundations.composition_form"
+      ],
+      "intro": "Nib-width modular measurement (Ibn Muqla's rhombic dot/nuqta system), Naskh, Thuluth, and Nastaliq hanging baseline geometry, stroke ductus, kashida extension, reed qalam carving, and ink rheology.",
+      "sources": [
+        {
+          "id": "src_arts_schimmel",
+          "title": "Schimmel - Calligraphy and Islamic Culture"
+        }
+      ]
+    },
+    {
+      "id": "arts.calligraphy_typography.typography_letterform",
+      "title": "Typography & Vector Glyph Design",
+      "parentId": "arts.calligraphy_typography",
+      "prereqIds": [
+        "arts.calligraphy_typography.classical_calligraphy",
+        "math.geometry.euclidean_analytic"
+      ],
+      "intro": "Quadratic/cubic Bézier curve interpolation, x-height and overshoot optical compensation, kerning pairs, OpenType contextual shaping (GSUB/GPOS), and multi-script typesetting.",
+      "sources": [
+        {
+          "id": "src_arts_cheng",
+          "title": "Karen Cheng - Designing Type"
+        }
+      ]
+    },
+    {
+      "id": "arts.fine_plastic_arts",
+      "title": "Fine & Plastic Arts",
+      "parentId": "arts",
+      "prereqIds": [],
+      "intro": "Direct observational representation, pigment/binder material craft, and three-dimensional physical sculpture.",
+      "sources": [
+        {
+          "id": "src_arts_gombrich",
+          "title": "Gombrich - The Story of Art"
+        }
+      ]
+    },
+    {
+      "id": "arts.fine_plastic_arts.drawing_anatomy",
+      "title": "Constructive Drawing & Anatomy",
+      "parentId": "arts.fine_plastic_arts",
+      "prereqIds": [
+        "arts.visual_foundations.perspective_drafting"
+      ],
+      "intro": "Gesture dynamics, planar breakdown of organic forms, skeletal landmarks, musculoskeletal biomechanics, and cross-contour line weight.",
+      "sources": [
+        {
+          "id": "src_arts_bridgman",
+          "title": "Bridgman - Constructive Anatomy"
+        }
+      ]
+    },
+    {
+      "id": "arts.fine_plastic_arts.painting_materials",
+      "title": "Painting & Pigment Materiality",
+      "parentId": "arts.fine_plastic_arts",
+      "prereqIds": [
+        "arts.visual_foundations.color_light",
+        "natural_sciences.chemistry.inorganic"
+      ],
+      "intro": "Pigment mineralogy and organic lakes, drying-oil polymerization, gum arabic/egg tempera binders, ground preparation, optical glazing, and alla prima brushwork.",
+      "sources": [
+        {
+          "id": "src_arts_mayer",
+          "title": "Ralph Mayer - The Artist's Handbook of Materials and Techniques"
+        }
+      ]
+    },
+    {
+      "id": "arts.fine_plastic_arts.sculpture_form",
+      "title": "Sculpture & Tactile Form",
+      "parentId": "arts.fine_plastic_arts",
+      "prereqIds": [
+        "arts.visual_foundations.perspective_drafting"
+      ],
+      "intro": "Subtractive carving vs. additive clay/wax modeling, internal armature mechanics, mold-making, lost-wax casting, and spatial mass balance.",
+      "sources": [
+        {
+          "id": "src_arts_lanteri",
+          "title": "Lantéri - Modelling and Sculpting the Human Figure"
+        }
+      ]
+    },
+    {
+      "id": "arts.digital_generative",
+      "title": "Digital, Generative & Spatial Arts",
+      "parentId": "arts",
+      "prereqIds": [],
+      "intro": "Computational geometry, procedural shaders, 3D digital sculpting, and photographic imaging pipelines.",
+      "sources": [
+        {
+          "id": "src_arts_shirley",
+          "title": "Marschner & Shirley - Fundamentals of Computer Graphics"
+        }
+      ]
+    },
+    {
+      "id": "arts.digital_generative.sculpting_procedural",
+      "title": "3D Digital Sculpting, Mesh Topology & Shaders",
+      "parentId": "arts.digital_generative",
+      "prereqIds": [
+        "arts.fine_plastic_arts.sculpture_form",
+        "math.algebra.linear"
+      ],
+      "intro": "Manifold quad topology, Catmull-Clark subdivision surfaces, UV unwrapping, Physically Based Rendering (PBR) BRDFs, and real-time GLSL/WebGL fragment shaders.",
+      "sources": [
+        {
+          "id": "src_arts_akenine",
+          "title": "Akenine-Möller et al. - Real-Time Rendering"
+        }
+      ]
+    },
+    {
+      "id": "arts.digital_generative.photography_cinematography",
+      "title": "Photography, Astrophotography & Visual Direction",
+      "parentId": "arts.digital_generative",
+      "prereqIds": [
+        "physics.em_optics.optics",
+        "arts.visual_foundations.composition_form"
+      ],
+      "intro": "Aperture/shutter/ISO radiometry, sensor quantum efficiency, RAW linear calibration (bias/dark/flat frames), stacking SNR scaling ($\\propto \\sqrt{N}$), and cinematic framing.",
+      "sources": [
+        {
+          "id": "src_arts_adams",
+          "title": "Ansel Adams - The Camera, The Negative, The Print"
+        }
+      ]
+    },
+    {
+      "id": "arts.music_acoustics",
+      "title": "Music Theory & Sonic Arts",
+      "parentId": "arts",
+      "prereqIds": [],
+      "intro": "Harmonic pitch ratios, counterpoint, acoustic resonance, and electronic sound synthesis.",
+      "sources": [
+        {
+          "id": "src_arts_schoenberg",
+          "title": "Schoenberg - Theory of Harmony"
+        }
+      ]
+    },
+    {
+      "id": "arts.music_acoustics.harmony_counterpoint",
+      "title": "Harmony, Rhythm & Counterpoint",
+      "parentId": "arts.music_acoustics",
+      "prereqIds": [
+        "math.discrete.number_theory"
+      ],
+      "intro": "Overtone series, Pythagorean vs. just intonation vs. 12-TET ($2^{k/12}$) tuning, modal/functional harmony, voice leading, and species counterpoint.",
+      "sources": [
+        {
+          "id": "src_arts_fux",
+          "title": "Fux - Gradus ad Parnassum"
+        }
+      ]
+    },
+    {
+      "id": "arts.music_acoustics.acoustics_synthesis",
+      "title": "Musical Acoustics & Sound Synthesis",
+      "parentId": "arts.music_acoustics",
+      "prereqIds": [
+        "arts.music_acoustics.harmony_counterpoint",
+        "engineering.electrical.signals_systems"
+      ],
+      "intro": "Resonant cavities and standing waves, spectral envelope/formants, additive/subtractive/FM synthesis, and digital audio DSP effects.",
+      "sources": [
+        {
+          "id": "src_arts_rossing",
+          "title": "Rossing, Moore, Wheeler - The Science of Sound"
         }
       ]
     },

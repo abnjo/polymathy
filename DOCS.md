@@ -117,6 +117,7 @@ $$\text{Mathematics} \xrightarrow{\text{foundations}} \text{Physics} \xrightarro
    - `pure_sciences`: Pure Sciences (Physics, Chemistry & Biology)
    - `cs`: Computer Science
    - `engineering`: Engineering & Applied Sciences
+   - `arts`: Arts & Design
    - `humanities`: Philosophy, Linguistics & Economics
 
 2. **The Pure Sciences Triad (`parentId: pure_sciences`):**
@@ -131,6 +132,34 @@ $$\text{Mathematics} \xrightarrow{\text{foundations}} \text{Physics} \xrightarro
      - Cellular biology, membrane transport & bioenergetics (`cellular`)
      - Genetics, genomics & evolutionary dynamics (`genetics_evolution`)
      - Organismal & systems physiology (`physiology_systems`)
+
+### 3.6 Arts & Design and Mechanical CAD Taxonomy (`002_arts_and_cad_patch`)
+
+Applied via Layer 0 patch `002_arts_and_cad_patch`:
+
+1. **Arts & Design Domain (`arts`, `parentId: knowledge`):**
+   - **Visual Foundations & Spatial Projection (`arts.visual_foundations`):**
+     - `color_light`: Color Theory, Value & Illumination (prereq: `physics.em_optics.optics`)
+     - `perspective_drafting`: Perspective, Descriptive Geometry & Orthographic Projection (prereq: `math.geometry.euclidean_analytic`)
+     - `composition_form`: Composition, Proportion & Visual Hierarchy
+   - **Calligraphy, Script & Typography (`arts.calligraphy_typography`):**
+     - `classical_calligraphy`: Classical Calligraphy & Proportional Canons (prereq: `arts.visual_foundations.composition_form`)
+     - `typography_letterform`: Typography & Vector Glyph Design (prereqs: `classical_calligraphy`, `math.geometry.euclidean_analytic`)
+   - **Fine & Plastic Arts (`arts.fine_plastic_arts`):**
+     - `drawing_anatomy`: Constructive Drawing & Anatomy (prereq: `arts.visual_foundations.perspective_drafting`)
+     - `painting_materials`: Painting & Pigment Materiality (prereqs: `arts.visual_foundations.color_light`, `natural_sciences.chemistry.inorganic`)
+     - `sculpture_form`: Sculpture & Tactile Form (prereq: `arts.visual_foundations.perspective_drafting`)
+   - **Digital, Generative & Spatial Arts (`arts.digital_generative`):**
+     - `sculpting_procedural`: 3D Digital Sculpting, Mesh Topology & Shaders (prereqs: `sculpture_form`, `math.algebra.linear`)
+     - `photography_cinematography`: Photography, Astrophotography & Visual Direction (prereqs: `physics.em_optics.optics`, `composition_form`)
+   - **Music Theory & Sonic Arts (`arts.music_acoustics`):**
+     - `harmony_counterpoint`: Harmony, Rhythm & Counterpoint (prereq: `math.discrete.number_theory`)
+     - `acoustics_synthesis`: Musical Acoustics & Sound Synthesis (prereqs: `harmony_counterpoint`, `engineering.electrical.signals_systems`)
+
+2. **Mechanical Design & Solid Modeling (`engineering.mechanical_design`, `parentId: engineering`):**
+   - `cad_modeling`: Parametric CAD & Solid Modeling (prereqs: `math.geometry.euclidean_analytic`, `arts.visual_foundations.perspective_drafting`)
+   - `mechanics_of_materials`: Mechanics of Materials & Machine Elements (prereqs: `physics.classical_mechanics.fluid_continuum`, `cad_modeling`)
+   - `manufacturing_gdt`: GD&T, Tolerancing & Digital Fabrication (prereq: `cad_modeling`)
 
 ---
 
